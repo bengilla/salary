@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Employees{% endblock %}
+
+{% block content %}
+<section id="all" class="py-[2%] px-[5%] lg:px-[15%]">
+
+    <!-- {{ info }} -->
+    <div class="mt-2 w-full border border-1 border-slate-900">
+        <table class="table-auto w-full">
+            <tbody>
+                <tr>
+                    <!--image -->
+                    <td>
+                        <div class="grid place-content-center">
+                            <img src="data:;base64, {{ info['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
+                        </div>
+                        <div class="grid grid-rows-1 place-content-center">
+                            <a href="{{ url_for('edit_emp', ids=info._id) }}">
+                                <button class="w-14 py-1 mb-1 border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">edit</button></a>
+                        </div>
+                    </td>
+
+                    <!--Info -->
+                    <td>
+                        <table class="auto">
+                            <tr>
+                                <th class="w-auto px-8"><span class="text-xs font-normal italic unselect">Name: </span></th>
+                                <td class="w-full">
+                                    <a href="{{ url_for('info_emp', ids=info._id) }}">
+                                        <span class="font-bold">{{ info.name }} | </span>
+                                    </a>
+                                    <span class="text-xs text-red-500">(RM {{ info.daily_salary }})</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th width="120px"><span class="text-xs font-normal italic unselect">ID:</span></th>
+                                <td>
+                                    <span class="text-xs">{{ info._id }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="text-xs font-normal italic unselect">D.O.B.:</span></th>
+                                <td>
+                                    <span class="text-xs">{{ info.dob }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th><span class="text-xs font-normal italic unselect">gender:</span></th>
+                                <td><span class="text-xs">{{ info.gender }}</span></td>
+                            </tr>
+                            <tr>
+                                <th><span class="text-xs font-normal italic unselect">Nationality:</span></th>
+                                <td><span class="text-xs">{{ info.nationality }}</span></td>
+                            </tr>
+                            <tr>
+                                <th><span class="text-xs font-normal italic unselect">Passport / IC:</span></th>
+                                <td><span class="text-xs">{{ info.ic }}</span></td>
+                            </tr>
+                            <tr>
+                                <th><span class="text-xs font-normal italic unselect">Contact:</span></th>
+                                <td><span class="text-xs">{{ info.contact }}</span></td>
+                            </tr>
+                            <tr>
+                                <th><span class="text-xs font-normal italic unselect">Address:</span></th>
+                                <td><span class="text-xs">{{ info.address}}</span></td>
+                            </tr>
+                            <tr>
+                                <th><span class="text-xs font-normal italic unselect">Sign-in Date:</span></th>
+                                <td><span class="text-xs">{{ info.sign_date }}</span></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <!-- End info -->
+
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+    <!-- Work Hour -->
+    <h3>Date</h3>
+</section>
+{% endblock %}

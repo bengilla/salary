@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Edit New Employee{% endblock %}
+
+{% block content %}
+<section id="list" class="px-[1%] sm:px-[5%] mb-16">
+
+    <!-- Dropdown Menu -->
+
+    <div class="dropdown mb-8">
+        <button class="dropbtn rounded-lg">Select Date</button>
+        <div class="dropdown-content">
+            {% for i in all_id %}
+            <a href="{{ url_for('all_list', ids=i) }}">{{ i }}</a>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <!-- All the list -->
+
+    {% for iname, idata in emp.items() %}
+    <div class="text-xs sm:text-[0.8rem]">
+        <span>Name:</span> <b class="font-bold">{{ iname }}</b><br>
+        <span>Daily Salary:</span> <span class="font-bold"><b>RM {{ idata["daily_salary"] }}</b></span> |
+        <span>Total Salary:</span> <span class="font-bold">RM {{ idata["total_salary"] }}</span>
+    </div>
+    <hr class="border-red-800">
+
+    <table class="w-full list-table mb-4">
+        <tr>
+            {% for v in idata["output"] %}
+            <td class="text-xs text-red-700 sm:text-sm">
+                <span>{{ v["day"] }}</span>
+            </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for v in idata["output"] %}
+            <td class="text-xs border-[2px] border-amber-600 sm:text-sm">
+                <span>RM </span><br>
+                <span>{{ v["pay_perday"] }}</span>
+            </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for v in idata["output"] %}
+            <td class="text-xs sm:text-sm">
+                <span>{{ v["work_time"][0] }}</span><br>
+                <span>{{ v["work_time"][-1] }}</span>
+            </td>
+            {% endfor %}
+        </tr>
+    </table>
+    {% endfor %}
+
+</section>
+{% endblock %}

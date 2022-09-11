@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Add New Employee{% endblock %}
+
+{% block content %}
+<section id="add" class="py-[2%] px-[5%] lg:px-[30%]">
+    <center>
+        <p class="text-2xl text-red-500 font-bold">{{ msg }}</p>
+    </center>
+
+    <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" novalidate>
+        {{ form.csrf_token }}
+        <div class="pb-6">
+            {{ form.img_emp.label(class="text-sm") }}
+            <span class="text-xs text-red-500">(required)</span><br>
+            {{ form.img_emp(class="custom-file-input") }}
+            {% for err in form.img_emp.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.name.label(class="text-sm") }}
+            <span class="text-xs text-red-500">(required)</span><br>
+            {{ form.name(class="form-input") }}<br>
+            {% for err in form.name.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.ic.label(class="text-sm") }}
+            <span class="text-xs text-red-500">(required)</span><br>
+            {{ form.ic(class="form-input") }}<br>
+            {% for err in form.ic.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.dob.label(class="text-sm") }} {{ form.dob(class="form-input") }}<br>
+            {% for err in form.dob.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.nationality.label(class="text-sm") }} {{ form.nationality(class="form-input") }}<br>
+            {% for err in form.nationality.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.gender.label(class="text-sm") }} {{ form.gender(class="form-input") }}<br>
+            {% for err in form.gender.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.contact.label(class="text-sm") }} {{ form.contact(class="form-input") }}<br>
+            {% for err in form.contact.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.address.label(class="text-sm") }} {{ form.address(class="form-input") }}<br>
+            {% for err in form.address.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.finger_print.label(class="text-sm") }} {{ form.finger_print(class="form-input") }}<br>
+            {% for err in form.finger_print.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.pay_hour.label(class="text-sm") }} {{ form.pay_hour(class="form-input") }}<br>
+            {% for err in form.pay_hour.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+        <div class="pb-2">
+            {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
+        </div>
+        <br><br>
+    </form>
+</section>
+{% endblock %}

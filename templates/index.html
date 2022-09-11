@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+<section class="w-full">
+
+    <div class="w-full mb-8 text-center">
+        <span>Today:</span>
+        <div class="w-full grid grid-cols-1">
+            <div class="grid place-content-center">
+                <hr class="w-[300px] border-2 border-amber-600">
+            </div>
+        </div>
+        <span class="font-bold m-2">{{ date.date().strftime("%d-%m-%Y") }} ({{ date.today().strftime('%A') }})</span>
+    </div>
+
+    <div class="w-full grid grid-cols-1 lg:grid-cols-1">
+        <div></div>
+        <div class="grid py-2 place-content-center">
+            <a href="{{ url_for('all_emp') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+                Read All Employee
+            </a>
+        </div>
+        <div class="grid py-2 place-content-center">
+            <a href="{{ url_for('add_emp') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+                Add New Employee
+            </a>
+        </div>
+        <div class="grid py-2 place-content-center">
+            <a href="{{ url_for('all_list', ids=all_id[-1]) }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+                All List Work Hours
+            </a>
+        </div>
+
+        <div class="px-2 my-6 grid grid-cols-1 place-items-center">
+            <hr class="w-3/5 border-slate-700">
+        </div>
+
+        <div class="py-4 grid grid-cols-1 place-items-center">
+            <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data" class="w-4/5 sm:w-[400px]">
+                <p class="text-sm text-red-500">Upload salary file</p>
+                <input type="file" name="file" class="p-4 w-full border-[1px] border-slate-800 rounded-xl"><br>
+                <input type="submit" class="p-2 w-full my-2 bg-slate-300 rounded hover:bg-red-400 ease-in-out duration-300">
+            </form>
+        </div>
+    </div>
+
+</section>
+{% endblock %}

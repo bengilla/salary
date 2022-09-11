@@ -1,0 +1,15 @@
+### Node ###
+node_modules
+package-lock.json
+package.json
+tailwind.config.js
+
+### Python ###
+venv
+__pycache__
+
+### env ###
+env
+*.env
+
+_working-file

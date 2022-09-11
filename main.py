@@ -1,0 +1,131 @@
+"""
+Project for TBROS employees salary calculator and employee person info
+"""
+
+# typing
+from datetime import datetime
+
+from flask import Flask, redirect, render_template, request, url_for
+from werkzeug.wrappers import Response
+
+# 自身库
+from emp_mongodb import EmpInfo
+from emp_pay_cal import FileCal
+from forms import CreateForm, EditForm
+from mongodb import MongoDB
+
+# 设置
+app = Flask(__name__)
+app.config["SECRET_KEY"] = "tbrosventures"
+
+
+EMPINFO = EmpInfo()
+
+def connect_mongodb():
+    """Get data"""
+    e = MongoDB()
+    e_collection = e.work_hour_collection()
+    return e_collection
+
+
+@app.route("/", methods=["GET", "POST"])
+def index() -> str:
+    """
+    链接至 index.html, 同时也输出日期
+    """
+    date = datetime.now()
+    # Get ID from list from data
+    work_list_db = connect_mongodb()
+    find_all_id = work_list_db.find({})
+    all_id = [x["_id"] for x in find_all_id]
+
+    if request.method == "POST":
+        file_cal = request.files['file']
+        FileCal(file_cal)
+
+    return render_template("index.html", date=date, all_id=all_id)
+
+
+@app.route("/add_emp", methods=["GET", "POST"])
+def add_emp() -> (Response | str):
+    """
+    建立员工资料，如果员工已存在就会显示 msg\n
+    如果建立成功转至 all.html\n
+    form = form.py
+    """
+    form = CreateForm()
+    msg = ""
+    if form.validate_on_submit():
+        create_emp = EMPINFO.emp_create()
+        if create_emp:
+            return redirect("/all_emp")
+        else:
+            msg = "Employee Exists, IC / PASSPORT is duplicate"
+
+    return render_template("add.html", form=form, msg=msg)
+
+
+@app.get("/all_emp")
+def all_emp() -> str:
+    """
+    浏览全部员工
+    """
+    info = EMPINFO.emp_info()
+    return render_template("all.html", info=info)
+
+
+@app.route("/info_emp/<ids>")
+def info_emp(ids: str) -> str:
+    """
+    浏览单位员工
+    """
+    info = EMPINFO.emp_one(ids)
+    return render_template("emp.html", info=info)
+
+
+@app.route("/edit_emp/<ids>", methods=["GET", "POST"])
+def edit_emp(ids: str) -> (Response | str):
+    """
+    修改员工资料, 只是修改 ic, contact, address, pay
+    """
+    form = EditForm()
+    get_emp = EMPINFO.emp_one(ids)
+
+    if request.method == "POST":
+        ic_card = form.ic.data
+        contact = form.contact.data
+        address = form.address.data
+        pay = form.pay_hour.data
+
+        EMPINFO.emp_edit(ids, ic_card, contact, address, pay)
+
+        return redirect(url_for("all_emp"))
+    return render_template("edit.html", form=form, edit_emp=get_emp)
+
+
+@app.get("/delete_emp/<ids>")
+def delete_emp(ids: str) -> Response:
+    """
+    删除员工资料
+    """
+    EMPINFO.emp_delete(ids)
+    return redirect(url_for("all_emp"))
+
+
+@app.route("/all_list/<ids>", methods=["GET", "POST"])
+def all_list(ids: str) -> str:
+    """
+    当月发工资列表
+    """
+    work_list_db = connect_mongodb()
+    emp_one = work_list_db.find_one({"_id": ids})
+    output = emp_one["emp_work_hours"]
+
+    _all = work_list_db.find({})
+    all_id = [x["_id"] for x in _all]
+
+    return render_template("list.html", emp=output, all_id=all_id)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
