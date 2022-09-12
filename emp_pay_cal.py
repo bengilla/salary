@@ -2,7 +2,6 @@
 Project for TBROS employees salary calculator and employee person info
 """
 
-from dataclasses import dataclass
 from datetime import datetime
 
 import pandas as pd
@@ -13,27 +12,32 @@ from mongodb import MongoDB
 
 
 class ReadExcel:
-    """读取Excel文件"""
+    """读取 excel 文件"""
     def __init__(self, filename) -> None:
+        # 选择 excel 的第二页和 excel 文件名
         self._sheet_num = 2
         self._filename = filename
 
+        # pandas 生成和生成日期
         self._df = pd.read_excel(self._filename, sheet_name=self._sheet_num)
         self._date = datetime.strptime(self._df.loc[1][2].split(" ")[0], "%Y-%m-%d")
 
     def get_day(self) -> list[int]:
-        """抓取时间的数字"""
+        """读取 excel 文件的日期"""
         day_list = [x for x in self._df.loc[2]]
+        # 如果 31 生成 16 天，如果没有 31 生成 15 天
         if 31 not in day_list:
-            return day_list[:15]
+            num_index = day_list.index(1)
+            return day_list[num_index:num_index+15]
         else:
-            return day_list[:16]
+            num_index = day_list.index(16)
+            return day_list[num_index:num_index+16]
 
     def get_name(self) -> list[str]:
         """把所有名字变为列表"""
-        column_list_name = [i for i in self._df.columns]
-        get_name_list = self._df.loc[3::2][column_list_name[10]]  # col and row number
-        name_list = [i.lower() for i in get_name_list]
+        column_name = [i for i in self._df.columns]
+        get_name_columns = self._df.loc[3::2][column_name[10]]  # col and row number
+        name_list = [i.lower() for i in get_name_columns]
         return name_list
 
     def get_time(self, row_num: int) -> list[str, int]:
@@ -52,8 +56,8 @@ class ReadExcel:
                     store_time.append([each_time[0:5], each_time[-5:]])
         return store_time
 
-    def get_all_list(self) -> dict:
-        """输出全部列表"""
+    def generate_all(self) -> dict:
+        """输出全部列表，如果列表全 0 就排除"""
         all_list = {}
         num = 4
         for show_name in self.get_name():
@@ -71,8 +75,8 @@ class ReadExcel:
         return all_list
 
 
-class TimeCal:
-    """Time Calculator"""
+class TimeCalculation:
+    """TimeCalculation 是计算所有员工的上下班时间"""
     def __init__(self, emp_time, emp_salary) -> None:
         self.emp_time: list = emp_time
         self.emp_salary: float = emp_salary
@@ -86,9 +90,7 @@ class TimeCal:
         elif len(self.emp_time[num]) < 2:
             return 0
 
-        # elif type(self.emp_time[num]) == list:
         elif isinstance(self.emp_time[num], list):
-            # c_time = lambda t: datetime.strptime(t, "%H:%M")
             def c_time(time_input):
                 time_output = datetime.strptime(time_input, "%H:%M")
                 return time_output
@@ -103,34 +105,12 @@ class TimeCal:
             # lv1_overtime = timedelta(minutes=45)  # 17:30 - 22:00
             # lv2_overtime = timedelta(minutes=40)  # 22:00 - End
 
-            # Day Time Work Hour
+            # 计算白天的工作时间
             if emp_in < day_in and emp_out > day_out:  # Full day
                 self.emp_pay += 8
             elif emp_in > day_in and emp_out > day_out:  # Late come until 17:30
                 temp = str(day_out - emp_in)[0:4]
-                # print(temp)
-                if c_time(temp).hour > 5:
-                    self.emp_pay += c_time(temp).hour - lunch_time
-                    if c_time(temp).minute > 30:
-                        self.emp_pay += 1
-                else:
-                    self.emp_pay += c_time(temp).hour
-                    if c_time(temp).minute > 30:
-                        self.emp_pay += 1
-            elif emp_in < day_in and emp_out < day_out:  # Early Come Early Out
-                temp = str(emp_out - day_in)[0:4]
-                # print(temp)
-                if c_time(temp).hour > 5:
-                    self.emp_pay += c_time(temp).hour - lunch_time
-                    if c_time(temp).minute > 30:
-                        self.emp_pay += 1
-                else:
-                    self.emp_pay += c_time(temp).hour
-                    if c_time(temp).minute > 30:
-                        self.emp_pay += 1
-            elif emp_in > day_in and emp_out < day_out:  # Early Come Early Out
-                temp = str(emp_out - emp_in)[0:4]
-                # print(temp)
+
                 if c_time(temp).hour > 5:
                     self.emp_pay += c_time(temp).hour - lunch_time
                     if c_time(temp).minute > 30:
@@ -140,7 +120,31 @@ class TimeCal:
                     if c_time(temp).minute > 30:
                         self.emp_pay += 1
 
-            # OverTime
+            elif emp_in < day_in and emp_out < day_out:  # Early Come Early Out
+                temp = str(emp_out - day_in)[0:4]
+
+                if c_time(temp).hour > 5:
+                    self.emp_pay += c_time(temp).hour - lunch_time
+                    if c_time(temp).minute > 30:
+                        self.emp_pay += 1
+                else:
+                    self.emp_pay += c_time(temp).hour
+                    if c_time(temp).minute > 30:
+                        self.emp_pay += 1
+
+            elif emp_in > day_in and emp_out < day_out:  # Early Come Early Out
+                temp = str(emp_out - emp_in)[0:4]
+
+                if c_time(temp).hour > 5:
+                    self.emp_pay += c_time(temp).hour - lunch_time
+                    if c_time(temp).minute > 30:
+                        self.emp_pay += 1
+                else:
+                    self.emp_pay += c_time(temp).hour
+                    if c_time(temp).minute > 30:
+                        self.emp_pay += 1
+
+            # 计算加班的工作时间
             if emp_out >= c_time("18:55"):
                 self.emp_pay += 2
 
@@ -154,7 +158,7 @@ class TimeCal:
 
 
 class FileCal:
-    """Final class to work"""
+    """这是最终到处所有计算后的数据"""
     def __init__(self, filename) -> None:
         self.data = {}
         self.filename = filename
@@ -166,11 +170,7 @@ class FileCal:
         read_excel = ReadExcel(self.filename)
         _day = read_excel.get_day()
 
-        get_all_list = read_excel.get_all_list()
-
-        # check_name_list = [i for i in get_all_list]
-        # print(check_name_list)
-
+        get_all_list = read_excel.generate_all()
         emp = EmpInfo().emp_one(name)
 
         emp_sum_salary = []
@@ -179,7 +179,7 @@ class FileCal:
 
         send_to_mongodb = []
         for index, day in enumerate(_day):
-            time_cal = TimeCal(emp_time=get_all_list[name], emp_salary=hour_salary)
+            time_cal = TimeCalculation(emp_time=get_all_list[name], emp_salary=hour_salary)
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
 
@@ -191,7 +191,7 @@ class FileCal:
                 }
             )
 
-        # Store to data
+        # 存于 MongoDB 的格式
         store_data = {
             "daily_salary": daily_salary,
             "total_salary": sum(emp_sum_salary),
@@ -200,39 +200,51 @@ class FileCal:
         self.data[name.title()] = store_data
 
     def send_to_mongodb(self):
-        """main"""
+        """导出至 MongoDB"""
         get_emp_name = EmpInfo().emp_info()
         emp_name = [x["_id"] for x in get_emp_name]
 
-        # Final Output
-        # Catch all emp info incluse salary
+        # 最终输出，计算没人的基本工资
+        no_find = []
         for each_emp in emp_name:
-            self.main(each_emp)
+            try:
+                self.main(each_emp)
+            except KeyError as err:
+                cut_symbol = str(err).split("'")
+                no_find.append(cut_symbol[1])
+                continue
+        print(no_find)
+        # 上传至 MongoDB
+        # read_excel = ReadExcel(self.filename)
+        # _day = read_excel.get_day()
+        # _month = read_excel._date.month  # pylint: disable=W0212
 
-        # Send to mongoDB database
-        read_excel = ReadExcel(self.filename)
-        _day = read_excel.get_day()
-        _month = read_excel._date.month  # pylint: disable=W0212
-        
-        mongodb = MongoDB()
-        work_hour_collection = mongodb.work_hour_collection()
-        send_data = {
-            "_id": f"{_month}-{_day[0]}",
-            "emp_work_hours": self.data
-        }
-        work_hour_collection.insert_one(send_data)
+        # mongodb = MongoDB()
+        # work_hour_collection = mongodb.work_hour_collection()
+        # send_data = {
+        #     "_id": f"{_month}-{_day[0]}",
+        #     "emp_work_hours": self.data
+        # }
+        # work_hour_collection.insert_one(send_data)
 
-        # Test single person
-        # main("alom")
-        # print(self.data)
+        # 测试输出
+        print(self.data)
 
-# Test------------------------------------------------------------------------
-# e = ReadExcel()
-# print(e.get_day())
-# print(e.get_name())
-# print(e.get_time(8))
-# print(len(e.get_all_list()))
 
-# Real Output ----------------------------------------------------------------
-# a = FileCal("data/8/1_StandardReport.xls")
-# a.send_to_mongodb()
+
+FileCal("data/8/1_StandardReport.xls")
+print("testing 12 sep")
+# import time
+
+# start_time = time.time()
+# print(start_time)
+
+# try:
+#     FileCal("data/8/1_StandardReport.xls")
+# except KeyError as e:
+#     print(e)
+#     # print("Some emp no exists")
+
+# end_time = time.time()
+# print(end_time)
+# print(f"Total Time: {int(end_time - start_time)}")

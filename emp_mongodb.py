@@ -58,8 +58,8 @@ class EmpInfo:
         # 如果员工不在库里，执行
         if form.ic.data not in check_emp():
             new_emp = {
-                # "_id": FORM.name.data.split(' ')[0] + FORM.ic.data[-4:],
-                "_id": form.name.data.replace(" ", "").lower(),
+                "_id": form.name.data.split(' ')[0].lower() + form.ic.data[-4:],
+                # "_id": form.name.data.replace(" ", "").lower(),
                 "name": form.name.data.title(),
                 "dob": form.dob.data,
                 "gender": form.gender.data,
@@ -81,14 +81,14 @@ class EmpInfo:
         else:
             return False
 
-    def emp_info(self):
+    def emp_info(self) -> dict[str]:
         """
         读取所有员工资料
         """
         results = self.emp_info_collection.find({})
         return results
 
-    def emp_one(self, ids: str):
+    def emp_one(self, ids: str) ->dict[str]:
         """
         读取单位员工资料
         """
