@@ -165,7 +165,6 @@ class FileCal:
 
         read_excel = ReadExcel(self.filename)
         _day = read_excel.get_day()
-        _month = read_excel._date.month  # pylint: disable=W0212
 
         get_all_list = read_excel.get_all_list()
 
@@ -210,18 +209,22 @@ class FileCal:
         for each_emp in emp_name:
             self.main(each_emp)
 
-        # # Send to mongoDB database
-        # mongodb = MongoDB()
-        # work_hour_collection = mongodb.work_hour_collection()
-        # send_data = {
-        #     "_id": f"{_month}-{_day[0]}",
-        #     "emp_work_hours": data
-        # }
-        # work_hour_collection.insert_one(send_data)
+        # Send to mongoDB database
+        read_excel = ReadExcel(self.filename)
+        _day = read_excel.get_day()
+        _month = read_excel._date.month  # pylint: disable=W0212
+        
+        mongodb = MongoDB()
+        work_hour_collection = mongodb.work_hour_collection()
+        send_data = {
+            "_id": f"{_month}-{_day[0]}",
+            "emp_work_hours": self.data
+        }
+        work_hour_collection.insert_one(send_data)
 
         # Test single person
         # main("alom")
-        print(self.data)
+        # print(self.data)
 
 # Test------------------------------------------------------------------------
 # e = ReadExcel()

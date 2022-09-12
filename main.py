@@ -42,9 +42,13 @@ def index() -> str:
     if request.method == "POST":
         file_cal = request.files['file']
         FileCal(file_cal)
+        return render_template("complete.html")
 
     return render_template("index.html", date=date, all_id=all_id)
 
+# @app.route("/complete")
+# def complete():
+#     return render_template("complete.html")
 
 @app.route("/add_emp", methods=["GET", "POST"])
 def add_emp() -> (Response | str):
@@ -121,10 +125,12 @@ def all_list(ids: str) -> str:
     emp_one = work_list_db.find_one({"_id": ids})
     output = emp_one["emp_work_hours"]
 
+    output_id = ids.split('-')[0]
+
     _all = work_list_db.find({})
     all_id = [x["_id"] for x in _all]
 
-    return render_template("list.html", emp=output, all_id=all_id)
+    return render_template("list.html", emp=output, all_id=all_id, output_id=output_id)
 
 
 if __name__ == "__main__":
