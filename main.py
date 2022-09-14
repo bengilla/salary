@@ -10,7 +10,7 @@ from werkzeug.wrappers import Response
 
 # 自身库
 from emp_mongodb import EmpInfo
-from emp_pay_cal import FileCal
+from emp_pay_cal import EmpSalary
 from forms import CreateForm, EditForm
 from mongodb import MongoDB
 
@@ -40,8 +40,8 @@ def index() -> str:
     all_id = [x["_id"] for x in find_all_id]
 
     if request.method == "POST":
-        file_cal = request.files['file']
-        FileCal(file_cal)
+        file_input = request.files['file']
+        EmpSalary(file_input)
         return render_template("complete.html")
 
     return render_template("index.html", date=date, all_id=all_id)
@@ -69,7 +69,7 @@ def add_emp() -> (Response | str):
     return render_template("add.html", form=form, msg=msg)
 
 
-@app.get("/all_emp")
+@app.route("/all_emp")
 def all_emp() -> str:
     """
     浏览全部员工
@@ -107,7 +107,7 @@ def edit_emp(ids: str) -> (Response | str):
     return render_template("edit.html", form=form, edit_emp=get_emp)
 
 
-@app.get("/delete_emp/<ids>")
+@app.route("/delete_emp/<ids>")
 def delete_emp(ids: str) -> Response:
     """
     删除员工资料
@@ -125,7 +125,9 @@ def all_list(ids: str) -> str:
     emp_one = work_list_db.find_one({"_id": ids})
     output = emp_one["emp_work_hours"]
 
-    output_id = ids.split('-')[0]
+    month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    output_id = int(ids.split('-')[0])
+    output_id = month_list[output_id - 1]
 
     _all = work_list_db.find({})
     all_id = [x["_id"] for x in _all]

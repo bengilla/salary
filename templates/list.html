@@ -6,19 +6,22 @@
 
     <!-- Dropdown Menu -->
 
-    <div class="dropdown mb-8">
-        <button class="dropbtn rounded-lg">Select Date</button>
-        <div class="dropdown-content">
-            {% for i in all_id %}
-            <a href="{{ url_for('all_list', ids=i) }}">{{ i }}</a>
-            {% endfor %}
+    <div class="w-full grid grid-cols-2 dropdown mb-8">
+        <div class="grid place-items-start">
+            <button class="dropbtn rounded-lg">Select Date</button>
+            <div class="dropdown-content">
+                {% for i in all_id %}
+                <a href="{{ url_for('all_list', ids=i) }}">{{ i }}</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="grid place-items-end">
+            <h4 class="pb-10">
+                <span class="text-lg">month: </span>
+                <span class="text-xl text-amber-600 font-bold">{{ output_id }}</span>
+            </h4>
         </div>
     </div>
-
-    <div>
-        <h4 class="pb-8 text-xl text-orange-600 font-bold">month: {{ output_id }}</h4>
-    </div>
-
 
     <!-- All the list -->
 
