@@ -167,6 +167,7 @@ class EmpSalary:
         self.read_excel = ReadExcel(self.filename)
 
         # 读取文件的日和月
+        self._name = self.read_excel.get_name()
         self._day = self.read_excel.get_day()
         self._month = self.read_excel._date.month
 
@@ -217,13 +218,10 @@ class EmpSalary:
         emp_name = [x["_id"] for x in get_emp_name]
 
         # 最终输出，计算没人的基本工资
-        no_find = []
         for each_emp in emp_name:
             try:
                 self.make_emp_info(each_emp)
-            except KeyError as err:
-                cut_symbol = str(err).split("'")
-                no_find.append(cut_symbol[1])
+            except KeyError:
                 continue
 
         # 上传至 MongoDB

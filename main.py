@@ -38,13 +38,18 @@ def index() -> str:
     work_list_db = connect_mongodb()
     find_all_id = work_list_db.find({})
     all_id = [x["_id"] for x in find_all_id]
+    err_msg = ""
 
     if request.method == "POST":
         file_input = request.files['file']
-        EmpSalary(file_input)
-        return render_template("complete.html")
+        try:
+            EmpSalary(file_input)
+            return render_template("complete.html")
+        except ValueError:
+            print("Error")
+            err_msg = "Wrong file type!!!, please select again"
 
-    return render_template("index.html", date=date, all_id=all_id)
+    return render_template("index.html", date=date, all_id=all_id, err_msg=err_msg)
 
 # @app.route("/complete")
 # def complete():
