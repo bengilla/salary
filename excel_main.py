@@ -2,6 +2,8 @@
 Main work for work with exce lfil
 """
 
+import time
+
 from emp_mongodb import EmpInfo
 from excel_module import ReadExcel, TimeCalculation
 from mongodb import MongoDB
@@ -22,19 +24,27 @@ class EmpSalary:
         self._month = self.read_excel._date.month
 
         # 读取 EmpInfo 的数据
-        self.EMPINFO = EmpInfo()
+        self._empinfo = EmpInfo()
+
+        # 读取全部列表
+        self._get_all_list = self.read_excel.generate_all()
+
+        # 列出没有名字在网站的，等于说没有这个人的工资/天
+        web_name = [x['name'].lower() for x in self._empinfo.emp_info()]
+        excel_name = [x for x in self._name]
+        # 总合
+        self.no_name = [i for i in excel_name if i not in web_name]
 
         # 执行 main 功能 / time 部分可以删除
-        import time
-        start_time = int(time.time())
-        self.main()
-        end_time = int(time.time())
-        print(end_time - start_time)
+        if len(self.no_name) == 0:
+            start_time = int(time.time())
+            self.main()
+            end_time = int(time.time())
+            print(end_time - start_time)
 
     def make_emp_info(self, name: str) -> None:
         """执行所有的操作"""
-        get_all_list = self.read_excel.generate_all()
-        emp = self.EMPINFO.emp_one(name)
+        emp = self._empinfo.emp_one(name)
 
         emp_sum_salary = []
         daily_salary = emp["daily_salary"]
@@ -42,7 +52,7 @@ class EmpSalary:
 
         send_to_mongodb = []
         for index, day in enumerate(self._day):
-            time_cal = TimeCalculation(emp_time=get_all_list[name], emp_salary=hour_salary)
+            time_cal = TimeCalculation(emp_time=self._get_all_list[name], emp_salary=hour_salary)
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
 
@@ -53,7 +63,6 @@ class EmpSalary:
                     "work_time": time_cal.emp_time[index],
                 }
             )
-
         # 存于 MongoDB 的格式
         store_data = {
             "daily_salary": daily_salary,
@@ -64,7 +73,7 @@ class EmpSalary:
 
     def main(self):
         """导出至 MongoDB"""
-        get_emp_name = self.EMPINFO.emp_info()
+        get_emp_name = self._empinfo.emp_info()
         emp_name = [x["_id"] for x in get_emp_name]
 
         # 最终输出，计算没人的基本工资
@@ -85,8 +94,3 @@ class EmpSalary:
 
         # 测试输出
         # print(self.data)
-
-        # import pandas as pd
-        # list_name = self.read_excel.get_name()
-        # list_1 = pd.DataFrame(list_name)
-        # list_1.to_excel("test.xlsx")

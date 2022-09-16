@@ -26,34 +26,43 @@
     <!-- All the list -->
 
     {% for iname, idata in emp.items() %}
-    <div class="text-xs sm:text-[0.8rem]">
-        <span>Name:</span> <b class="font-bold">{{ iname }}</b><br>
+    <div class="pb-1 text-xs sm:text-[0.8rem]">
+        <span>Name:</span> <b class="text-sm font-bold">{{ iname }}</b><br>
         <span>Daily Salary:</span> <span class="font-bold"><b>RM {{ idata["daily_salary"] }}</b></span> |
-        <span>Total Salary:</span> <span class="font-bold">RM {{ idata["total_salary"] }}</span>
+        <span>Total Salary:</span> <span class="font-bold underline">RM {{ idata["total_salary"] }}</span>
     </div>
+
     <hr class="border-red-800">
 
     <table class="w-full list-table mb-4">
         <tr>
             {% for v in idata["output"] %}
             <td class="text-xs text-red-700 sm:text-sm">
-                <span>{{ v["day"] }}</span>
+                {% set day = v["day"] %}
+                <span>{{ day }}</span>
             </td>
             {% endfor %}
         </tr>
         <tr>
             {% for v in idata["output"] %}
             <td class="text-xs border-[2px] border-amber-600 sm:text-sm">
+                {% set pay_perday = v["pay_perday"] %}
+                {% if pay_perday == 0 %}
                 <span>RM </span><br>
-                <span>{{ v["pay_perday"] }}</span>
+                <span>{{ pay_perday }}</span>
+                {% else %}
+                <span>RM </span><br>
+                <span class="font-bold">{{ pay_perday }}</span>
+                {% endif %}
             </td>
             {% endfor %}
         </tr>
         <tr>
             {% for v in idata["output"] %}
             <td class="text-xs sm:text-sm">
-                <span>{{ v["work_time"][0] }}</span><br>
-                <span>{{ v["work_time"][-1] }}</span>
+                {% set work_time = v["work_time"] %}
+                <span>{{ work_time[0] }}</span><br>
+                <span>{{ work_time[1] }}</span>
             </td>
             {% endfor %}
         </tr>

@@ -41,7 +41,10 @@
                 <p class="text-sm text-red-500">Upload salary file</p>
                 <input type="file" name="file" class="p-4 w-full border-[1px] border-slate-800 rounded-xl"><br>
                 <input type="submit" class="p-2 w-full my-2 bg-slate-300 rounded hover:bg-red-400 ease-in-out duration-300">
-                <p class="text-ls font-bold text-red-700">{{ err_msg }}</p>
+                <p class="text-ls font-bold text-red-700">{{ err_title }}</p>
+                <span>
+                    {{ err_msg }}
+                </span>
             </form>
         </div>
     </div>
