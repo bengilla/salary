@@ -10,7 +10,7 @@ from werkzeug.wrappers import Response
 
 # 自身库
 from emp_mongodb import EmpInfo
-from emp_pay_cal import EmpSalary
+from excel_main import EmpSalary
 from forms import CreateForm, EditForm
 from mongodb import MongoDB
 
