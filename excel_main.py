@@ -93,4 +93,4 @@ class EmpSalary:
         # work_hour_collection.insert_one(send_data)
 
         # 测试输出
-        # print(self.data)
+        print(self.data)
