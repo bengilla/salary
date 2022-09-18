@@ -70,7 +70,7 @@ class EmpInfo:
                 "sign_date": date,
                 "img_employee": img_convert(form.img_emp.data),
                 "daily_salary": form.pay_hour.data,
-                "finger_print": int(form.finger_print.data),
+                # "finger_print": int(form.finger_print.data),
             }
             self.emp_info_collection.insert_one(new_emp)
 
