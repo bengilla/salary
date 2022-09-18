@@ -37,6 +37,7 @@ def index() -> str:
     all_id = [x["_id"] for x in find_all_id]
     err_title = ""
     err_msg = ""
+    err_exception_msg = ""
 
     if request.method == "POST":
         file_input = request.files['file']
@@ -48,12 +49,12 @@ def index() -> str:
             else:
                 err_title = "This all members not in website:"
                 err_msg = emp_salary.not_register # pylint: disable=E1101
-        except Exception as err: # pylint: disable=W0703
+        except Exception as err: # pylint: disable=W0704
             err_title = "Wrong file type!!!, please select again"
-            err_msg = err
+            err_exception_msg = err
 
     # return render_template("index.html", date=_date_now, all_id=all_id) # Testing
-    return render_template("index.html", date=_date_now, all_id=all_id, err_title=err_title, err_msg=err_msg)
+    return render_template("index.html", date=_date_now, all_id=all_id, err_title=err_title, err_msg=err_msg, err_exception_msg=err_exception_msg)
 
 
 @app.route("/add_emp", methods=["GET", "POST"])
