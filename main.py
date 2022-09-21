@@ -6,7 +6,6 @@ import os
 from datetime import datetime
 
 from flask import Flask, redirect, render_template, request, url_for
-from werkzeug.wrappers import Response
 
 # Library from own
 from emp_mongodb import EmpInfo
@@ -29,7 +28,7 @@ _date_now = datetime.now()
 
 
 @app.route("/", methods=["GET", "POST"])
-def index() -> str:
+def index():
     """
     链接至 index.html, 同时也输出日期
     """
@@ -59,7 +58,7 @@ def index() -> str:
 
 
 @app.route("/add_emp", methods=["GET", "POST"])
-def add_emp() -> (Response | str):
+def add_emp():
     """
     建立员工资料，如果员工已存在就会显示 msg
     如果建立成功转至 all.html
@@ -78,21 +77,21 @@ def add_emp() -> (Response | str):
 
 
 @app.route("/all_emp")
-def all_emp() -> str:
+def all_emp():
     """浏览全部员工"""
     info = _empinfo.emp_info()
     return render_template("all.html", info=info)
 
 
 @app.route("/info_emp/<ids>")
-def info_emp(ids: str) -> str:
+def info_emp(ids: str):
     """浏览单位员工"""
     info = _empinfo.emp_one(ids)
     return render_template("emp.html", info=info)
 
 
 @app.route("/edit_emp/<ids>", methods=["GET", "POST"])
-def edit_emp(ids: str) -> (Response | str):
+def edit_emp(ids: str):
     """修改员工资料, 只是修改 ic, contact, address, pay"""
     form = EditForm()
     get_emp = _empinfo.emp_one(ids)
@@ -110,14 +109,14 @@ def edit_emp(ids: str) -> (Response | str):
 
 
 @app.route("/delete_emp/<ids>")
-def delete_emp(ids: str) -> Response:
+def delete_emp(ids: str):
     """删除员工资料"""
     _empinfo.emp_delete(ids)
     return redirect(url_for("all_emp"))
 
 
 @app.route("/all_list/<ids>", methods=["GET"])
-def all_list(ids: str) -> str:
+def all_list(ids: str):
     """当月发工资列表"""
     emp_one = _work_list_db.find_one({"_id": ids})
     output = emp_one["emp_work_hours"]
