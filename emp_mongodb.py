@@ -88,7 +88,7 @@ class EmpInfo:
         results = self.emp_info_collection.find({})
         return results
 
-    def emp_one(self, ids: str) ->dict[str]:
+    def emp_one(self, ids: str):
         """
         读取单位员工资料
         """
