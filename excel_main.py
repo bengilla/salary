@@ -84,13 +84,13 @@ class EmpSalary:
                 continue
 
         # 上传至 MongoDB
-        # mongodb = MongoDB()
-        # work_hour_collection = mongodb.work_hour_collection()
-        # send_data = {
-        #     "_id": f"{self._month}-{self._day[0]}",
-        #     "emp_work_hours": self.data
-        # }
-        # work_hour_collection.insert_one(send_data)
+        mongodb = MongoDB()
+        work_hour_collection = mongodb.work_hour_collection()
+        send_data = {
+            "_id": f"{self._month}-{self._day[0]}",
+            "emp_work_hours": self.data
+        }
+        work_hour_collection.insert_one(send_data)
 
         # 测试输出
         # print(self.data)

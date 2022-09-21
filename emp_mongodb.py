@@ -32,7 +32,7 @@ class EmpInfo:
         form = CreateForm()
         date = dt.datetime.now().strftime("%d-%m-%Y")
 
-        def img_convert(img_input: str) -> str:
+        def img_convert(img_input: str):
             """
             img 压缩成 Binary 代码\n
             """
@@ -45,7 +45,7 @@ class EmpInfo:
             img_resize.save(buffered, format="JPEG")
             return b64encode(buffered.getvalue()).decode("ascii")
 
-        def check_emp() -> list[str]:
+        def check_emp():
             """
             检查是否员工已经入库
             """
@@ -95,13 +95,13 @@ class EmpInfo:
         result = self.emp_info_collection.find_one({"_id": ids})
         return result
 
-    def emp_delete(self, ids: str) -> None:
+    def emp_delete(self, ids: str):
         """
         删除员工资料
         """
         self.emp_info_collection.delete_one({"_id": ids})
 
-    def emp_edit(self, ids, ic_card, contact, address, pay) -> None:
+    def emp_edit(self, ids, ic_card, contact, address, pay):
         """
         更新员工资料
         """

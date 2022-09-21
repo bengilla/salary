@@ -9,7 +9,7 @@ import pandas as pd
 
 class ReadExcel:
     """读取 excel 文件"""
-    def __init__(self, filename) -> None:
+    def __init__(self, filename):
         # 选择 excel 的第二页和 excel 文件名
         self._sheet_num = 2
         self._filename = filename
@@ -18,7 +18,7 @@ class ReadExcel:
         self._df = pd.read_excel(self._filename, sheet_name=self._sheet_num)
         self._date = dt.strptime(self._df.loc[1][2].split(" ")[0], "%Y-%m-%d")
 
-    def get_day(self) -> list[int]:
+    def get_day(self):
         """读取 excel 文件的日期"""
         day_list = [x for x in self._df.loc[2]]
         # 如果 31 生成 16 天，如果没有 31 生成 15 天
@@ -29,14 +29,14 @@ class ReadExcel:
             num_index = day_list.index(16)
             return day_list[num_index:num_index+16]
 
-    def get_name(self) -> list[str]:
+    def get_name(self):
         """把所有名字变为列表"""
         column_name = [i for i in self._df.columns]
         get_name_columns = self._df.loc[3::2][column_name[10]]  # col and row number
         name_list = [i.lower() for i in get_name_columns]
         return name_list
 
-    def get_time(self, row_num: int) -> list[str, int]:
+    def get_time(self, row_num: int):
         """获取名字和时间"""
         store_time = []
         get_time_from_excel = [
@@ -52,7 +52,7 @@ class ReadExcel:
                     store_time.append([each_time[0:5], each_time[-5:]])
         return store_time
 
-    def generate_all(self) -> dict:
+    def generate_all(self):
         """输出全部列表，如果列表全 0 就排除"""
         all_list = {}
         num = 4
