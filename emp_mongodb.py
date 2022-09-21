@@ -81,7 +81,7 @@ class EmpInfo:
         else:
             return False
 
-    def emp_info(self) -> dict[str]:
+    def emp_info(self):
         """
         读取所有员工资料
         """
