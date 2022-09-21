@@ -2,6 +2,7 @@
 Project for TBROS employees salary calculator and employee person info
 """
 
+import os
 from datetime import datetime
 
 from flask import Flask, redirect, render_template, request, url_for
@@ -132,4 +133,4 @@ def all_list(ids: str) -> str:
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=os.getenv("PORT", default=5000))
