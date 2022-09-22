@@ -40,21 +40,28 @@ def index():
     err_exception_msg = ""
 
     if request.method == "POST":
-        file_input = request.files['file']
+        file_input = request.files["file"]
         # EmpSalary(file_input) # Testing
         try:
             emp_salary = EmpSalary(file_input)
-            if len(emp_salary.not_register) == 0: # pylint: disable=E1101
+            if len(emp_salary.not_register) == 0:  # pylint: disable=E1101
                 return render_template("complete.html")
             else:
                 err_title = "This all members not in website:"
-                err_msg = emp_salary.not_register # pylint: disable=E1101
-        except Exception as err: # pylint: disable=W0704
+                err_msg = emp_salary.not_register  # pylint: disable=E1101
+        except Exception as err:  # pylint: disable=W0703
             err_title = "Wrong file type!!!, please select again"
             err_exception_msg = err
 
     # return render_template("index.html", date=_date_now, all_id=all_id) # Testing
-    return render_template("index.html", date=_date_now, all_id=all_id, err_title=err_title, err_msg=err_msg, err_exception_msg=err_exception_msg)
+    return render_template(
+        "index.html",
+        date=_date_now,
+        all_id=all_id,
+        err_title=err_title,
+        err_msg=err_msg,
+        err_exception_msg=err_exception_msg,
+    )
 
 
 @app.route("/add_emp", methods=["GET", "POST"])
@@ -100,7 +107,7 @@ def edit_emp(ids: str):
         ic_card = form.ic.data
         contact = form.contact.data
         address = form.address.data
-        pay = form.pay_hour.data
+        pay = form.daily_salary.data
 
         _empinfo.emp_edit(ids, ic_card, contact, address, pay)
 
@@ -108,7 +115,7 @@ def edit_emp(ids: str):
     return render_template("edit.html", form=form, edit_emp=get_emp)
 
 
-@app.route("/delete_emp/<ids>")
+@app.route("/delete/<ids>")
 def delete_emp(ids: str):
     """删除员工资料"""
     _empinfo.emp_delete(ids)
@@ -121,8 +128,21 @@ def all_list(ids: str):
     emp_one = _work_list_db.find_one({"_id": ids})
     output = emp_one["emp_work_hours"]
 
-    month_list = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    output_id = int(ids.split('-')[0])
+    month_list = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ]
+    output_id = int(ids.split("-")[0])
     output_id = month_list[output_id - 1]
 
     _all = _work_list_db.find({})

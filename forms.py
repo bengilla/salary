@@ -16,7 +16,7 @@ class EditForm(FlaskForm):
     ic = StringField("passport / ic")
     contact = StringField("contact")
     address = StringField("address")
-    pay_hour = FloatField("daily salary")
+    daily_salary = FloatField("daily salary")
 
     submit = SubmitField("submit")
 

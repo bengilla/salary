@@ -58,7 +58,7 @@ class EmpInfo:
         # 如果员工不在库里，执行
         if form.ic.data not in check_emp():
             new_emp = {
-                "_id": form.name.data.split(' ')[0].lower() + form.ic.data[-4:],
+                "_id": form.name.data.split(" ")[0].lower() + form.ic.data[-4:],
                 # "_id": form.name.data.replace(" ", "").lower(),
                 "name": form.name.data.title(),
                 "dob": form.dob.data,
@@ -113,7 +113,7 @@ class EmpInfo:
                     "ic": ic_card,
                     "contact": contact,
                     "address": address,
-                    "pay_hour": pay,
+                    "daily_salary": pay,
                 }
             },
         )
