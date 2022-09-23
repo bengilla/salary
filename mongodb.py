@@ -15,14 +15,14 @@ class MongoDB:
 
     def __init__(self) -> None:
         try:
+            conn = MongoClient("127.0.0.1:27017")
+        except Exception:  # pylint: disable=broad-except
             load_dotenv()
             conn = MongoClient(
                 f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
             )
-            # conn = MongoClient("127.0.0.1:27017")
+        finally:
             self.db = conn["TBROS"]
-        except Exception as err:  # pylint: disable=broad-except
-            print(err)
 
     def info_collection(self):
         """

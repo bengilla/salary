@@ -91,8 +91,8 @@ class TimeCalculation:
                 try:
                     time_output = dt.strptime(time_input, "%H:%M")
                     return time_output
-                except:
-                    return
+                except Exception:
+                    return dt.strptime("00:00", "%H:%M")
 
             emp_in = calculate_time(self.emp_time[num][0])
             emp_out = calculate_time(self.emp_time[num][-1])
