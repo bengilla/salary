@@ -11,6 +11,7 @@ from mongodb import MongoDB
 
 class EmpSalary:
     """这是最终到处所有计算后的数据"""
+
     def __init__(self, filename) -> None:
         self.data = {}
         self.filename = filename
@@ -30,17 +31,17 @@ class EmpSalary:
         self._get_all_list = self.read_excel.generate_all()
 
         # 列出没有名字在网站的，等于说没有这个人的工资/天
-        web_name = [x['name'].lower() for x in self._empinfo.emp_info()]
+        web_name = [x["name"].lower() for x in self._empinfo.emp_info()]
         excel_name = [x for x in self._name]
         # 总合
         self.not_register = [x for x in excel_name if x not in web_name]
 
         # 执行 main 功能 / time 部分可以删除
-        # if len(self.not_register) == 0:
-        start_time = int(time.time())
-        self.main()
-        end_time = int(time.time())
-        print(end_time - start_time)
+        if len(self.not_register) == 0:
+            start_time = int(time.time())
+            self.main()
+            end_time = int(time.time())
+            print(end_time - start_time)
 
     def make_emp_info(self, name: str) -> None:
         """执行所有的操作"""
@@ -48,11 +49,12 @@ class EmpSalary:
 
         emp_sum_salary = []
         pay_hour = emp["pay_hour"]
-        # hour_salary = pay_hour / 8
 
         send_to_mongodb = []
         for index, day in enumerate(self._day):
-            time_cal = TimeCalculation(emp_time=self._get_all_list[name], emp_salary=pay_hour)
+            time_cal = TimeCalculation(
+                emp_time=self._get_all_list[name], emp_salary=pay_hour
+            )
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
 
@@ -88,7 +90,7 @@ class EmpSalary:
         work_hour_collection = mongodb.work_hour_collection()
         send_data = {
             "_id": f"{self._month}-{self._day[0]}",
-            "emp_work_hours": self.data
+            "emp_work_hours": self.data,
         }
         work_hour_collection.insert_one(send_data)
 
