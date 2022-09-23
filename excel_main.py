@@ -37,11 +37,11 @@ class EmpSalary:
         self.not_register = [x for x in excel_name if x not in web_name]
 
         # 执行 main 功能 / time 部分可以删除
-        if len(self.not_register) == 0:
-            start_time = int(time.time())
-            self.main()
-            end_time = int(time.time())
-            print(end_time - start_time)
+        # if len(self.not_register) == 0:
+        # start_time = int(time.time())
+        self.main()
+        # end_time = int(time.time())
+        # print(end_time - start_time)
 
     def make_emp_info(self, name: str) -> None:
         """执行所有的操作"""
