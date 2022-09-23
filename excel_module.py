@@ -88,8 +88,11 @@ class TimeCalculation:
 
         elif isinstance(self.emp_time[num], list):
             def calculate_time(time_input):
-                time_output = dt.strptime(time_input, "%H:%M")
-                return time_output
+                try:
+                    time_output = dt.strptime(time_input, "%H:%M")
+                    return time_output
+                except:
+                    return
 
             emp_in = calculate_time(self.emp_time[num][0])
             emp_out = calculate_time(self.emp_time[num][-1])
@@ -105,7 +108,7 @@ class TimeCalculation:
             if emp_in < day_in and emp_out > day_out:  # Full day
                 self.emp_pay += 8
             elif emp_in > day_in and emp_out > day_out:  # Late come until 17:30
-                temp = "0" + str(day_out - emp_in)[0:4]
+                temp = str(day_out - emp_in)[0:4]
 
                 if calculate_time(temp).hour > 5:
                     self.emp_pay += calculate_time(temp).hour - lunch_time
@@ -117,7 +120,7 @@ class TimeCalculation:
                         self.emp_pay += 1
 
             elif emp_in < day_in and emp_out < day_out:  # Early Come Early Out
-                temp = "0" + str(emp_out - day_in)[0:4]
+                temp = str(emp_out - day_in)[0:4]
 
                 if calculate_time(temp).hour > 5:
                     self.emp_pay += calculate_time(temp).hour - lunch_time
@@ -129,7 +132,7 @@ class TimeCalculation:
                         self.emp_pay += 1
 
             elif emp_in > day_in and emp_out < day_out:  # Early Come Early Out
-                temp = "0" + str(emp_out - emp_in)[0:4]
+                temp = str(emp_out - emp_in)[0:4]
 
                 if calculate_time(temp).hour > 5:
                     self.emp_pay += calculate_time(temp).hour - lunch_time
