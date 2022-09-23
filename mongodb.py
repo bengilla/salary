@@ -20,7 +20,7 @@ class MongoDB:
                 f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
             )
             self.db = conn["TBROS"]
-        except:  # pylint: disable=broad-except
+        except Exception:  # pylint: disable=broad-except
             conn = MongoClient("127.0.0.1:27017")
             self.db = conn["TBROS"]
 
