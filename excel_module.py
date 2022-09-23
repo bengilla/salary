@@ -105,7 +105,7 @@ class TimeCalculation:
             if emp_in < day_in and emp_out > day_out:  # Full day
                 self.emp_pay += 8
             elif emp_in > day_in and emp_out > day_out:  # Late come until 17:30
-                temp = str(day_out - emp_in)[0:4]
+                temp = "0" + str(day_out - emp_in)[0:4]
 
                 if calculate_time(temp).hour > 5:
                     self.emp_pay += calculate_time(temp).hour - lunch_time
@@ -117,7 +117,7 @@ class TimeCalculation:
                         self.emp_pay += 1
 
             elif emp_in < day_in and emp_out < day_out:  # Early Come Early Out
-                temp = str(emp_out - day_in)[0:4]
+                temp = "0" + str(emp_out - day_in)[0:4]
 
                 if calculate_time(temp).hour > 5:
                     self.emp_pay += calculate_time(temp).hour - lunch_time
@@ -129,7 +129,7 @@ class TimeCalculation:
                         self.emp_pay += 1
 
             elif emp_in > day_in and emp_out < day_out:  # Early Come Early Out
-                temp = str(emp_out - emp_in)[0:4]
+                temp = "0" + str(emp_out - emp_in)[0:4]
 
                 if calculate_time(temp).hour > 5:
                     self.emp_pay += calculate_time(temp).hour - lunch_time
