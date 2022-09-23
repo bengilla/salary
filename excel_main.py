@@ -47,12 +47,12 @@ class EmpSalary:
         emp = self._empinfo.emp_one(name)
 
         emp_sum_salary = []
-        daily_salary = emp["daily_salary"]
-        hour_salary = daily_salary / 8
+        pay_hour = emp["pay_hour"]
+        # hour_salary = pay_hour / 8
 
         send_to_mongodb = []
         for index, day in enumerate(self._day):
-            time_cal = TimeCalculation(emp_time=self._get_all_list[name], emp_salary=hour_salary)
+            time_cal = TimeCalculation(emp_time=self._get_all_list[name], emp_salary=pay_hour)
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
 
@@ -65,7 +65,7 @@ class EmpSalary:
             )
         # 存于 MongoDB 的格式
         store_data = {
-            "daily_salary": daily_salary,
+            "pay_hour": pay_hour,
             "total_salary": sum(emp_sum_salary),
             "output": send_to_mongodb,
         }

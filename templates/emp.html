@@ -16,7 +16,7 @@
                         </div>
                         <div class="grid grid-rows-1 place-content-center">
                             <a href="{{ url_for('edit_emp', ids=info._id) }}">
-                                <button class="w-14 py-1 mb-1 border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">edit</button></a>
+                                <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
                         </div>
                     </td>
 
@@ -29,7 +29,7 @@
                                     <a href="{{ url_for('info_emp', ids=info._id) }}">
                                         <span class="font-bold">{{ info.name }} | </span>
                                     </a>
-                                    <span class="text-xs text-red-500">(RM {{ info.daily_salary }})</span>
+                                    <span class="text-xs text-red-500">(RM {{ info.pay_hour }})</span>
                                 </td>
                             </tr>
                             <tr>

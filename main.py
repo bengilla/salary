@@ -107,7 +107,7 @@ def edit_emp(ids: str):
         ic_card = form.ic.data
         contact = form.contact.data
         address = form.address.data
-        pay = form.daily_salary.data
+        pay = form.pay_hour.data
 
         _empinfo.emp_edit(ids, ic_card, contact, address, pay)
 

@@ -58,8 +58,8 @@ class EmpInfo:
         # 如果员工不在库里，执行
         if form.ic.data not in check_emp():
             new_emp = {
-                "_id": form.name.data.split(" ")[0].lower() + form.ic.data[-4:],
-                # "_id": form.name.data.replace(" ", "").lower(),
+                # "_id": form.name.data.split(" ")[0].lower() + form.ic.data[-4:],
+                "_id": form.name.data.split(" ")[0].lower(),
                 "name": form.name.data.title(),
                 "dob": form.dob.data,
                 "gender": form.gender.data,
@@ -69,7 +69,7 @@ class EmpInfo:
                 "address": form.address.data,
                 "sign_date": date,
                 "img_employee": img_convert(form.img_emp.data),
-                "daily_salary": form.pay_hour.data,
+                "pay_hour": form.pay_hour.data,
                 # "finger_print": int(form.finger_print.data),
             }
             self.emp_info_collection.insert_one(new_emp)
@@ -113,7 +113,7 @@ class EmpInfo:
                     "ic": ic_card,
                     "contact": contact,
                     "address": address,
-                    "daily_salary": pay,
+                    "pay_hour": pay,
                 }
             },
         )
