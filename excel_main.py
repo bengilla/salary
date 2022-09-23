@@ -57,6 +57,7 @@ class EmpSalary:
             )
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
+            # print(index, day)
 
             send_to_mongodb.append(
                 {
