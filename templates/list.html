@@ -10,7 +10,7 @@
         <div class="grid place-items-start">
             <button class="dropbtn rounded-lg">Select Date</button>
             <div class="dropdown-content">
-                {% for i in all_id %}
+                {% for i in document_id %}
                 <a href="{{ url_for('all_list', ids=i) }}">{{ i }}</a>
                 {% endfor %}
             </div>

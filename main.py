@@ -64,7 +64,7 @@ def index():
     )
 
 
-@app.route("/add_emp", methods=["GET", "POST"])
+@app.route("/add", methods=["GET", "POST"])
 def add_emp():
     """
     建立员工资料，如果员工已存在就会显示 msg
@@ -76,28 +76,32 @@ def add_emp():
     if form.validate_on_submit():
         create_emp = _empinfo.emp_create()
         if create_emp:
-            return redirect("/all_emp")
+            return redirect("/all")
         else:
             msg = "Employee Exists, IC / PASSPORT is duplicate"
 
     return render_template("add.html", form=form, msg=msg)
 
 
-@app.route("/all_emp")
+@app.route("/all")
 def all_emp():
     """浏览全部员工"""
+    count = 0
+    for _ in _empinfo.emp_info():
+        count += 1
+
     info = _empinfo.emp_info()
-    return render_template("all.html", info=info)
+    return render_template("all.html", info=info, count=count)
 
 
-@app.route("/info_emp/<ids>")
+@app.route("/info/<ids>")
 def info_emp(ids: str):
     """浏览单位员工"""
     info = _empinfo.emp_one(ids)
     return render_template("emp.html", info=info)
 
 
-@app.route("/edit_emp/<ids>", methods=["GET", "POST"])
+@app.route("/edit/<ids>", methods=["GET", "POST"])
 def edit_emp(ids: str):
     """修改员工资料, 只是修改 ic, contact, address, pay"""
     form = EditForm()
@@ -145,10 +149,13 @@ def all_list(ids: str):
     output_id = int(ids.split("-")[0])
     output_id = month_list[output_id - 1]
 
-    _all = _work_list_db.find({})
-    all_id = [x["_id"] for x in _all]
+    all_documents = _work_list_db.find({})
+    document_id = [x["_id"] for x in all_documents]
+    print()
 
-    return render_template("list.html", emp=output, all_id=all_id, output_id=output_id)
+    return render_template(
+        "list.html", emp=output, document_id=document_id, output_id=output_id
+    )
 
 
 if __name__ == "__main__":
