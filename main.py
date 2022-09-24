@@ -132,6 +132,12 @@ def all_list(ids: str):
     emp_one = _work_list_db.find_one({"_id": ids})
     output = emp_one["emp_work_hours"]
 
+    salary = []
+    for _, value in output.items():
+        output_value = value
+        salary.append(output_value["total_salary"])
+    total_cash = "{:.2f}".format(sum(salary))
+
     month_list = [
         "January",
         "February",
@@ -151,10 +157,13 @@ def all_list(ids: str):
 
     all_documents = _work_list_db.find({})
     document_id = [x["_id"] for x in all_documents]
-    print()
 
     return render_template(
-        "list.html", emp=output, document_id=document_id, output_id=output_id
+        "list.html",
+        emp=output,
+        document_id=document_id,
+        output_id=output_id,
+        total_cash=total_cash,
     )
 
 
