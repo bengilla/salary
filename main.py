@@ -2,7 +2,6 @@
 Project for TBROS employees salary calculator and employee person info
 """
 
-import os
 from datetime import datetime
 
 from flask import Flask, redirect, render_template, request, url_for
@@ -41,7 +40,6 @@ def index():
 
     if request.method == "POST":
         file_input = request.files["file"]
-        # EmpSalary(file_input) # Testing
         try:
             emp_salary = EmpSalary(file_input)
             if len(emp_salary.not_register) == 0:  # pylint: disable=E1101
@@ -53,7 +51,6 @@ def index():
             err_title = "Wrong file type!!!, please select again"
             err_exception_msg = err
 
-    # return render_template("index.html", date=_date_now, all_id=all_id) # Testing
     return render_template(
         "index.html",
         date=_date_now,
@@ -130,13 +127,14 @@ def delete_emp(ids: str):
 def all_list(ids: str):
     """当月发工资列表"""
     emp_one = _work_list_db.find_one({"_id": ids})
-    output = emp_one["emp_work_hours"]
+    emp_output = emp_one["emp_work_hours"]
 
+    # 呈现总数工资
     salary = []
-    for _, value in output.items():
+    for _, value in emp_output.items():
         output_value = value
         salary.append(output_value["total_salary"])
-    total_cash = "RM {:,.2f}".format(sum(salary))
+    total_cash = f"RM {sum(salary):,.2f}"
 
     month_list = [
         "January",
@@ -160,7 +158,7 @@ def all_list(ids: str):
 
     return render_template(
         "list.html",
-        emp=output,
+        emp=emp_output,
         document_id=document_id,
         output_id=output_id,
         total_cash=total_cash,
@@ -168,5 +166,4 @@ def all_list(ids: str):
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, port=os.getenv("PORT", default=5000))
     app.run(debug=True)
