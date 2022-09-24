@@ -7,7 +7,7 @@ import datetime as dt
 import os
 
 from dotenv import load_dotenv
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 
 
 class MongoDB:
@@ -17,21 +17,26 @@ class MongoDB:
         try:
             load_dotenv()
             conn = MongoClient(
-                f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
+                host=[
+                    f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
+                ],
+                serverSelectionTimeoutMS=5000,
             )
-            self.db = conn["TBROS"]
-        except Exception:  # pylint: disable=broad-except
+            conn.server_info()
+        except errors.ServerSelectionTimeoutError:
             conn = MongoClient("127.0.0.1:27017")
-            self.db = conn["TBROS"]
+            conn.server_info()
+        finally:
+            self.collection = conn["TBROS"]
 
     def info_collection(self):
         """
         链接至 emp-info
         """
-        return self.db["emp-info"]
+        return self.collection["emp-info"]
 
     def work_hour_collection(self):
         """
         链接至 emp-<年份>
         """
-        return self.db[f"emp-{dt.datetime.now().year}"]
+        return self.collection[f"emp-{dt.datetime.now().year}"]
