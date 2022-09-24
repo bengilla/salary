@@ -2,7 +2,6 @@
 Project for TBROS employees salary calculator and employee person info
 """
 
-import locale
 import os
 from datetime import datetime
 
@@ -13,9 +12,6 @@ from emp_mongodb import EmpInfo
 from excel_main import EmpSalary
 from forms import CreateForm, EditForm
 from mongodb import MongoDB
-
-# 设置国家
-locale.setlocale(locale.LC_ALL, "ms_MY")
 
 # 设置
 app = Flask(__name__)
@@ -140,8 +136,7 @@ def all_list(ids: str):
     for _, value in output.items():
         output_value = value
         salary.append(output_value["total_salary"])
-    # total_cash = "{:.2f}".format(sum(salary))
-    total_cash = locale.currency(sum(salary), grouping=True)
+    total_cash = "RM {:,.2f}".format(sum(salary))
 
     month_list = [
         "January",
