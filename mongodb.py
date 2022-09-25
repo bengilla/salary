@@ -24,7 +24,7 @@ class MongoDB:
             )
             conn.server_info()
         except errors.ServerSelectionTimeoutError:
-            conn = MongoClient("127.0.0.1:27017")
+            conn = MongoClient(host="127.0.0.1", port=27017)
             conn.server_info()
         finally:
             self.collection = conn["TBROS"]
