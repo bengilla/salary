@@ -36,7 +36,6 @@ class EmpInfo:
             """
             img 压缩成 Binary 代码\n
             """
-            # try:
             base_width = 300
             buffered = BytesIO()
             img = Image.open(img_input)
@@ -45,8 +44,6 @@ class EmpInfo:
             img_resize = img.resize((base_width, height_size), Image.ANTIALIAS)
             img_resize.save(buffered, format="JPEG")
             return b64encode(buffered.getvalue()).decode("ascii")
-            # except:
-            #     raise Exception("Please upload image")
 
         def check_emp():
             """

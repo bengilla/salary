@@ -2,8 +2,6 @@
 Main work for work with exce lfil
 """
 
-import time
-
 from emp_mongodb import EmpInfo
 from excel_module import ReadExcel, TimeCalculation
 from mongodb import MongoDB
@@ -36,12 +34,9 @@ class EmpSalary:
         # 总合
         self.not_register = [x for x in excel_name if x not in web_name]
 
-        # 执行 main 功能 / time 部分可以删除
+        # 执行 main 功能
         # if len(self.not_register) == 0:
-        # start_time = int(time.time())
         self.main()
-        # end_time = int(time.time())
-        # print(end_time - start_time)
 
     def make_emp_info(self, name: str) -> None:
         """执行所有的操作"""
@@ -57,7 +52,6 @@ class EmpSalary:
             )
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
-            # print(index, day)
 
             send_to_mongodb.append(
                 {
