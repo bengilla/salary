@@ -36,6 +36,7 @@ class EmpInfo:
             """
             img 压缩成 Binary 代码\n
             """
+            # try:
             base_width = 300
             buffered = BytesIO()
             img = Image.open(img_input)
@@ -44,6 +45,8 @@ class EmpInfo:
             img_resize = img.resize((base_width, height_size), Image.ANTIALIAS)
             img_resize.save(buffered, format="JPEG")
             return b64encode(buffered.getvalue()).decode("ascii")
+            # except:
+            #     raise Exception("Please upload image")
 
         def check_emp():
             """
@@ -60,23 +63,19 @@ class EmpInfo:
             new_emp = {
                 # "_id": form.name.data.split(" ")[0].lower() + form.ic.data[-4:],
                 "_id": form.name.data.split(" ")[0].lower(),
+                "img_emp": img_convert(form.img_emp.data),
                 "name": form.name.data.title(),
-                "dob": form.dob.data,
-                "gender": form.gender.data,
-                "nationality": form.nationality.data,
                 "ic": form.ic.data,
+                "pay_hour": form.pay_hour.data,
+                "dob": form.dob.data,
+                "nationality": form.nationality.data,
+                "gender": form.gender.data,
                 "contact": form.contact.data,
                 "address": form.address.data,
                 "sign_date": date,
-                "img_employee": img_convert(form.img_emp.data),
-                "pay_hour": form.pay_hour.data,
                 # "finger_print": int(form.finger_print.data),
             }
             self.emp_info_collection.insert_one(new_emp)
-
-            # 同时建立薪资资料
-            # from emp_salary import EmpWork
-            # EmpWork(id)
             return True
         else:
             return False

@@ -24,6 +24,11 @@ body {
     padding: 0.3rem 0.5rem;
 }
 
+.form-error {
+    color: red;
+    font-size: 0.8rem;
+}
+
 .list-table tr td {
     width: 50px;
     text-align: center;

@@ -34,6 +34,20 @@
             {% endfor %}
         </div>
         <div class="pb-2">
+            {{ form.pay_hour.label(class="text-sm") }}
+            <span class="text-xs text-red-500">(required)</span><br>
+            {{ form.pay_hour(class="form-input") }}<br>
+            {% for err in form.pay_hour.errors %}
+            <p class="form-error">{{ err }}</p>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4 mb-8">
+            <span class="text-xs italic">Optional</span>
+            <hr class="border-[1px] border-slate-600 mb-2">
+        </div>
+
+        <div class="pb-2">
             {{ form.dob.label(class="text-sm") }} {{ form.dob(class="form-input") }}<br>
             {% for err in form.dob.errors %}
             <p class="form-error">{{ err }}</p>
@@ -69,12 +83,6 @@
             <p class="form-error">{{ err }}</p>
             {% endfor %}
         </div> -->
-        <div class="pb-2">
-            {{ form.pay_hour.label(class="text-sm") }} {{ form.pay_hour(class="form-input") }}<br>
-            {% for err in form.pay_hour.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
-        </div>
         <div class="pb-2">
             {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
         </div>
