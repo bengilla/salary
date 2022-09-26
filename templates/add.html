@@ -2,7 +2,7 @@
 {% block title %}Add New Employee{% endblock %}
 
 {% block content %}
-<section id="add" class="py-[2%] px-[5%] lg:px-[30%]">
+<section id="add" class="py-[2%] px-[5%] sm:px-[30%]">
     <center>
         <p class="text-2xl text-red-500 font-bold">{{ msg }}</p>
     </center>
@@ -12,7 +12,12 @@
         <div class="pb-6">
             {{ form.img_emp.label(class="text-sm") }}
             <span class="text-xs text-red-500">(required)</span><br>
-            {{ form.img_emp(class="custom-file-input") }}
+            {{ form.img_emp(class="block w-full text-sm text-slate-500
+            file:mr-4 file:py-2 file:px-4
+            file:rounded-lg file:border-0
+            file:text-sm file:font-semibold
+            file:bg-blue-300 file:text-slate-700
+            hover:file:bg-blue-700 hover:file:text-white") }}
             {% for err in form.img_emp.errors %}
             <p class="form-error">{{ err }}</p>
             {% endfor %}
@@ -42,51 +47,36 @@
             {% endfor %}
         </div>
 
+        <!-- HR -->
         <div class="mt-4 mb-8">
             <span class="text-xs italic">Optional</span>
-            <hr class="border-[1px] border-slate-600 mb-2">
+            <hr class="w-auto border-[1px] border-slate-600 mb-2">
         </div>
 
+        <!-- Optional -->
         <div class="pb-2">
             {{ form.dob.label(class="text-sm") }} {{ form.dob(class="form-input") }}<br>
-            {% for err in form.dob.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
         </div>
         <div class="pb-2">
             {{ form.nationality.label(class="text-sm") }} {{ form.nationality(class="form-input") }}<br>
-            {% for err in form.nationality.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
         </div>
         <div class="pb-2">
             {{ form.gender.label(class="text-sm") }} {{ form.gender(class="form-input") }}<br>
-            {% for err in form.gender.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
         </div>
         <div class="pb-2">
             {{ form.contact.label(class="text-sm") }} {{ form.contact(class="form-input") }}<br>
-            {% for err in form.contact.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
         </div>
         <div class="pb-2">
             {{ form.address.label(class="text-sm") }} {{ form.address(class="form-input") }}<br>
-            {% for err in form.address.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
         </div>
-        <!-- <div class="pb-2">
-            {{ form.finger_print.label(class="text-sm") }} {{ form.finger_print(class="form-input") }}<br>
-            {% for err in form.finger_print.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
-        </div> -->
+
+        <!-- Submit -->
         <div class="pb-2">
             {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
         </div>
+
         <br><br>
     </form>
+
 </section>
 {% endblock %}

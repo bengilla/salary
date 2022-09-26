@@ -14,8 +14,8 @@
 
             <thead class="bg-slate-600">
                 <tr>
-                    <th class="p-1 w-22 text-xs text-white border-b-2 border-slate-900 sm:w-48 sm:p-1 sm:text-sm">Photo</th>
-                    <th class="p-1 px-8 text-xs text-white text-center border-b-2 border-slate-900 sm:p-1 sm:text-sm">Info</th>
+                    <th class="p-1 w-20 text-xs text-white border-b-2 border-slate-900 select-none sm:w-48 sm:p-1 sm:text-sm">Photo</th>
+                    <th class="p-1 px-8 text-xs text-white text-center border-b-2 border-slate-900 select-none sm:p-1 sm:text-sm">Info</th>
                 </tr>
             </thead>
 
@@ -24,62 +24,50 @@
                     <!--image -->
                     <td>
                         <div class="grid place-content-center">
-                            <img src="data:;base64, {{ i['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
+                            <img src="data:;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
                         </div>
                         <div class="grid grid-rows-1 place-content-center">
                             <a href="{{ url_for('edit_emp', ids=i._id) }}">
-                                <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
+                                <button class="w-[4.6rem] h-7 mx-2 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 select-none sm:rounded-md sm:py-1 sm:w-40 sm:h-8 sm:text-sm">edit</button></a>
                         </div>
                     </td>
 
                     <!--Info -->
                     <td>
                         <table class="auto">
+                            {% set cols={
+                            'name': i.name,
+                            'pay': i.pay_hour,
+                            'ID': i._id,
+                            'd.o.b': i.dob,
+                            'gender': i.gender,
+                            'nationality': i.nationality,
+                            'passport/ic': i.ic,
+                            'contact': i.contact,
+                            'address': i.address,
+                            'sign date': i.sign_date
+                            } %}
+                            {% for key, value in cols.items() %}
                             <tr>
-                                <th class="w-auto px-8"><span class="text-xs font-normal italic unselect">Name: </span></th>
+                                <th class="p-[0px] sm:p-[4px]">
+                                    <span class="mx-2 text-xs font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                                </th>
                                 <td class="w-full">
+                                    {% if key == 'name' %}
                                     <a href="{{ url_for('info_emp', ids=i._id) }}">
-                                        <span class="font-bold">{{ i.name }} | </span>
+                                        <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
                                     </a>
-                                    <span class="text-xs text-red-500">(RM {{ i.pay_hour }})</span>
+                                    {% elif key == 'pay' %}
+                                    <span class="text-xs text-red-500 sm:text-sm">RM
+                                        <span class="font-bold underline select-all sm:text-sm">
+                                            {{ value }}
+                                        </span> / hour</span>
+                                    {% else %}
+                                    <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                    {% endif %}
                                 </td>
                             </tr>
-                            <tr>
-                                <th width="120px"><span class="text-xs font-normal italic unselect">ID:</span></th>
-                                <td>
-                                    <span class="text-xs">{{ i._id }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">D.O.B.:</span></th>
-                                <td>
-                                    <span class="text-xs">{{ i.dob }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">gender:</span></th>
-                                <td><span class="text-xs">{{ i.gender }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Nationality:</span></th>
-                                <td><span class="text-xs">{{ i.nationality }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Passport / IC:</span></th>
-                                <td><span class="text-xs">{{ i.ic }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Contact:</span></th>
-                                <td><span class="text-xs">{{ i.contact }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Address:</span></th>
-                                <td><span class="text-xs">{{ i.address}}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Sign-in Date:</span></th>
-                                <td><span class="text-xs">{{ i.sign_date }}</span></td>
-                            </tr>
+                            {% endfor %}
                         </table>
                     </td>
                     <!-- End info -->
