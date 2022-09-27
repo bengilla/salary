@@ -166,11 +166,12 @@ def all_list(ids: str):
     )
 
 
-# @app.route("/camera")
-# def camera():
-#     """Testing Camera"""
-#     camera = Camera()
-#     return camera.run_camera()
+@app.route("/camera")
+def camera():
+    """Testing Camera"""
+    from camera import Camera
+    camera = Camera()
+    return camera.run_camera()
 
 
 if __name__ == "__main__":
