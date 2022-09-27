@@ -1,6 +1,7 @@
 dnspython
 flask-wtf
 gunicorn
+opencv-python
 pandas
 pillow
 pylint
