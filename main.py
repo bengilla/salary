@@ -7,7 +7,7 @@ from datetime import datetime
 from flask import Flask, redirect, render_template, request, url_for
 
 # Library from own
-from camera import Camera
+# from camera import Camera
 from emp_mongodb import EmpInfo
 from excel_main import EmpSalary
 from forms import CreateForm, EditForm
@@ -166,11 +166,11 @@ def all_list(ids: str):
     )
 
 
-@app.route("/camera")
-def camera():
-    """Testing Camera"""
-
-    return Camera()
+# @app.route("/camera")
+# def camera():
+#     """Testing Camera"""
+#     camera = Camera()
+#     return camera.run_camera()
 
 
 if __name__ == "__main__":

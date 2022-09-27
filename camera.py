@@ -10,7 +10,10 @@ class Camera:
     """Camera Testing"""
 
     def __init__(self) -> None:
+        pass
 
+    def run_camera(self):
+        """Run Camera"""
         cap = cv2.VideoCapture(0)
 
         while True:
