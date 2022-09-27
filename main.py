@@ -96,7 +96,8 @@ def all_emp():
 def info_emp(ids: str):
     """浏览单位员工"""
     info = _empinfo.emp_one(ids)
-    return render_template("emp.html", info=info)
+    emp_name = info["name"]
+    return render_template("emp.html", info=info, emp_name=emp_name)
 
 
 @app.route("/edit/<ids>", methods=["GET", "POST"])
@@ -170,6 +171,7 @@ def all_list(ids: str):
 def camera():
     """Testing Camera"""
     from camera import Camera
+
     camera = Camera()
     return camera.run_camera()
 
