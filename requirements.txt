@@ -7,3 +7,4 @@ pillow
 pylint
 pymongo
 python-dotenv
+xlrd
