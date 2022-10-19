@@ -60,10 +60,22 @@ class EmpSalary:
                     "work_time": time_cal.emp_time[index],
                 }
             )
+
+            # round the amount
+            sum_salary = round(sum(emp_sum_salary))
+            balance = sum_salary % 10
+            add_subtract = 10 - balance
+            output_emp_salary = 0
+
+            if balance > 5:
+                output_emp_salary += sum_salary + add_subtract
+            else:
+                output_emp_salary += sum_salary - balance
+
         # 存于 MongoDB 的格式
         store_data = {
             "pay_hour": pay_hour,
-            "total_salary": sum(emp_sum_salary),
+            "total_salary": output_emp_salary,
             "output": send_to_mongodb,
         }
         self.data[name.title()] = store_data

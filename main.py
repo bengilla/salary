@@ -136,7 +136,8 @@ def all_list(ids: str):
     for _, value in emp_output.items():
         output_value = value
         salary.append(output_value["total_salary"])
-    total_cash = f"RM {sum(salary):,.2f}"
+
+    total_cash = f"RM {sum(salary)}"
 
     month_list = [
         "January",

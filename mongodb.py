@@ -14,6 +14,11 @@ class MongoDB:
     """链接 MongoDB"""
 
     def __init__(self) -> None:
+        # Local Testing MongoDB
+        # conn = MongoClient(host="127.0.0.1", port=27017)
+        # self.collection = conn["TBROS"]
+
+        # Real Server MongoDB
         try:
             load_dotenv()
             conn = MongoClient(

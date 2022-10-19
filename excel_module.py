@@ -9,6 +9,7 @@ import pandas as pd
 
 class ReadExcel:
     """读取 excel 文件"""
+
     def __init__(self, filename):
         # 选择 excel 的第二页和 excel 文件名
         self._sheet_num = 2
@@ -24,10 +25,10 @@ class ReadExcel:
         # 如果 31 生成 16 天，如果没有 31 生成 15 天
         if 31 not in day_list:
             num_index = day_list.index(1)
-            return day_list[num_index:num_index+15]
+            return day_list[num_index : num_index + 15]
         else:
             num_index = day_list.index(16)
-            return day_list[num_index:num_index+16]
+            return day_list[num_index : num_index + 16]
 
     def get_name(self):
         """把所有名字变为列表"""
@@ -37,11 +38,13 @@ class ReadExcel:
         return name_list
 
     def get_time(self, row_num: int):
-        """获取名字和时间"""
+        """获取时间"""
         store_time = []
+
         get_time_from_excel = [
             0 if str(x) == "nan" else x for x in self._df.loc[row_num]
         ]
+
         for each_time in get_time_from_excel:
             if each_time == 0:
                 store_time.append(0)
@@ -56,8 +59,8 @@ class ReadExcel:
         """输出全部列表，如果列表全 0 就排除"""
         all_list = {}
         num = 4
-        for show_name in self.get_name():
-            all_list[show_name] = self.get_time(num)
+        for emp_name in self.get_name():
+            all_list[emp_name] = self.get_time(num)
             num += 2
 
         # 删除没上班的员工
@@ -73,6 +76,7 @@ class ReadExcel:
 
 class TimeCalculation:
     """TimeCalculation 是计算所有员工的上下班时间"""
+
     def __init__(self, emp_time, emp_salary) -> None:
         self.emp_time: list = emp_time
         self.emp_salary: float = emp_salary
@@ -87,6 +91,7 @@ class TimeCalculation:
             return 0
 
         elif isinstance(self.emp_time[num], list):
+
             def calculate_time(time_input):
                 try:
                     time_output = dt.strptime(time_input, "%H:%M")
@@ -154,3 +159,14 @@ class TimeCalculation:
                 self.emp_pay += 3
 
             return self.emp_pay * self.emp_salary
+
+
+# file = ReadExcel("data/10/test.xls")
+# day = file.get_day()
+# name = file.get_name()
+# time = file.get_time(4)
+# all_emp = file.generate_all()
+# print(day)
+# print(len(name))
+# print(len(name))
+# print(all_emp)
