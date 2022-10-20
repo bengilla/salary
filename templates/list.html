@@ -23,9 +23,29 @@
         </div>
     </div>
 
-    <div class="pb-8">
-        <span class="text-sm">Total Pay to employees: <span class="mx-4 py-2 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ total_cash }}</span></span>
-    </div>
+    <!-- Header section -->
+    <table class="w-full mb-8 bg-slate-300">
+        <tr>
+            <td class="w-[200px]">
+                <div class="px-2 py-4">
+                    <span class="text-sm">Total employee on list:</span>
+                </div>
+            </td>
+            <td>
+                <span class="mx-4 py-2 px-4 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_emp_on_list }}</span>
+            </td>
+        </tr>
+        <tr>
+            <td class="">
+                <div class="px-2 py-4">
+                    <span class="text-sm">Total pay to employees:</span>
+                </div>
+            </td>
+            <td>
+                <span class="mx-4 py-2 px-4 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_cash }}</span>
+            </td>
+        </tr>
+    </table>
 
     <!-- All the list -->
 
@@ -52,10 +72,10 @@
             <td class="text-xs border-[2px] border-amber-600 sm:text-sm">
                 {% set pay_perday = v["pay_perday"] %}
                 {% if pay_perday == 0 %}
-                <span>RM </span><br>
+                <span>RM </span>
                 <span>{{ pay_perday }}</span>
                 {% else %}
-                <span>RM </span><br>
+                <span>RM </span>
                 <span class="font-bold">{{ pay_perday }}</span>
                 {% endif %}
             </td>
