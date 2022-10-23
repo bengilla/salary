@@ -131,15 +131,18 @@ def all_list(ids: str):
     emp_one = _work_list_db.find_one({"_id": ids})  # 寻找月份工人列表
     emp_output = emp_one["emp_work_hours"]
 
-    # 呈现总数工资
+    # 呈现所有员工总数工资
     salary = []
     for _, value in emp_output.items():
         output_value = value
         salary.append(output_value["total_salary"])
 
+    # 名单总数
     total_emp_on_list = len(emp_output)
+    # 工资总数
     total_cash = f"RM {sum(salary):,.2f}"
 
+    # 月份列表转换
     month_list = [
         "January",
         "February",
@@ -154,9 +157,16 @@ def all_list(ids: str):
         "November",
         "December",
     ]
-    output_id = int(ids.split("-")[0])
-    output_id = month_list[output_id - 1]
 
+    # 取文件月份
+    output_month = int(ids.split("-")[0])
+    # 取文件日期
+    output_day = int(ids.split("-")[1])
+    print(output_month, output_day)
+    # 呈现月份，把数字转换成英文
+    output_id = month_list[output_month - 1]
+
+    # 所有mongoDB资料
     all_documents = _work_list_db.find({})
     document_id = [x["_id"] for x in all_documents]
 
@@ -170,13 +180,13 @@ def all_list(ids: str):
     )
 
 
-@app.route("/camera")
-def camera():
-    """Testing Camera"""
-    from camera import Camera
+# @app.route("/camera")
+# def camera():
+#     """Testing Camera"""
+#     from camera import Camera
 
-    camera = Camera()
-    return camera.run_camera()
+#     camera = Camera()
+#     return camera.run_camera()
 
 
 if __name__ == "__main__":

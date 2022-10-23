@@ -24,7 +24,7 @@
     </div>
 
     <!-- Header section -->
-    <table class="w-full mb-8 bg-slate-300">
+    <table class="w-full mb-8">
         <tr>
             <td class="w-[200px]">
                 <div class="px-2 py-4">
@@ -50,47 +50,56 @@
     <!-- All the list -->
 
     {% for iname, idata in emp.items() %}
-    <div class="pb-1 text-xs sm:text-[0.8rem]">
-        <span>Name:</span> <b class="text-sm font-bold">{{ iname }}</b><br>
-        <span>Hour Salary:</span> <span class="font-bold"><b>RM {{ idata["pay_hour"] }}</b></span> |
-        <span>Total Salary:</span> <span class="font-bold underline">RM {{ idata["total_salary"] }}</span>
+    <div class="bg-stone-200 p-2 mb-4 outline outline-1 rounded">
+        <div class="pb-2 text-sm sm:text-base">
+            <span>Name: </span><b class="font-bold">{{ iname }}</b><br>
+            <span>Hour Salary: </span><span class="font-bold"><b>RM {{ idata["pay_hour"] }}</b></span><br>
+            <span>Total work hours: </span><span class="font-bold text-sky-700 underline">{{ idata["total_work_hours"] }}</span><br>
+            <span>Total Salary: </span><span class="font-bold text-orange-700 underline">RM {{ idata["total_salary"] }}</span>
+        </div>
+
+        <hr class="border-red-800">
+
+        <table class="w-full pb-8 list-table mb-4">
+            <tr>
+                {% for v in idata["output"] %}
+                <td class="text-xs text-red-700 sm:text-sm">
+                    {% set day = v["day"] %}
+                    <span>{{ day }}</span>
+                </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for v in idata["output"] %}
+                <td class="text-xs border-[2px] border-amber-600 sm:text-sm">
+                    {% set pay_perday = v["pay_perday"] %}
+                    {% set daily_work_hours = v["daily_work_hours"] %}
+
+                    <span class="text-sky-700">
+                        ( {{ daily_work_hours }} )<br>
+                    </span>
+
+                    {% if pay_perday == 0 %}
+                    <!-- <span>RM </span> -->
+                    <span>{{ pay_perday }}</span>
+                    {% else %}
+                    <!-- <span>RM </span> -->
+                    <span class="font-bold">{{ pay_perday }}</span>
+                    {% endif %}
+                </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for v in idata["output"] %}
+                <td class="text-xs sm:text-sm">
+                    {% set work_time = v["work_time"] %}
+                    <span>{{ work_time[0] }}</span><br>
+                    <span>{{ work_time[1] }}</span>
+                </td>
+                {% endfor %}
+            </tr>
+        </table>
     </div>
-
-    <hr class="border-red-800">
-
-    <table class="w-full list-table mb-4">
-        <tr>
-            {% for v in idata["output"] %}
-            <td class="text-xs text-red-700 sm:text-sm">
-                {% set day = v["day"] %}
-                <span>{{ day }}</span>
-            </td>
-            {% endfor %}
-        </tr>
-        <tr>
-            {% for v in idata["output"] %}
-            <td class="text-xs border-[2px] border-amber-600 sm:text-sm">
-                {% set pay_perday = v["pay_perday"] %}
-                {% if pay_perday == 0 %}
-                <span>RM </span>
-                <span>{{ pay_perday }}</span>
-                {% else %}
-                <span>RM </span>
-                <span class="font-bold">{{ pay_perday }}</span>
-                {% endif %}
-            </td>
-            {% endfor %}
-        </tr>
-        <tr>
-            {% for v in idata["output"] %}
-            <td class="text-xs sm:text-sm">
-                {% set work_time = v["work_time"] %}
-                <span>{{ work_time[0] }}</span><br>
-                <span>{{ work_time[1] }}</span>
-            </td>
-            {% endfor %}
-        </tr>
-    </table>
     {% endfor %}
 
 </section>
