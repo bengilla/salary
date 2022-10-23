@@ -23,6 +23,7 @@
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- Header section -->
     <table class="w-full mb-8">
         <tr>
@@ -46,6 +47,11 @@
             </td>
         </tr>
     </table>
+=======
+    <div class="pb-8">
+        <span class="text-sm">Total Pay to employees: <span class="mx-4 py-2 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ total_cash }}</span></span>
+    </div>
+>>>>>>> parent of 8a3babf (add total employee at list.html)
 
     <!-- All the list -->
 
@@ -100,6 +106,45 @@
             </tr>
         </table>
     </div>
+<<<<<<< HEAD
+=======
+
+    <hr class="border-red-800">
+
+    <table class="w-full list-table mb-4">
+        <tr>
+            {% for v in idata["output"] %}
+            <td class="text-xs text-red-700 sm:text-sm">
+                {% set day = v["day"] %}
+                <span>{{ day }}</span>
+            </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for v in idata["output"] %}
+            <td class="text-xs border-[2px] border-amber-600 sm:text-sm">
+                {% set pay_perday = v["pay_perday"] %}
+                {% if pay_perday == 0 %}
+                <span>RM </span><br>
+                <span>{{ pay_perday }}</span>
+                {% else %}
+                <span>RM </span><br>
+                <span class="font-bold">{{ pay_perday }}</span>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for v in idata["output"] %}
+            <td class="text-xs sm:text-sm">
+                {% set work_time = v["work_time"] %}
+                <span>{{ work_time[0] }}</span><br>
+                <span>{{ work_time[1] }}</span>
+            </td>
+            {% endfor %}
+        </tr>
+    </table>
+>>>>>>> parent of 8a3babf (add total employee at list.html)
     {% endfor %}
 
 </section>
