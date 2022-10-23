@@ -36,7 +36,7 @@ def index():
     find_all_id = _work_list_db.find({})
     all_id = [x["_id"] for x in find_all_id]
     err_title = ""
-    err_msg = ""
+    not_register_emp = ""
     err_exception_msg = ""
 
     if request.method == "POST":
@@ -47,9 +47,9 @@ def index():
                 return render_template("complete.html")
             else:
                 err_title = "This all members not in website:"
-                err_msg = emp_salary.not_register  # pylint: disable=E1101
+                not_register_emp = emp_salary.not_register  # pylint: disable=E1101
         except Exception as err:  # pylint: disable=W0703
-            err_title = "Wrong file type!!!, please select again"
+            err_title = "You have error message:"
             err_exception_msg = err
 
     return render_template(
@@ -57,7 +57,7 @@ def index():
         date=_date_now,
         all_id=all_id,
         err_title=err_title,
-        err_msg=err_msg,
+        err_emp=not_register_emp,
         err_exception_msg=err_exception_msg,
     )
 
@@ -128,7 +128,7 @@ def delete_emp(ids: str):
 @app.route("/all_list/<ids>", methods=["GET"])
 def all_list(ids: str):
     """当月发工资列表"""
-    emp_one = _work_list_db.find_one({"_id": ids})
+    emp_one = _work_list_db.find_one({"_id": ids})  # 寻找月份工人列表
     emp_output = emp_one["emp_work_hours"]
 
     # 呈现所有员工总数工资
@@ -137,12 +137,9 @@ def all_list(ids: str):
         output_value = value
         salary.append(output_value["total_salary"])
 
-<<<<<<< HEAD
     # 名单总数
     total_emp_on_list = len(emp_output)
     # 工资总数
-=======
->>>>>>> parent of 8a3babf (add total employee at list.html)
     total_cash = f"RM {sum(salary):,.2f}"
 
     # 月份列表转换
@@ -179,6 +176,7 @@ def all_list(ids: str):
         document_id=document_id,
         output_id=output_id,
         total_cash=total_cash,
+        total_emp_on_list=total_emp_on_list,
     )
 
 
