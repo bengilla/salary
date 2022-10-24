@@ -13,7 +13,7 @@
 
 <body class="bg-slate-200">
 
-    <header id="header" class="w-full h-20 font-bold text-center">
+    <header id="header" class="w-full h-20 font-bold text-center print:hidden">
         <div>
             <a href="{{ url_for('index') }}">
                 <h1 class="p-6 text-xl sm:text-2xl hover:text-white">TBROS Ventures Sdn. Bhd.</h1>
@@ -25,7 +25,7 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer id="footer" class="w-full pt-2 h-10 text-[0.8rem] font-bold text-center bg-slate-200 border-t-[1px] border-slate-800 fixed bottom-0">
+    <footer id="footer" class="w-full pt-2 h-10 text-[0.8rem] font-bold text-center bg-slate-200 border-t-[1px] border-slate-800 fixed bottom-0 print:hidden">
         <div>
             <span>© tbros ventures sdn bhd</span>
         </div>
