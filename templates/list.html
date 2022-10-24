@@ -64,8 +64,8 @@
             <tr>
                 {% for v in idata["output"] %}
                 <td class="text-xs text-red-700 sm:text-sm">
-                    {% set day = v["day"] %}
-                    <span>{{ day }}</span>
+                    <span>{{ v["day"] }}</span>
+                    <span class="text-xs text-slate-700">({{ v["day_of_week"] }})</span>
                 </td>
                 {% endfor %}
             </tr>

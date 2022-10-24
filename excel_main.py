@@ -2,6 +2,8 @@
 Main work for work with exce lfil
 """
 
+import pendulum
+
 from emp_mongodb import EmpInfo
 from excel_module import ReadExcel, TimeCalculation
 from mongodb import MongoDB
@@ -18,9 +20,9 @@ class EmpSalary:
         self.read_excel = ReadExcel(self.filename)
 
         # 读取文件的日和月
-        self._name = self.read_excel.get_name()
-        self._day = self.read_excel.get_day()
-        self._month = self.read_excel._date.month
+        self._name: list = self.read_excel.get_name()
+        self._day: list = self.read_excel.get_day()
+        self._month: int = self.read_excel._date.month
 
         # 读取 EmpInfo 的数据
         self._empinfo = EmpInfo()
@@ -53,14 +55,20 @@ class EmpSalary:
             )
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
-            total_work_hours.append(time_cal.emp_work_hours)
+            total_work_hours.append(time_cal.emp_work_hour)
+
+            # 做星期几的列表
+            day_of_week = pendulum.from_format(
+                f"{self._month}-{self._day[index]}", "MM-DD"
+            )
 
             send_to_mongodb.append(
                 {
                     "day": day,
+                    "day_of_week": day_of_week.format("dd"),
                     "pay_perday": pay_day_cost,
                     "work_time": time_cal.emp_time[index],
-                    "daily_work_hours": time_cal.emp_work_hours,
+                    "daily_work_hours": time_cal.emp_work_hour,
                 }
             )
 

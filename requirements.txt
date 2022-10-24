@@ -8,3 +8,4 @@ pylint
 pymongo
 python-dotenv
 xlrd
+pendulum

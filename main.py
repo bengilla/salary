@@ -3,7 +3,9 @@ Project for TBROS employees salary calculator and employee person info
 """
 
 from datetime import datetime
+from email.policy import strict
 
+import pendulum
 from flask import Flask, redirect, render_template, request, url_for
 
 # Library from own
@@ -160,9 +162,6 @@ def all_list(ids: str):
 
     # 取文件月份
     output_month = int(ids.split("-")[0])
-    # 取文件日期
-    output_day = int(ids.split("-")[1])
-    print(output_month, output_day)
     # 呈现月份，把数字转换成英文
     output_id = month_list[output_month - 1]
 
