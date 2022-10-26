@@ -21,8 +21,15 @@ class EmpSalary:
 
         # 读取文件的日和月
         self._name: list = self.read_excel.get_name()
-        self._day: list = self.read_excel.get_day()
         self._month: int = self.read_excel._date.month
+        self._day: list = self.read_excel.get_day()
+
+        self._date_from_readexcel: str = self.read_excel._date.date()
+        self._date = pendulum.datetime(
+            self._date_from_readexcel.year,
+            self._date_from_readexcel.month,
+            self._date_from_readexcel.day,
+        )
 
         # 读取 EmpInfo 的数据
         self._empinfo = EmpInfo()
@@ -37,7 +44,6 @@ class EmpSalary:
         self.not_register = [x for x in excel_name if x not in web_name]
 
         # 执行 main 功能
-        # if len(self.not_register) == 0:
         self.main()
 
     def make_emp_info(self, name: str) -> None:
@@ -83,8 +89,6 @@ class EmpSalary:
             else:
                 output_emp_salary += sum_salary - balance
 
-            # sum total work hours
-
         # 存于 MongoDB 的格式
         store_data = {
             "pay_hour": pay_hour,
@@ -110,10 +114,7 @@ class EmpSalary:
         mongodb = MongoDB()
         work_hour_collection = mongodb.work_hour_collection()
         send_data = {
-            "_id": f"{self._month}-{self._day[0]}",
+            "_id": self._date.format("MMM DD, YYYY"),
             "emp_work_hours": self.data,
         }
         work_hour_collection.insert_one(send_data)
-
-        # 测试输出
-        # print(self.data)

@@ -144,26 +144,8 @@ def all_list(ids: str):
     # 工资总数
     total_cash = f"RM {sum(salary):,.2f}"
 
-    # 月份列表转换
-    month_list = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-    ]
-
     # 取文件月份
-    output_month = int(ids.split("-")[0])
-    # 呈现月份，把数字转换成英文
-    output_id = month_list[output_month - 1]
+    output_month = ids.split(" ")[0]
 
     # 所有mongoDB资料
     all_documents = _work_list_db.find({})
@@ -173,19 +155,10 @@ def all_list(ids: str):
         "list.html",
         emp=emp_output,
         document_id=document_id,
-        output_id=output_id,
+        output_id=output_month,
         total_cash=total_cash,
         total_emp_on_list=total_emp_on_list,
     )
-
-
-# @app.route("/camera")
-# def camera():
-#     """Testing Camera"""
-#     from camera import Camera
-
-#     camera = Camera()
-#     return camera.run_camera()
 
 
 if __name__ == "__main__":
