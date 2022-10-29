@@ -160,6 +160,11 @@ def all_list(ids: str):
         total_emp_on_list=total_emp_on_list,
     )
 
+@app.route("/camera")
+def camera():
+    """camera teesting"""
+    return render_template("camera.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
