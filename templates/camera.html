@@ -5,24 +5,40 @@
 <h1 class="text-center">Display Webcam Stream</h1>
 
 <div id="container" class="grid grid-cols-1 place-items-center">
-    <video src="" autoplay="true" id="videoElement"></video>
+    <video id="video" width="640px" height="480px" autoplay></video>
+    <button id="capture" class="mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-700 hover:text-white transition">capture</button>
+    <canvas id="canvas" width="640px" height="480px">Hello</canvas>
 </div>
 
-<script>
-    let video = document.querySelector("#videoElement")
 
-    if (navigator.mediaDevices.getUserMedia) {
+<script>
+    let video = document.querySelector("#video")
+    let capture = document.getElementById("capture")
+    let canvas = document.querySelector("#canvas")
+    let context = canvas.getContext("2d")
+
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         // console.log("Camera is Work")
+        // navigator.mediaDevices.enumerateDevices().then(devides => {
+        //    console.log(devides)
+        //})
         navigator.mediaDevices.getUserMedia({ video: true })
-            .then(function (stream) {
+            .then((stream) => {
                 video.srcObject = stream;
             })
-            .catch(function (error) {
+            .catch((error) => {
                 console.log(error)
             })
     } else {
         console.log("getUserMedia not supported")
     }
+
+    function add_click() {
+        context.drawImage(video, 0, 0, 640, 480)
+    }
+
+    capture.addEventListener("click", add_click);
+
 </script>
 
 {% endblock %}
