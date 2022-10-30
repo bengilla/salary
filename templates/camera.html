@@ -1,61 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
+{% block title %}Camera{% endblock %}
+{% block content %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Test</title>
-    <style>
-        h1 {
-            text-align: center;
-            font-family: sans-serif;
-            color: #333;
-        }
+<h1 class="text-center">Display Webcam Stream</h1>
 
-        body {
-            margin: 50px;
-        }
+<div id="container" class="grid grid-cols-1 place-items-center">
+    <video src="" autoplay="true" id="videoElement"></video>
+</div>
 
-        #container {
-            margin: 0px auto;
-            width: 500px;
-            height: 375px;
-            border: 10px #333 solid;
-        }
+<script>
+    let video = document.querySelector("#videoElement")
 
-        #videoElement {
-            width: 500px;
-            height: 375px;
-            background-color: #666;
-        }
-    </style>
-</head>
+    if (navigator.mediaDevices.getUserMedia) {
+        // console.log("Camera is Work")
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function (stream) {
+                video.srcObject = stream;
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+    } else {
+        console.log("getUserMedia not supported")
+    }
+</script>
 
-<body>
-    <h1>Display Webcam Stream</h1>
-    <div id="container">
-        <video src="" autoplay="true" id="videoElement">
-
-
-        </video>
-    </div>
-    <script>
-        let video = document.querySelector("#videoElement")
-
-        if (navigator.mediaDevices.getUserMedia) {
-            // console.log("Camera is Work")
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function (stream) {
-                    video.srcObject = stream;
-                })
-                .catch(function (error) {
-                    console.log(error)
-                })
-        } else {
-            console.log("getUserMedia not supported")
-        }
-    </script>
-</body>
-
-</html>
+{% endblock %}
