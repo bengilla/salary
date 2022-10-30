@@ -6,7 +6,6 @@
 <!-- <h4 id="camera_select" class="text-center">Camera</h4> -->
 <div class="grid grid-cols-1 place-items-center">
     <ul id="cameraList" class="text-red-400">
-        <li></li>
     </ul>
 </div>
 
@@ -25,15 +24,16 @@
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         // console.log("Camera is Work")
         const cam = navigator.mediaDevices.enumerateDevices().then(devides => {
-            // console.log(devides)
-            var ul = document.getElementById("cameraList")
-            var li = document.createElement("li")
+            console.log(devides)
+
             let count = 1
             for (i = 0; i != devides.length; i++) {
                 if (devides[i].kind === "videoinput") {
-                    console.log("Camera " + count)
-                    li.appendChild(document.createTextNode("Camera " + count))
-                    ul.appendChild(li)
+                    var ul = document.getElementById("cameraList");
+                    var li = document.createElement("li");
+                    li.appendChild(document.createTextNode(devides[i].kind));
+                    ul.appendChild(li);
+                    count++
                 }
             }
         })
