@@ -9,7 +9,14 @@
 
     <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" novalidate>
         {{ form.csrf_token }}
-        <div class="pb-6">
+        <!-- camera -->
+        <div id="container" class="grid grid-cols-1 place-items-center" hidden>
+            <video id="video" width="200" autoplay></video>
+            <button id="capture" class="mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-700 hover:text-white transition">capture</button>
+            <canvas id="canvas" width="200" height="200" class="mt-4 mb-20 outline outline-2 outline-orange-500"></canvas>
+        </div>
+
+        <!-- <div class="pb-6">
             {{ form.img_emp.label(class="text-sm") }}
             <span class="text-xs text-red-500">(required)</span><br>
             {{ form.img_emp(class="block w-full text-sm text-slate-500
@@ -21,7 +28,8 @@
             {% for err in form.img_emp.errors %}
             <p class="form-error">{{ err }}</p>
             {% endfor %}
-        </div>
+        </div> -->
+
         <div class="pb-2">
             {{ form.name.label(class="text-sm") }}
             <span class="text-xs text-red-500">(required)</span><br>
@@ -30,6 +38,7 @@
             <p class="form-error">{{ err }}</p>
             {% endfor %}
         </div>
+
         <div class="pb-2">
             {{ form.ic.label(class="text-sm") }}
             <span class="text-xs text-red-500">(required)</span><br>
@@ -38,6 +47,7 @@
             <p class="form-error">{{ err }}</p>
             {% endfor %}
         </div>
+
         <div class="pb-2">
             {{ form.pay_hour.label(class="text-sm") }}
             <span class="text-xs text-red-500">(required)</span><br>
@@ -78,5 +88,6 @@
         <br><br>
     </form>
 
+    <script src="{{ url_for('static', filename='js/camera.js') }}"></script>
 </section>
 {% endblock %}
