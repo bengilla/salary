@@ -90,7 +90,9 @@ def all_emp():
     for _ in _empinfo.emp_info():
         count += 1
 
-    info = _empinfo.emp_info()
+    info_from_db = _empinfo.emp_info()
+    info = info_from_db.sort("_id", 1)
+
     return render_template("all.html", info=info, count=count)
 
 
