@@ -101,22 +101,30 @@ class TimeCalculation:
 
             # 计算白天的工作时间 -----------------------------------------
             # 正常
-            if emp_in < day_in and emp_out > day_out:
+            if emp_in <= day_in and emp_out >= day_out:
                 self.emp_work_hour += 8
             # 早到 早退
-            elif emp_in < day_in and emp_out < day_out:
-                total_hours = pendulum.period(day_in, emp_out)
-                if total_hours.hours > 4:
-                    self.emp_work_hour += total_hours.hours - lunch_time
+            elif emp_in <= day_in and emp_out <= day_out:
+                total_times = pendulum.period(day_in, emp_out)
+                if total_times.hours > 4:
+                    self.emp_work_hour += total_times.hours - lunch_time
+                    if total_times.minutes >= 50:
+                        self.emp_work_hour += 1
                 else:
-                    self.emp_work_hour += total_hours.hours
+                    self.emp_work_hour += total_times.hours
+                    if total_times.minutes >= 50:
+                        self.emp_work_hour += 1
             # 晚到 晚退
-            elif emp_in > day_in and emp_out > day_out:
-                total_hours = pendulum.period(emp_in, day_out)
-                if total_hours.hours > 4:
-                    self.emp_work_hour += total_hours.hours - lunch_time
+            elif emp_in >= day_in and emp_out >= day_out:
+                total_times = pendulum.period(emp_in, day_out)
+                if total_times.hours > 4:
+                    self.emp_work_hour += total_times.hours - lunch_time
+                    if total_times.minutes >= 50:
+                        self.emp_work_hour += 1
                 else:
-                    self.emp_work_hour += total_hours.hours
+                    self.emp_work_hour += total_times.hours
+                    if total_times.minutes >= 50:
+                        self.emp_work_hour += 1
 
             # 计算加班 -------------------------------------------------
             overtime = [
