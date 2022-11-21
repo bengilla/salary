@@ -2,7 +2,7 @@
 {% block title %}salary list{% endblock %}
 
 {% block content %}
-<section id="list" class="px-[1%] sm:px-[5%] mb-16">
+<section id="list" class="px-[1%] mb-16 sm:px-[5%] 2xl:px-[20%]">
 
     <!-- Dropdown Menu -->
 
@@ -24,28 +24,27 @@
     </div>
 
     <!-- Header section -->
-    <table class="w-full mb-8 print:hidden">
-        <tr>
-            <td class="w-[200px]">
-                <div class="px-2 py-4">
-                    <span class="text-sm">Total employee on list:</span>
-                </div>
-            </td>
-            <td>
-                <span class="mx-4 py-2 px-4 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_emp_on_list }}</span>
-            </td>
-        </tr>
-        <tr>
-            <td class="">
-                <div class="px-2 py-4">
-                    <span class="text-sm">Total pay to employees:</span>
-                </div>
-            </td>
-            <td>
-                <span class="mx-4 py-2 px-4 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_cash }}</span>
-            </td>
-        </tr>
-    </table>
+    <div class="w-full mb-8 print:hidden">
+        <!-- total employee -->
+        <div class="flex items-center">
+            <div class="w-[200px]">
+                <span class="text-sm">Total employee on list:</span>
+            </div>
+            <div class="py-2">
+                <span class="px-4 py-1 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_emp_on_list }}</span>
+            </div>
+        </div>
+        <!-- total pay amount -->
+        <div class="flex items-center">
+            <div class="w-[200px]">
+                <span class="text-sm">Total pay to employees:</span>
+            </div>
+            <div class="py-2">
+                <span class="px-4 py-1 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_cash }}</span>
+            </div>
+        </div>
+
+    </div>
 
     <!-- All the list -->
     {% for iname, idata in emp.items() %}

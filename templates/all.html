@@ -2,9 +2,10 @@
 {% block title %}employees{% endblock %}
 
 {% block content %}
-<section id="all" class="mb-10 py-[2%] px-[5%] lg:px-[15%]">
-    <div class="py-4">
-        <span class="text-sm">Total Employees: <span class="mx-4 py-2 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span></span>
+<section id="all" class="mb-10 py-[2%] px-[10%] 2xl:px-[20%]">
+    <div class="py-4 flex gap-4 items-center">
+        <div><span class="text-sm">Total Employees: </span></div>
+        <div><span class="py-1 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span></div>
     </div>
 
     <!-- {{ info }} -->
@@ -38,7 +39,6 @@
                             {% set cols={
                             'name': i.name,
                             'pay': i.pay_hour,
-                            'ID': i._id,
                             'passport/ic': i.ic,
                             'nationality': i.nationality,
                             'gender': i.gender,
@@ -49,8 +49,8 @@
                             } %}
                             {% for key, value in cols.items() %}
                             <tr>
-                                <th class="p-[0px] sm:p-[4px]">
-                                    <span class="mx-2 text-xs font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                                <th class="text-right">
+                                    <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
                                 </th>
                                 <td class="w-full">
                                     {% if key == 'name' %}

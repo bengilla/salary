@@ -10,7 +10,7 @@
             <tbody>
                 <tr>
                     <!--image -->
-                    <td>
+                    <td class="w-20 px-4">
                         <div class="grid place-content-center">
                             <img src="data:;base64, {{ info['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
                         </div>
@@ -23,51 +23,37 @@
                     <!--Info -->
                     <td>
                         <table class="auto">
+                            {% set cols={
+                            'id': info._id,
+                            'name': info.name,
+                            'pay': info.pay_hour,
+                            'passport/ic': info.ic,
+                            'nationality': info.nationality,
+                            'gender': info.gender,
+                            'd.o.b': info.dob,
+                            'contact': info.contact,
+                            'address': info.address,
+                            'sign date': info.sign_date
+                            } %}
+                            {% for key, value in cols.items() %}
                             <tr>
-                                <th class="w-auto px-8"><span class="text-xs font-normal italic unselect">Name: </span></th>
+                                <th class="text-right">
+                                    <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                                </th>
                                 <td class="w-full">
-                                    <a href="{{ url_for('info_emp', ids=info._id) }}">
-                                        <span class="font-bold">{{ info.name }} | </span>
-                                    </a>
-                                    <span class="text-xs text-red-500">(RM {{ info.pay_hour }})</span>
+                                    {% if key == 'name' %}
+                                    <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
+                                    {% elif key == 'pay' %}
+                                    <span class="text-xs text-red-500 sm:text-sm">RM
+                                        <span class="font-bold underline select-all sm:text-sm">
+                                            {{ value }}
+                                        </span> / hour</span>
+                                    {% else %}
+                                    <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                    {% endif %}
                                 </td>
                             </tr>
-                            <tr>
-                                <th width="120px"><span class="text-xs font-normal italic unselect">ID:</span></th>
-                                <td>
-                                    <span class="text-xs">{{ info._id }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">D.O.B.:</span></th>
-                                <td>
-                                    <span class="text-xs">{{ info.dob }}</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">gender:</span></th>
-                                <td><span class="text-xs">{{ info.gender }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Nationality:</span></th>
-                                <td><span class="text-xs">{{ info.nationality }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Passport / IC:</span></th>
-                                <td><span class="text-xs">{{ info.ic }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Contact:</span></th>
-                                <td><span class="text-xs">{{ info.contact }}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Address:</span></th>
-                                <td><span class="text-xs">{{ info.address}}</span></td>
-                            </tr>
-                            <tr>
-                                <th><span class="text-xs font-normal italic unselect">Sign-in Date:</span></th>
-                                <td><span class="text-xs">{{ info.sign_date }}</span></td>
-                            </tr>
+                            {% endfor %}
                         </table>
                     </td>
                     <!-- End info -->
