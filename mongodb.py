@@ -16,24 +16,18 @@ class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB
         conn = MongoClient(host="127.0.0.1", port=27017)
-        self.collection = conn["TBROS"]
 
         # Real Server MongoDB
-        # try:
-        #     load_dotenv()
-        #     conn = MongoClient(
-        #         host=[
-        #             f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
-        #         ],
-        #         serverSelectionTimeoutMS=5000,
-        #     )
-        #     conn.server_info()
-        # except errors.ServerSelectionTimeoutError:
-        #     conn = MongoClient(host="127.0.0.1", port=27017)
-        #     conn.server_info()
-        # finally:
-        #     self.collection = conn["TBROS"]
-
+        # load_dotenv()
+        # conn = MongoClient(
+        #     host=[
+        #         f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
+        #     ],
+        #     serverSelectionTimeoutMS=5000,
+        # )
+        
+        # Collection
+        self.collection = conn["TBROS"]
     def info_collection(self):
         """
         链接至 emp-info
