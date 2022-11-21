@@ -24,7 +24,7 @@
                     <!--image -->
                     <td>
                         <div class="grid place-content-center">
-                            <img src="data:;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
+                            <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
                         </div>
                         <div class="grid grid-rows-1 place-content-center">
                             <a href="{{ url_for('edit_emp', ids=i._id) }}">
