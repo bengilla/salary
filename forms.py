@@ -14,6 +14,7 @@ from wtforms.validators import DataRequired
 class EditForm(FlaskForm):
     """Edit Form"""
 
+    img_employee = FileField("img_employee")
     ic = StringField("passport / ic")
     contact = StringField("contact")
     address = StringField("address")

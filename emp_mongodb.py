@@ -3,13 +3,10 @@ Emp operation function
 """
 
 import datetime as dt
-from base64 import b64encode
-from io import BytesIO
-
-from PIL import Image
 
 # 自身库
 from forms import CreateForm
+from modules.image import ImageConvert
 from mongodb import MongoDB
 
 # 建立员工模组
@@ -24,6 +21,7 @@ class EmpInfo:
         """
         mongodb = MongoDB()
         self.emp_info_collection = mongodb.info_collection()
+        self.img_convert = ImageConvert()
 
     def emp_create(self) -> bool:
         """
@@ -31,19 +29,6 @@ class EmpInfo:
         """
         form = CreateForm()
         date = dt.datetime.now().strftime("%d-%m-%Y")
-
-        def img_convert(img_input: str):
-            """
-            img 压缩成 Binary 代码\n
-            """
-            base_width = 300
-            buffered = BytesIO()
-            img = Image.open(img_input)
-            width_percent = base_width / float(img.size[0])
-            height_size = int((float(img.size[1]) * float(width_percent)))
-            img_resize = img.resize((base_width, height_size), Image.ANTIALIAS)
-            img_resize.save(buffered, format="JPEG")
-            return b64encode(buffered.getvalue()).decode("ascii")
 
         def check_emp():
             """
@@ -60,7 +45,7 @@ class EmpInfo:
             new_emp = {
                 # "_id": form.name.data.split(" ")[0].lower() + form.ic.data[-4:],
                 "_id": form.name.data.split(" ")[0].lower(),
-                "img_employee": img_convert(form.img_employee.data),
+                "img_employee": self.img_convert.img_base64(form.img_employee.data),
                 "name": form.name.data.title(),
                 "ic": form.ic.data,
                 "pay_hour": form.pay_hour.data,
@@ -97,15 +82,17 @@ class EmpInfo:
         """
         self.emp_info_collection.delete_one({"_id": ids})
 
-    def emp_edit(self, ids, ic_card, contact, address, pay):
+    def emp_edit(self, ids, ic_card, contact, address, pay, img_employee):
         """
         更新员工资料
         """
+
         get_id = {"_id": ids}
         self.emp_info_collection.update_one(
             get_id,
             {
                 "$set": {
+                    "img_employee": self.img_convert.img_base64(img_employee),
                     "ic": ic_card,
                     "contact": contact,
                     "address": address,

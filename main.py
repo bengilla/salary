@@ -3,9 +3,7 @@ Project for TBROS employees salary calculator and employee person info
 """
 
 from datetime import datetime
-from email.policy import strict
 
-import pendulum
 from flask import Flask, redirect, render_template, request, url_for
 
 # Library from own
@@ -111,12 +109,13 @@ def edit_emp(ids: str):
     get_emp = _empinfo.emp_one(ids)
 
     if request.method == "POST":
+        img_employee = form.img_employee.data
         ic_card = form.ic.data
         contact = form.contact.data
         address = form.address.data
         pay = form.pay_hour.data
 
-        _empinfo.emp_edit(ids, ic_card, contact, address, pay)
+        _empinfo.emp_edit(ids, ic_card, contact, address, pay, img_employee)
 
         return redirect(url_for("all_emp"))
     return render_template("edit.html", form=form, edit_emp=get_emp)
