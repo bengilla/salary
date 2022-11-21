@@ -7,7 +7,7 @@ import datetime as dt
 import os
 
 from dotenv import load_dotenv
-from pymongo import MongoClient, errors
+from pymongo import MongoClient
 
 
 class MongoDB:
