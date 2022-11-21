@@ -10,6 +10,9 @@
     <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" novalidate>
         {{ form.csrf_token }}
         <!-- camera -->
+        <div>
+            <input type="file" id="capture" accept="image/*, video/*" capture />
+        </div>
         <!-- <div id="container" class="grid grid-cols-1 place-items-center" hidden>
             <video id="video" width="200" autoplay></video>
             <button id="capture" class="mt-4 px-4 py-2 bg-gray-300 hover:bg-gray-700 hover:text-white transition">capture</button>
