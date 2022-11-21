@@ -5,7 +5,8 @@ CreateForm, EditForm
 
 
 from flask_wtf import FlaskForm
-from wtforms import FileField, FloatField, SelectField, StringField, SubmitField
+from wtforms import (FileField, FloatField, SelectField, StringField,
+                     SubmitField)
 from wtforms.validators import DataRequired
 
 
@@ -26,7 +27,7 @@ class EditForm(FlaskForm):
 class CreateForm(EditForm, FlaskForm):
     """Create Form and inherent to Edit Form"""
 
-    img_emp = FileField("img_emp", validators=[DataRequired()])
+    img_employee = FileField("img_employee", validators=[DataRequired()])
     name = StringField("name", validators=[DataRequired()])
     pay_hour = FloatField("hour salary", validators=[DataRequired()])
     ic = StringField("passport / ic", validators=[DataRequired()])

@@ -60,7 +60,7 @@ class EmpInfo:
             new_emp = {
                 # "_id": form.name.data.split(" ")[0].lower() + form.ic.data[-4:],
                 "_id": form.name.data.split(" ")[0].lower(),
-                "img_emp": img_convert(form.img_emp.data),
+                "img_employee": img_convert(form.img_employee.data),
                 "name": form.name.data.title(),
                 "ic": form.ic.data,
                 "pay_hour": form.pay_hour.data,

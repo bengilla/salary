@@ -11,15 +11,15 @@
         {{ form.csrf_token }}
         <!-- camera -->
         <div class="pb-6">
-            {{ form.img_emp.label(class="text-sm") }}
+            {{ form.img_employee.label(class="text-sm") }}
             <span class="text-xs text-red-500">(required)</span><br>
-            {{ form.img_emp(class="block w-full text-sm text-slate-500
+            {{ form.img_employee(class="block w-full text-sm text-slate-500
             file:mr-4 file:py-2 file:px-4
             file:rounded-lg file:border-0
             file:text-sm file:font-semibold
             file:bg-blue-300 file:text-slate-700
             hover:file:bg-blue-700 hover:file:text-white") }}
-            {% for err in form.img_emp.errors %}
+            {% for err in form.img_employee.errors %}
             <p class="form-error">{{ err }}</p>
             {% endfor %}
         </div>
