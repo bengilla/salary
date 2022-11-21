@@ -86,17 +86,30 @@ class EmpInfo:
         """
         更新员工资料
         """
-
         get_id = {"_id": ids}
-        self.emp_info_collection.update_one(
-            get_id,
-            {
-                "$set": {
-                    "img_employee": self.img_convert.img_base64(img_employee),
-                    "ic": ic_card,
-                    "contact": contact,
-                    "address": address,
-                    "pay_hour": pay,
-                }
-            },
-        )
+
+        if img_employee:
+            self.emp_info_collection.update_one(
+                get_id,
+                {
+                    "$set": {
+                        "img_employee": self.img_convert.img_base64(img_employee),
+                        "ic": ic_card,
+                        "contact": contact,
+                        "address": address,
+                        "pay_hour": pay,
+                    }
+                },
+            )
+        else:
+            self.emp_info_collection.update_one(
+                get_id,
+                {
+                    "$set": {
+                        "ic": ic_card,
+                        "contact": contact,
+                        "address": address,
+                        "pay_hour": pay,
+                    }
+                },
+            )
