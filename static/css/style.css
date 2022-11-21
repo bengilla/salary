@@ -1,12 +1,12 @@
 @font-face {
     font-family: "montserrat";
     font-weight: bold;
-    src: url(../static/fonts/Montserrat-Regular.ttf)
+    src: url(../fonts/Montserrat-Regular.ttf)
 }
 
 @font-face {
     font-family: "montserrat-bold";
-    src: url(../static/fonts/Montserrat-Bold.ttf)
+    src: url(../fonts/Montserrat-Bold.ttf)
 }
 
 body {
