@@ -133,6 +133,7 @@ def all_list(ids: str):
     """当月发工资列表"""
     emp_one = _work_list_db.find_one({"_id": ids})  # 寻找月份工人列表
     emp_output = emp_one["emp_work_hours"]
+    sort_emp_dict = dict(sorted(emp_output.items()))
 
     # 呈现所有员工总数工资
     salary = []
@@ -142,6 +143,7 @@ def all_list(ids: str):
 
     # 名单总数
     total_emp_on_list = len(emp_output)
+
     # 工资总数
     total_cash = f"RM {sum(salary):,.2f}"
 
@@ -154,7 +156,7 @@ def all_list(ids: str):
 
     return render_template(
         "list.html",
-        emp=emp_output,
+        emp=sort_emp_dict,
         document_id=document_id,
         output_id=output_month,
         total_cash=total_cash,
