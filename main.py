@@ -8,9 +8,9 @@ from flask import Flask, redirect, render_template, request, url_for
 
 # Library from own
 # from camera import Camera
-from emp_mongodb import EmpInfo
-from excel_main import EmpSalary
-from forms import CreateForm, EditForm
+from emp.emp_mongodb import EmpInfo
+from excels import EmpSalary
+from forms.form import CreateForm, EditForm
 from mongodb import MongoDB
 
 # 设置

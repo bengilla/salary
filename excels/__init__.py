@@ -4,8 +4,8 @@ Main work for work with exce lfil
 
 import pendulum
 
-from emp_mongodb import EmpInfo
-from excel_module import ReadExcel, TimeCalculation
+from emp.emp_mongodb import EmpInfo
+from excels.excel_module import ReadExcel, TimeCalculation
 from mongodb import MongoDB
 
 
