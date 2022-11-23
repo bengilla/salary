@@ -2,83 +2,86 @@
 {% block title %}employees{% endblock %}
 
 {% block content %}
-<section id="all" class="mb-10 py-[2%] px-[10%] 2xl:px-[20%]">
-    <div class="py-4 flex gap-4 items-center">
-        <div><span class="text-sm">Total Employees: </span></div>
-        <div><span class="py-1 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span></div>
+<section id="all" class="mb-16 flex justify-center">
+    <div class="max-w-3xl mx-2">
+
+        <div class="py-4 mx-2 flex gap-4 items-center">
+            <div><span class="text-sm">Total Employees: </span></div>
+            <div><span class="py-1 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span></div>
+        </div>
+
+        <!-- {{ info }} -->
+        {% for i in info %}
+        <div class="mt-2 w-full border border-1 border-slate-900">
+            <table class="w-full">
+
+                <thead class="bg-slate-600">
+                    <tr class="text-xs text-white text-center sm:text-sm">
+                        <th class="p-1 select-none w-[5rem] sm:w-44">Photo</th>
+                        <th class="p-1 select-none">Info</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr>
+                        <!--image -->
+                        <td>
+                            <div class="flex justify-center">
+                                <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
+                            </div>
+                            <div class="flex justify-center">
+                                <a href="{{ url_for('edit_emp', ids=i._id) }}">
+                                    <button class="w-[3rem] h-7 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 select-none sm:rounded-md sm:py-1 sm:w-32 sm:h-8 sm:text-sm">edit</button></a>
+                            </div>
+                        </td>
+
+                        <!--Info -->
+                        <td>
+                            <table>
+                                {% set cols={
+                                'name': i.name,
+                                'pay': i.pay_hour,
+                                'passport/ic': i.ic,
+                                'nationality': i.nationality,
+                                'gender': i.gender,
+                                'd.o.b': i.dob,
+                                'contact': i.contact,
+                                'address': i.address,
+                                'sign date': i.sign_date
+                                } %}
+                                {% for key, value in cols.items() %}
+                                <tr>
+                                    <th class="text-right">
+                                        <span class="mr-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                                    </th>
+                                    <td class="w-full pr-2">
+                                        {% if key == 'name' %}
+                                        <a href="{{ url_for('info_emp', ids=i._id) }}">
+                                            <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
+                                        </a>
+                                        {% elif key == 'pay' %}
+                                        <span class="text-xs text-red-500 sm:text-sm">RM
+                                            <span class="font-bold underline select-all sm:text-sm">
+                                                {{ value }}
+                                            </span> / hour</span>
+                                        {% else %}
+                                        <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                        <!-- End info -->
+
+                    </tr>
+                </tbody>
+
+            </table>
+
+        </div>
+        {% endfor %}
+
     </div>
-
-    <!-- {{ info }} -->
-    {% for i in info %}
-    <div class="mt-2 w-full border border-1 border-slate-900">
-        <table class="table-auto w-full">
-
-            <thead class="bg-slate-600">
-                <tr>
-                    <th class="p-1 w-20 text-xs text-white border-b-2 border-slate-900 select-none sm:w-48 sm:p-1 sm:text-sm">Photo</th>
-                    <th class="p-1 px-8 text-xs text-white text-center border-b-2 border-slate-900 select-none sm:p-1 sm:text-sm">Info</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                <tr>
-                    <!--image -->
-                    <td>
-                        <div class="grid place-content-center">
-                            <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
-                        </div>
-                        <div class="grid grid-rows-1 place-content-center">
-                            <a href="{{ url_for('edit_emp', ids=i._id) }}">
-                                <button class="w-[4.6rem] h-7 mx-2 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 select-none sm:rounded-md sm:py-1 sm:w-40 sm:h-8 sm:text-sm">edit</button></a>
-                        </div>
-                    </td>
-
-                    <!--Info -->
-                    <td>
-                        <table class="auto">
-                            {% set cols={
-                            'name': i.name,
-                            'pay': i.pay_hour,
-                            'passport/ic': i.ic,
-                            'nationality': i.nationality,
-                            'gender': i.gender,
-                            'd.o.b': i.dob,
-                            'contact': i.contact,
-                            'address': i.address,
-                            'sign date': i.sign_date
-                            } %}
-                            {% for key, value in cols.items() %}
-                            <tr>
-                                <th class="text-right">
-                                    <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
-                                </th>
-                                <td class="w-full">
-                                    {% if key == 'name' %}
-                                    <a href="{{ url_for('info_emp', ids=i._id) }}">
-                                        <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
-                                    </a>
-                                    {% elif key == 'pay' %}
-                                    <span class="text-xs text-red-500 sm:text-sm">RM
-                                        <span class="font-bold underline select-all sm:text-sm">
-                                            {{ value }}
-                                        </span> / hour</span>
-                                    {% else %}
-                                    <span class="text-xs select-all sm:text-sm">{{ value }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </td>
-                    <!-- End info -->
-
-                </tr>
-            </tbody>
-
-        </table>
-
-    </div>
-    {% endfor %}
-
 </section>
 {% endblock %}
