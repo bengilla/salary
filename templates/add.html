@@ -2,86 +2,87 @@
 {% block title %}new employee{% endblock %}
 
 {% block content %}
-<section id="add" class="py-[2%] px-[5%] sm:px-[30%]">
-    <center>
-        <p class="text-2xl text-red-500 font-bold">{{ msg }}</p>
-    </center>
+<section id="add" class="w-full">
+    <div class="flex flex-col items-center">
 
-    <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" novalidate>
-        {{ form.csrf_token }}
-        <!-- camera -->
-        <div class="pb-6">
-            {{ form.img_employee.label(class="text-sm") }}
-            <span class="text-xs text-red-500">(required)</span><br>
-            {{ form.img_employee(class="block w-full text-sm text-slate-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-lg file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-300 file:text-slate-700
-            hover:file:bg-blue-700 hover:file:text-white") }}
-            {% for err in form.img_employee.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
+        <div>
+            <p class="text-2xl text-red-500 text-center font-bold">{{ msg }}</p>
         </div>
 
-        <div class="pb-2">
-            {{ form.name.label(class="text-sm") }}
-            <span class="text-xs text-red-500">(required)</span><br>
-            {{ form.name(class="form-input") }}<br>
-            {% for err in form.name.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
-        </div>
+        <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
+            {{ form.csrf_token }}
+            <div class="pb-6">
+                {{ form.img_employee.label(class="text-sm") }}
+                <span class="text-xs text-red-500">(required)</span><br>
+                {{ form.img_employee(class="w-full text-sm text-slate-500
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-lg file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-300 file:text-slate-700
+                hover:file:bg-blue-700 hover:file:text-white") }}
+                {% for err in form.img_employee.errors %}
+                <p class="form-error">{{ err }}</p>
+                {% endfor %}
+            </div>
 
-        <div class="pb-2">
-            {{ form.ic.label(class="text-sm") }}
-            <span class="text-xs text-red-500">(required)</span><br>
-            {{ form.ic(class="form-input") }}<br>
-            {% for err in form.ic.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
-        </div>
+            <div class="pb-2">
+                {{ form.name.label(class="text-sm") }}
+                <span class="text-xs text-red-500">(required)</span><br>
+                {{ form.name(class="form-input") }}<br>
+                {% for err in form.name.errors %}
+                <p class="form-error">{{ err }}</p>
+                {% endfor %}
+            </div>
 
-        <div class="pb-2">
-            {{ form.pay_hour.label(class="text-sm") }}
-            <span class="text-xs text-red-500">(required)</span><br>
-            {{ form.pay_hour(class="form-input") }}<br>
-            {% for err in form.pay_hour.errors %}
-            <p class="form-error">{{ err }}</p>
-            {% endfor %}
-        </div>
+            <div class="pb-2">
+                {{ form.ic.label(class="text-sm") }}
+                <span class="text-xs text-red-500">(required)</span><br>
+                {{ form.ic(class="form-input") }}<br>
+                {% for err in form.ic.errors %}
+                <p class="form-error">{{ err }}</p>
+                {% endfor %}
+            </div>
 
-        <!-- HR -->
-        <div class="mt-4 mb-8">
-            <span class="text-xs italic">Optional</span>
-            <hr class="w-auto border-[1px] border-slate-600 mb-2">
-        </div>
+            <div class="pb-2">
+                {{ form.pay_hour.label(class="text-sm") }}
+                <span class="text-xs text-red-500">(required)</span><br>
+                {{ form.pay_hour(class="form-input") }}<br>
+                {% for err in form.pay_hour.errors %}
+                <p class="form-error">{{ err }}</p>
+                {% endfor %}
+            </div>
 
-        <!-- Optional -->
-        <div class="pb-2">
-            {{ form.dob.label(class="text-sm") }} {{ form.dob(class="form-input") }}<br>
-        </div>
-        <div class="pb-2">
-            {{ form.nationality.label(class="text-sm") }} {{ form.nationality(class="form-input") }}<br>
-        </div>
-        <div class="pb-2">
-            {{ form.gender.label(class="text-sm") }} {{ form.gender(class="form-input") }}<br>
-        </div>
-        <div class="pb-2">
-            {{ form.contact.label(class="text-sm") }} {{ form.contact(class="form-input") }}<br>
-        </div>
-        <div class="pb-2">
-            {{ form.address.label(class="text-sm") }} {{ form.address(class="form-input") }}<br>
-        </div>
+            <!-- HR -->
+            <div class="mt-4 mb-8">
+                <span class="text-xs italic">Optional</span>
+                <hr class="border-[1px] border-slate-600 mb-2">
+            </div>
 
-        <!-- Submit -->
-        <div class="pb-2">
-            {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
-        </div>
+            <!-- Optional -->
+            <div class="pb-2">
+                {{ form.dob.label(class="text-sm") }} {{ form.dob(class="form-input") }}<br>
+            </div>
+            <div class="pb-2">
+                {{ form.nationality.label(class="text-sm") }} {{ form.nationality(class="form-input") }}<br>
+            </div>
+            <div class="pb-2">
+                {{ form.gender.label(class="text-sm") }} {{ form.gender(class="form-input") }}<br>
+            </div>
+            <div class="pb-2">
+                {{ form.contact.label(class="text-sm") }} {{ form.contact(class="form-input") }}<br>
+            </div>
+            <div class="pb-2">
+                {{ form.address.label(class="text-sm") }} {{ form.address(class="form-input") }}<br>
+            </div>
 
-        <br><br>
-    </form>
+            <!-- Submit -->
+            <div class="pb-2">
+                {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
+            </div>
 
-    <script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+            <br><br>
+        </form>
+    </div>
+
 </section>
 {% endblock %}

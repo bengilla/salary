@@ -76,7 +76,7 @@ def add_emp():
         if create_emp:
             return redirect("/all")
         else:
-            msg = "Employee Exists, IC / PASSPORT is duplicate"
+            msg = "Employee Exists"
 
     return render_template("add.html", form=form, msg=msg)
 
