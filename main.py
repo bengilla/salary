@@ -4,13 +4,14 @@ Project for TBROS employees salary calculator and employee person info
 
 from datetime import datetime
 
+import bcrypt
 from flask import Flask, redirect, render_template, request, url_for
 
 # Library from own
-# from camera import Camera
 from emp.emp_mongodb import EmpInfo
 from excels import EmpSalary
-from forms.form import CreateForm, EditForm
+from forms.form import CreateForm, EditForm, LoginForm, RegisterForm
+from modules.pass_check import Password
 from mongodb import MongoDB
 
 # 设置
@@ -19,12 +20,16 @@ app.config["SECRET_KEY"] = "tbrosventures"
 
 # Work List MongoDB connect
 _work_list_db = MongoDB().work_hour_collection()
+_members = MongoDB().user_collection()
 
 # Get Emp info from MongoDB
 _empinfo = EmpInfo()
 
 # Normal get date now
 _date_now = datetime.now()
+
+# Password
+_pass = Password()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -38,6 +43,21 @@ def index():
     err_title = ""
     not_register_emp = ""
     err_exception_msg = ""
+
+    #-------testing---------
+    get_emp = _members.find({})
+    my_pass = '123456'
+
+    for i in get_emp:
+        get_pass = i['password'].encode('utf-8')
+
+        check_password = _pass.check_password(my_pass, get_pass)
+        if check_password:
+            print("Match")
+            break
+        else:
+            print("Not Match")
+    #-------testing---------
 
     if request.method == "POST":
         file_input = request.files["file"]
@@ -71,7 +91,7 @@ def add_emp():
     """
     form = CreateForm()
     msg = ""
-    if form.validate_on_submit():
+    if request.method == "POST":
         create_emp = _empinfo.emp_create()
         if create_emp:
             return redirect("/all")
@@ -162,6 +182,46 @@ def all_list(ids: str):
         total_cash=total_cash,
         total_emp_on_list=total_emp_on_list,
     )
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Register"""
+    form = RegisterForm()
+    get_emp = _members.find({})
+    msg = ""
+
+    # From register.html Form
+    username = form.username.data
+    password = form.password.data
+    company_name = form.company_name.data
+
+    # Members in list
+    check_members_count = [list_member for list_member in get_emp]
+
+    # Password to hash
+    generate_password = _pass.create_password(password)
+
+    # dict mongodb
+    new_members = {
+        "username": username,
+        "password": generate_password,
+        "company_name": company_name
+    }
+
+    if request.method == "POST":
+        if len(check_members_count) == 0:
+            _members.insert_one(new_members)
+            return redirect(url_for('index'))
+        else:
+            for check_user in check_members_count:
+                if check_user['username'] == username:
+                    msg = "Members is exists"
+                else:
+                    _members.insert_one(new_members)
+                    return redirect(url_for('index'))
+
+    return render_template("register.html", form=form, msg=msg)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

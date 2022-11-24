@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<section id="add" class="w-full">
+    <div class="flex flex-col items-center">
+
+        <div>
+            <p class="text-2xl text-red-500 text-center font-bold">{{ msg }}</p>
+        </div>
+
+        <form action="{{ url_for('register') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
+            {{ form.csrf_token }}
+            <div class="pb-2">
+                {{ form.username.label(class="text-sm") }}
+                <span class="text-xs text-red-500">(required)</span><br>
+                {{ form.username(class="form-input") }}<br>
+                {% for err in form.username.errors %}
+                <p class="form-error">{{ err }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="pb-2">
+                {{ form.password.label(class="text-sm") }}
+                <span class="text-xs text-red-500">(required)</span><br>
+                {{ form.password(class="form-input") }}<br>
+                {% for err in form.password.errors %}
+                <p class="form-error">{{ err }}</p>
+                {% endfor %}
+            </div>
+
+            <div class="pb-2">
+                {{ form.company_name.label(class="text-sm") }}
+                <span class="text-xs text-red-500">(required)</span><br>
+                {{ form.company_name(class="form-input") }}<br>
+                {% for err in form.company_name.errors %}
+                <p class="form-error">{{ err }}</p>
+                {% endfor %}
+            </div>
+
+            <!-- Submit -->
+            <div class="pb-2">
+                {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
+            </div>
+
+            <br><br>
+        </form>
+    </div>
+
+</section>
+{% endblock %}

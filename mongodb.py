@@ -15,28 +15,34 @@ class MongoDB:
 
     def __init__(self) -> None:
         # Local Testing MongoDB
-        # conn = MongoClient(host="127.0.0.1", port=27017)
+        self.conn = MongoClient(host="127.0.0.1", port=27017)
 
         # Real Server MongoDB
-        load_dotenv()
-        conn = MongoClient(
-            host=[
-                f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
-            ],
-            serverSelectionTimeoutMS=5000,
-        )
+        # load_dotenv()
+        # conn = MongoClient(
+        #     host=[
+        #         f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
+        #     ],
+        #     serverSelectionTimeoutMS=5000,
+        # )
         
-        # Collection
-        self.collection = conn["TBROS"]
+    def user_collection(self):
+        """
+        会员资料
+        """
+        collection = self.conn["USER_DATA"]
+        return collection["members"]
 
     def info_collection(self):
         """
         链接至 emp-info
         """
-        return self.collection["emp-info"]
+        collection = self.conn["TBROS"]
+        return collection["emp-info"]
 
     def work_hour_collection(self):
         """
         链接至 emp-<年份>
         """
-        return self.collection[f"emp-{dt.datetime.now().year}"]
+        collection = self.conn["TBROS"]
+        return collection[f"emp-{dt.datetime.now().year}"]

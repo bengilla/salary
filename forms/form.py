@@ -5,8 +5,8 @@ CreateForm, EditForm
 
 
 from flask_wtf import FlaskForm
-from wtforms import (FileField, FloatField, SelectField, StringField,
-                     SubmitField)
+from wtforms import (FileField, FloatField, PasswordField, SelectField,
+                     StringField, SubmitField)
 from wtforms.validators import DataRequired
 
 
@@ -48,3 +48,20 @@ class CreateForm(EditForm, FlaskForm):
         ],
     )
     finger_print = StringField("finger print")
+    
+class LoginForm(FlaskForm):
+    """Login Form"""
+
+    username = StringField("name", validators=[DataRequired()])
+    password = PasswordField("name", validators=[DataRequired()])
+
+    submit = SubmitField("submit")
+
+class RegisterForm(FlaskForm):
+    """Register Form"""
+
+    username = StringField("username", validators=[DataRequired()])
+    password = PasswordField("password", validators=[DataRequired()])
+    company_name = StringField("company name", validators=[DataRequired()])
+
+    submit = SubmitField("submit")
