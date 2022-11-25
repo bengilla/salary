@@ -4,13 +4,13 @@ Project for TBROS employees salary calculator and employee person info
 
 from datetime import datetime
 
-import bcrypt
-from flask import Flask, redirect, render_template, request, url_for
+from flask import (Flask, make_response, redirect, render_template, request,
+                   url_for)
 
 # Library from own
 from emp.emp_mongodb import EmpInfo
 from excels import EmpSalary
-from forms.form import CreateForm, EditForm, LoginForm, RegisterForm
+from modules.form import CreateForm, EditForm, LoginForm, RegisterForm
 from modules.pass_check import Password
 from mongodb import MongoDB
 
@@ -43,21 +43,6 @@ def index():
     err_title = ""
     not_register_emp = ""
     err_exception_msg = ""
-
-    #-------testing---------
-    get_emp = _members.find({})
-    my_pass = '123456'
-
-    for i in get_emp:
-        get_pass = i['password'].encode('utf-8')
-
-        check_password = _pass.check_password(my_pass, get_pass)
-        if check_password:
-            print("Match")
-            break
-        else:
-            print("Not Match")
-    #-------testing---------
 
     if request.method == "POST":
         file_input = request.files["file"]
@@ -205,7 +190,7 @@ def register():
     new_members = {
         "username": username,
         "password": generate_password,
-        "company_name": company_name
+        "company_name": str(company_name).upper()
     }
 
     if request.method == "POST":
@@ -221,6 +206,29 @@ def register():
                     return redirect(url_for('index'))
 
     return render_template("register.html", form=form, msg=msg)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Login"""
+    form = LoginForm()
+    check_members = _members.find({})
+    msg = ""
+
+    if request.method == "POST":
+        get_username = form.username.data
+        get_password = form.password.data
+
+        for member in check_members:
+            com = member['company_name'].split(" ")
+
+            if member['username'] == get_username and _pass.check_password(get_password, member['password']):
+                resp = make_response(redirect(url_for('index')))
+                resp.set_cookie('userID', "".join(com))
+                return resp
+            else:
+                msg = "Members doesn't exists"
+        
+    return render_template("login.html", form=form, msg=msg)
 
 
 if __name__ == "__main__":

@@ -15,4 +15,5 @@ class Password:
 
     def check_password(self, password, hashed_password):
         """Check Password"""
-        return bcrypt.checkpw(password.encode('utf-8'), hashed_password)
+        encode_hashed = hashed_password.encode('utf-8')
+        return bcrypt.checkpw(password.encode('utf-8'), encode_hashed)

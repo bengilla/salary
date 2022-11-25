@@ -52,8 +52,8 @@ class CreateForm(EditForm, FlaskForm):
 class LoginForm(FlaskForm):
     """Login Form"""
 
-    username = StringField("name", validators=[DataRequired()])
-    password = PasswordField("name", validators=[DataRequired()])
+    username = StringField("username", validators=[DataRequired()])
+    password = PasswordField("password", validators=[DataRequired()])
 
     submit = SubmitField("submit")
 
