@@ -66,6 +66,39 @@ def index():
         err_exception_msg=err_exception_msg,
     )
 
+@app.route("/user", methods=["GET", "POST"])
+def user():
+    """
+    链接至 index.html, 同时也输出日期
+    """
+    # Get ID from list from data
+    find_all_id = _work_list_db.find({})
+    all_id = [x["_id"] for x in find_all_id]
+    err_title = ""
+    not_register_emp = ""
+    err_exception_msg = ""
+
+    if request.method == "POST":
+        file_input = request.files["file"]
+        try:
+            emp_salary = EmpSalary(file_input)
+            if len(emp_salary.not_register) == 0:  # pylint: disable=E1101
+                return render_template("complete.html")
+            else:
+                err_title = "This all members not in website:"
+                not_register_emp = emp_salary.not_register  # pylint: disable=E1101
+        except Exception as err:  # pylint: disable=W0703
+            err_title = "You have error message:"
+            err_exception_msg = err
+
+    return render_template(
+        "user.html",
+        date=_date_now,
+        all_id=all_id,
+        err_title=err_title,
+        err_emp=not_register_emp,
+        err_exception_msg=err_exception_msg,
+    )
 
 @app.route("/add", methods=["GET", "POST"])
 def add_emp():
