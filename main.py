@@ -4,8 +4,7 @@ Project for TBROS employees salary calculator and employee person info
 
 from datetime import datetime
 
-from flask import (Flask, make_response, redirect, render_template, request,
-                   url_for)
+from flask import Flask, make_response, redirect, render_template, request, url_for
 
 # Library from own
 from emp.emp_mongodb import EmpInfo
@@ -37,34 +36,13 @@ def index():
     """
     链接至 index.html, 同时也输出日期
     """
-    # Get ID from list from data
-    find_all_id = _work_list_db.find({})
-    all_id = [x["_id"] for x in find_all_id]
-    err_title = ""
-    not_register_emp = ""
-    err_exception_msg = ""
-
-    if request.method == "POST":
-        file_input = request.files["file"]
-        try:
-            emp_salary = EmpSalary(file_input)
-            if len(emp_salary.not_register) == 0:  # pylint: disable=E1101
-                return render_template("complete.html")
-            else:
-                err_title = "This all members not in website:"
-                not_register_emp = emp_salary.not_register  # pylint: disable=E1101
-        except Exception as err:  # pylint: disable=W0703
-            err_title = "You have error message:"
-            err_exception_msg = err
+    title = "Employee work system"
 
     return render_template(
         "index.html",
-        date=_date_now,
-        all_id=all_id,
-        err_title=err_title,
-        err_emp=not_register_emp,
-        err_exception_msg=err_exception_msg,
+        title=title,
     )
+
 
 @app.route("/user", methods=["GET", "POST"])
 def user():
@@ -99,6 +77,7 @@ def user():
         err_emp=not_register_emp,
         err_exception_msg=err_exception_msg,
     )
+
 
 @app.route("/add", methods=["GET", "POST"])
 def add_emp():
@@ -201,6 +180,7 @@ def all_list(ids: str):
         total_emp_on_list=total_emp_on_list,
     )
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register"""
@@ -223,22 +203,23 @@ def register():
     new_members = {
         "username": username,
         "password": generate_password,
-        "company_name": str(company_name).upper()
+        "company_name": str(company_name).upper(),
     }
 
     if request.method == "POST":
         if len(check_members_count) == 0:
             _members.insert_one(new_members)
-            return redirect(url_for('index'))
+            return redirect(url_for("index"))
         else:
             for check_user in check_members_count:
-                if check_user['username'] == username:
+                if check_user["username"] == username:
                     msg = "Members is exists"
                 else:
                     _members.insert_one(new_members)
-                    return redirect(url_for('index'))
+                    return redirect(url_for("index"))
 
     return render_template("register.html", form=form, msg=msg)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -252,15 +233,17 @@ def login():
         get_password = form.password.data
 
         for member in check_members:
-            com = member['company_name'].split(" ")
+            com = member["company_name"].split(" ")
 
-            if member['username'] == get_username and _pass.check_password(get_password, member['password']):
-                resp = make_response(redirect(url_for('index')))
-                resp.set_cookie('userID', "".join(com))
+            if member["username"] == get_username and _pass.check_password(
+                get_password, member["password"]
+            ):
+                resp = make_response(redirect(url_for("index")))
+                resp.set_cookie("userID", "".join(com))
                 return resp
             else:
                 msg = "Members doesn't exists"
-        
+
     return render_template("login.html", form=form, msg=msg)
 
 

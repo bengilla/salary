@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width={device-width}, initial-scale=1.0">
-    <title>TBROS - {% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='images/tb.ico') }}" rel="shortcut icon">
@@ -13,12 +13,8 @@
 
 <body class="bg-slate-200">
 
-    <header id="header" class="w-full h-20 font-bold text-center print:hidden">
-        <div class="bg-slate-400 rounded-b-[1rem]">
-            <a href="{{ url_for('index') }}">
-                <h1 class="p-6 text-xl sm:text-2xl hover:text-white">Employee Work Sheet System</h1>
-            </a>
-        </div>
+    <header id="header" class="w-full print:hidden">
+        {% block header %}{% endblock %}
     </header>
 
     <main id="content" class="mb-auto">
@@ -26,9 +22,7 @@
     </main>
 
     <footer id="footer" class="w-full pt-2 h-10 text-[0.8rem] font-bold text-center bg-slate-200 border-t-[1px] border-slate-800 fixed bottom-0 print:hidden">
-        <div>
-            <span>© tbros ventures sdn bhd</span>
-        </div>
+        {% block footer %}{% endblock %}
     </footer>
 
 </body>

@@ -1,6 +1,26 @@
 {% extends 'base.html' %}
 {% block title %}Index{% endblock %}
 
+<!-- Header -->
+{% block header %}
+<div class="h-20 flex justify-between bg-slate-400 rounded-b-[1rem]">
+    <div class="px-4 font-bold place-self-center">
+        <a href="{{ url_for('index') }}">
+            <h1 class="px-6 text-xl sm:text-2xl">{{ title }}</h1>
+        </a>
+    </div>
+    <div class="flex px-8">
+        <div class="px-4 place-self-center hover:text-white transition">
+            <a href="{{ url_for('login') }}">Login</a>
+        </div>
+        <div class="px-4 place-self-center hover:text-white transition">
+            <a href="{{ url_for('register') }}">Register</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Content -->
 {% block content %}
 <section class="w-full">
 
@@ -9,5 +29,9 @@
     </div>
 
 </section>
-<!-- Testing -->
+{% endblock %}
+
+<!-- Footer -->
+{% block footer %}
+<span>© {{ title }}</span>
 {% endblock %}
