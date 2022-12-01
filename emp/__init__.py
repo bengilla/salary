@@ -40,12 +40,17 @@ class EmpInfo:
                 store_emp_ic.append(emp_ic["ic"])
             return store_emp_ic
 
+        if not form.img_employee.data:
+            img_upload = "./static/images/no-data.jpg"
+        else:
+            img_upload = form.img_employee.data
+
         # 如果员工不在库里，执行
         if form.ic.data not in check_emp():
             new_emp = {
                 # "_id": form.name.data.split(" ")[0].lower() + form.ic.data[-4:],
                 "_id": form.name.data.split(" ")[0].lower(),
-                "img_employee": self.img_convert.img_base64(form.img_employee.data),
+                "img_employee": self.img_convert.img_base64(img_upload),
                 "name": form.name.data.title(),
                 "ic": form.ic.data,
                 "pay_hour": form.pay_hour.data,

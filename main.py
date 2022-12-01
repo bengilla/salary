@@ -1,6 +1,7 @@
 """
 Project for Employees Salary Calculator and Employee Person Info
 """
+
 import os
 from datetime import datetime
 
@@ -8,7 +9,7 @@ from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
 
 # Library from own
-from emp.emp_mongodb import EmpInfo
+from emp import EmpInfo
 from excels import EmpSalary
 from modules.cookie import Cookie
 from modules.form import CreateForm, EditForm, LoginForm, RegisterForm
@@ -21,8 +22,9 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 # Work List MongoDB connect
-_work_list_db = MongoDB().work_hour_collection()
-_members = MongoDB().user_collection()
+_mongodb = MongoDB()
+# _work_list_db = MongoDB().work_hour_collection()
+# _members = MongoDB().user_collection()
 
 # Get Emp info from MongoDB
 _empinfo = EmpInfo()
@@ -45,7 +47,7 @@ def index():
     title = "Employee work system - Login"
 
     form = LoginForm()
-    check_members = _members.find({})
+    check_members = _mongodb.user_collection().find({})
     msg = ""
 
     if request.method == "POST":
@@ -81,7 +83,8 @@ def user():
     title = _cookie.get_cookie("userID")
 
     # Get ID from list from data
-    find_all_id = _work_list_db.find({})
+    get_mongo = _mongodb.work_hour_collection()
+    find_all_id = get_mongo.find({})
     all_id = [x["_id"] for x in find_all_id]
     err_title = ""
     not_register_emp = ""
@@ -122,6 +125,7 @@ def add_emp():
 
     form = CreateForm()
     msg = ""
+
     if request.method == "POST":
         create_emp = _empinfo.emp_create()
         if create_emp:
@@ -201,7 +205,7 @@ def all_list(ids: str):
     """
     title = _cookie.get_cookie("userID")
 
-    emp_one = _work_list_db.find_one({"_id": ids})  # 寻找月份工人列表
+    emp_one = _mongodb.work_hour_collection().find_one({"_id": ids})  # 寻找月份工人列表
     emp_output = emp_one["emp_work_hours"]
     sort_emp_dict = dict(sorted(emp_output.items()))
 
@@ -221,7 +225,7 @@ def all_list(ids: str):
     output_month = ids.split(" ")[0]
 
     # 所有mongoDB资料
-    all_documents = _work_list_db.find({})
+    all_documents = _mongodb.work_hour_collection().find({})
     document_id = [x["_id"] for x in all_documents]
 
     return render_template(
@@ -241,7 +245,7 @@ def register():
     title = "Employee work system - Register"
 
     form = RegisterForm()
-    get_emp = _members.find({})
+    get_emp = _mongodb.user_collection().find({})
     msg = ""
 
     # From register.html Form
@@ -264,14 +268,14 @@ def register():
 
     if request.method == "POST":
         if len(check_members_count) == 0:
-            _members.insert_one(new_members)
+            _mongodb.user_collection().insert_one(new_members)
             return redirect(url_for("index"))
         else:
             for check_user in check_members_count:
                 if check_user["username"] == username:
                     msg = "Members is exists"
                 else:
-                    _members.insert_one(new_members)
+                    _mongodb.user_collection().insert_one(new_members)
                     return redirect(url_for("index"))
 
     return render_template("register.html", form=form, msg=msg, title=title)
@@ -279,6 +283,7 @@ def register():
 
 @app.route("/logout")
 def logout():
+    """Logout"""
     resp = _cookie.empty_cookie(page="index", cookie_name="userID")
     return resp
 

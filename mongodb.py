@@ -25,7 +25,7 @@ class MongoDB:
         #     ],
         #     serverSelectionTimeoutMS=5000,
         # )
-        
+
     def user_collection(self):
         """
         会员资料

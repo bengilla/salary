@@ -3,10 +3,15 @@ Form module
 CreateForm, EditForm
 """
 
-
 from flask_wtf import FlaskForm
-from wtforms import (FileField, FloatField, PasswordField, SelectField,
-                     StringField, SubmitField)
+from wtforms import (
+    FileField,
+    FloatField,
+    PasswordField,
+    SelectField,
+    StringField,
+    SubmitField,
+)
 from wtforms.validators import DataRequired
 
 
@@ -24,7 +29,6 @@ class EditForm(FlaskForm):
 
 
 # Class Create Form
-# Inherent Edit Form
 class CreateForm(EditForm, FlaskForm):
     """Create Form and inherent to Edit Form"""
 
@@ -48,7 +52,8 @@ class CreateForm(EditForm, FlaskForm):
         ],
     )
     finger_print = StringField("finger print")
-    
+
+
 class LoginForm(FlaskForm):
     """Login Form"""
 
@@ -56,6 +61,7 @@ class LoginForm(FlaskForm):
     password = PasswordField("password", validators=[DataRequired()])
 
     submit = SubmitField("submit")
+
 
 class RegisterForm(FlaskForm):
     """Register Form"""
