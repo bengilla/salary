@@ -78,8 +78,8 @@ def index():
     )
 
 
-@auth.login_required
 @app.route("/add", methods=["GET", "POST"])
+@auth.login_required
 def add_emp():
     """
     建立员工资料，如果员工已存在就会显示 msg
@@ -119,8 +119,8 @@ def info_emp(ids: str):
     return render_template("emp.html", info=info, emp_name=emp_name)
 
 
-@auth.login_required
 @app.route("/edit/<ids>", methods=["GET", "POST"])
+@auth.login_required
 def edit_emp(ids: str):
     """修改员工资料, 只是修改 ic, contact, address, pay"""
     form = EditForm()
@@ -139,8 +139,8 @@ def edit_emp(ids: str):
     return render_template("edit.html", form=form, edit_emp=get_emp)
 
 
-@auth.login_required
 @app.route("/delete/<ids>")
+@auth.login_required
 def delete_emp(ids: str):
     """删除员工资料"""
     _empinfo.emp_delete(ids)
