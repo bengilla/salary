@@ -13,16 +13,26 @@
 
 <body class="bg-slate-200">
 
-    <header id="header" class="w-full print:hidden">
-        {% block header %}{% endblock %}
+    <header id="header" class="w-full h-20 bg-slate-400 rounded-b-2xl print:hidden">
+        <div class="h-full flex flex-row justify-between place-self-center">
+            <div class="rounded-b-[1rem] place-self-center">
+                <div class="w-full px-4 font-bold">
+                    <h1 class="px-6 text-xl sm:text-2xl">{{ title }}</h1>
+                </div>
+            </div>
+            <div class="mr-4 px-4 flex gap-4 place-self-center">
+                {% block header %}{% endblock %}
+            </div>
     </header>
 
     <main id="content" class="mb-auto">
         {% block content %}{% endblock %}
     </main>
 
-    <footer id="footer" class="w-full pt-2 h-10 text-[0.8rem] font-bold text-center bg-slate-200 border-t-[1px] border-slate-800 fixed bottom-0 print:hidden">
-        {% block footer %}{% endblock %}
+    <footer id="footer" class="w-full h-10 text-[0.8rem] font-bold text-center bg-slate-200 border-t-[1px] border-slate-800 fixed bottom-0 print:hidden">
+        <div class="h-full flex justify-center items-center">
+            <span>© {{ title }}</span>
+        </div>
     </footer>
 
 </body>

@@ -1,8 +1,12 @@
 {% extends 'base.html' %}
 {% block title %}salary list{% endblock %}
 
+{% block header %}
+<a href="{{ url_for('user') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
+{% endblock %}
+
 {% block content %}
-<section id="list" class="mb-16 flex justify-center">
+<section id="list" class="pt-8 mb-16 flex justify-center">
     <div class="max-w-5xl">
         <!-- Dropdown Menu -->
 
