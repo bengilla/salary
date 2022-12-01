@@ -1,5 +1,6 @@
 dnspython
 flask-wtf
+flask_httpauth
 gunicorn
 opencv-python
 pandas
