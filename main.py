@@ -44,7 +44,6 @@ def verify_password(username, password):
 
 
 @app.route("/", methods=["GET", "POST"])
-@auth.login_required
 def index():
     """
     链接至 index.html, 同时也输出日期
@@ -79,6 +78,7 @@ def index():
     )
 
 
+@auth.login_required
 @app.route("/add", methods=["GET", "POST"])
 def add_emp():
     """
@@ -119,6 +119,7 @@ def info_emp(ids: str):
     return render_template("emp.html", info=info, emp_name=emp_name)
 
 
+@auth.login_required
 @app.route("/edit/<ids>", methods=["GET", "POST"])
 def edit_emp(ids: str):
     """修改员工资料, 只是修改 ic, contact, address, pay"""
@@ -138,6 +139,7 @@ def edit_emp(ids: str):
     return render_template("edit.html", form=form, edit_emp=get_emp)
 
 
+@auth.login_required
 @app.route("/delete/<ids>")
 def delete_emp(ids: str):
     """删除员工资料"""
