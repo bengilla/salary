@@ -23,8 +23,6 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 # Work List MongoDB connect
 _mongodb = MongoDB()
-# _work_list_db = MongoDB().work_hour_collection()
-# _members = MongoDB().user_collection()
 
 # Get Emp info from MongoDB
 _empinfo = EmpInfo()
