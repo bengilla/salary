@@ -149,6 +149,7 @@ def delete_emp(ids: str):
 
 
 @app.route("/all_list/<ids>", methods=["GET"])
+@auth.login_required
 def all_list(ids: str):
     """当月发工资列表"""
     emp_one = _work_list_db.find_one({"_id": ids})  # 寻找月份工人列表
