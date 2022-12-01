@@ -99,6 +99,7 @@ def add_emp():
 
 
 @app.route("/all")
+@auth.login_required
 def all_emp():
     """浏览全部员工"""
     count = 0
