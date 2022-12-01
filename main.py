@@ -2,9 +2,12 @@
 Project for TBROS employees salary calculator and employee person info
 """
 
+import os
 from datetime import datetime
 
+from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
+from flask_httpauth import HTTPBasicAuth
 
 # Library from own
 # from camera import Camera
@@ -26,8 +29,22 @@ _empinfo = EmpInfo()
 # Normal get date now
 _date_now = datetime.now()
 
+# auth
+load_dotenv()
+auth = HTTPBasicAuth()
+
+user_password = {"boon": os.getenv("USER_PASSWORD")}
+
+
+@auth.verify_password
+def verify_password(username, password):
+    """Username and Password"""
+    if username in user_password and password == user_password.get(username):
+        return username
+
 
 @app.route("/", methods=["GET", "POST"])
+@auth.login_required
 def index():
     """
     链接至 index.html, 同时也输出日期
@@ -162,6 +179,7 @@ def all_list(ids: str):
         total_cash=total_cash,
         total_emp_on_list=total_emp_on_list,
     )
+
 
 if __name__ == "__main__":
     app.run(debug=True)
