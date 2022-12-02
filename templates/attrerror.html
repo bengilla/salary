@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}new employee{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<section id="add" class="w-full">
+    <div class="w-full flex justify-center">
+        <div>
+            <h1 class="pt-12 text-4xl font-bold text-center">Login Error</h1>
+            <span class="text-center">
+                Please Login
+                <a href="{{ url_for('index') }}" class="text-orange-700 underline">login page</a>
+            </span>
+        </div>
+    </div>
+</section>
+{% endblock %}

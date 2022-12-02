@@ -25,6 +25,7 @@ class MongoDB:
         #     ],
         #     serverSelectionTimeoutMS=5000,
         # )
+        self.collection = self.conn[os.getenv("USER_CONFIRM")]
 
     def user_collection(self):
         """
@@ -37,12 +38,10 @@ class MongoDB:
         """
         链接至 emp-info
         """
-        collection = self.conn["TBROS"]
-        return collection["emp-info"]
+        return self.collection["emp-info"]
 
     def work_hour_collection(self):
         """
         链接至 emp-<年份>
         """
-        collection = self.conn["TBROS"]
-        return collection[f"emp-{dt.datetime.now().year}"]
+        return self.collection[f"emp-{dt.datetime.now().year}"]
