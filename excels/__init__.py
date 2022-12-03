@@ -6,7 +6,7 @@ import pendulum
 
 from emp import EmpInfo
 from excels.excel_module import ReadExcel, TimeCalculation
-from mongodb import MongoDB
+from modules.mongodb import MongoDB
 
 
 class EmpSalary:
@@ -39,6 +39,7 @@ class EmpSalary:
 
         # 列出没有名字在网站的，等于说没有这个人的工资/天
         web_name = [x["name"].lower() for x in self._empinfo.emp_info()]
+        print(web_name)
         excel_name = [x for x in self._name]
         # 总合
         self.not_register = [x for x in excel_name if x not in web_name]

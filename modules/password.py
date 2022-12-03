@@ -1,4 +1,6 @@
-"""Password Section"""
+"""
+Password Section
+"""
 
 import bcrypt
 

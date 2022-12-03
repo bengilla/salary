@@ -13,8 +13,8 @@ from emp import EmpInfo
 from excels import EmpSalary
 from modules.cookie import Cookie
 from modules.form import CreateForm, EditForm, LoginForm, RegisterForm
+from modules.mongodb import MongoDB
 from modules.password import Password
-from mongodb import MongoDB
 
 # 设置
 load_dotenv()
@@ -43,16 +43,16 @@ def index():
     链接至 index.html, 同时也输出日期
     """
     title = "Employee work system - Login"
+    error = ""
 
     form = LoginForm()
-    check_members = _mongodb.user_collection().find({})
-    msg = ""
+    check_users = _mongodb.user_collection().find({})
 
     if request.method == "POST":
         get_username = form.username.data
         get_password = form.password.data
 
-        for member in check_members:
+        for member in check_users:
             com = member["company_name"]
 
             if member["username"] == get_username and _pass.check_password(
@@ -64,12 +64,13 @@ def index():
                 )
                 return resp
             else:
-                msg = "Members doesn't exists"
+                error = "Invalid credentials, please register"
 
+    # if login direct to user page else to login page
     if request.cookies.get("userID"):
         return redirect(url_for("user"))
     else:
-        return render_template("index.html", title=title, form=form, msg=msg)
+        return render_template("index.html", title=title, form=form, error=error)
 
 
 @app.route("/user", methods=["GET", "POST"])
@@ -122,16 +123,16 @@ def add_emp():
     title = _cookie.get_cookie("userID")
 
     form = CreateForm()
-    msg = ""
+    error = ""
 
     if request.method == "POST":
         create_emp = _empinfo.emp_create()
         if create_emp:
             return redirect("/all")
         else:
-            msg = "Employee Exists"
+            error = "Employee Exists"
 
-    return render_template("add.html", form=form, msg=msg, title=title)
+    return render_template("add.html", form=form, title=title, error=error)
 
 
 @app.route("/all")
@@ -244,7 +245,7 @@ def register():
 
     form = RegisterForm()
     get_emp = _mongodb.user_collection().find({})
-    msg = ""
+    error = ""
 
     # From register.html Form
     username = form.username.data
@@ -252,7 +253,7 @@ def register():
     company_name = form.company_name.data
 
     # Members in list
-    check_members_count = [list_member for list_member in get_emp]
+    users_list = [list_member["username"] for list_member in get_emp]
 
     # Password to hash
     generate_password = _pass.create_password(password)
@@ -265,18 +266,17 @@ def register():
     }
 
     if request.method == "POST":
-        if len(check_members_count) == 0:
+        if len(users_list) == 0:
             _mongodb.user_collection().insert_one(new_members)
             return redirect(url_for("index"))
         else:
-            for check_user in check_members_count:
-                if check_user["username"] == username:
-                    msg = "Members is exists"
-                else:
-                    _mongodb.user_collection().insert_one(new_members)
-                    return redirect(url_for("index"))
+            if username not in users_list:
+                _mongodb.user_collection().insert_one(new_members)
+                return redirect(url_for("index"))
+            else:
+                error = "You have registed, please login"
 
-    return render_template("register.html", form=form, msg=msg, title=title)
+    return render_template("register.html", form=form, title=title, error=error)
 
 
 @app.route("/logout")
