@@ -20,36 +20,40 @@ class EmpSalary:
         self.read_excel = ReadExcel(self.filename)
 
         # 读取文件的日和月
-        self._name: list = self.read_excel.get_name()
-        self._month: int = self.read_excel._date.month
-        self._day: list = self.read_excel.get_day()
+        self._name: list = self.read_excel.get_name()  # Get all name in excel (list)
+        self._month: int = self.read_excel._date.month  # Get month in excel
+        self._day: list = self.read_excel.get_day()  # Get day uin excel (list)
 
-        self._date_from_readexcel: str = self.read_excel._date.date()
+        self._date_from_readexcel: str = (
+            self.read_excel._date.date()
+        )  # Get full date in excel
         self._date = pendulum.datetime(
             self._date_from_readexcel.year,
             self._date_from_readexcel.month,
             self._date_from_readexcel.day,
-        )
-
-        # 读取 EmpInfo 的数据
-        self._empinfo = EmpInfo()
+        )  # Turn date to pendulum format
 
         # 读取全部列表
-        self._get_all_list = self.read_excel.generate_all()
-
-        # 列出没有名字在网站的，等于说没有这个人的工资/天
-        web_name = [x["name"].lower() for x in self._empinfo.emp_info()]
-        print(web_name)
-        excel_name = [x for x in self._name]
-        # 总合
-        self.not_register = [x for x in excel_name if x not in web_name]
+        self._get_all_list = (
+            self.read_excel.generate_all()
+        )  # Get name and work hours in dict
 
         # 执行 main 功能
         self.main()
 
+    def find_no_emp(self) -> list:
+        """Find who not in excel file"""
+        # 列出没有名字在网站的，等于说没有这个人的工资/天
+        _empinfo = EmpInfo()
+        emp_on_web = [x["name"].lower() for x in _empinfo.emp_info()]
+        emp_on_excel = [x for x in self._name]
+        not_register = [x for x in emp_on_excel if x not in emp_on_web]
+        return not_register
+
     def make_emp_info(self, name: str) -> None:
         """执行所有的操作"""
-        emp = self._empinfo.emp_one(name)
+        _empinfo = EmpInfo()
+        emp = _empinfo.emp_one(name)
 
         emp_sum_salary = []
         pay_hour = emp["pay_hour"]
@@ -77,7 +81,7 @@ class EmpSalary:
                     "work_time": time_cal.emp_time[index],
                     "daily_work_hours": time_cal.emp_work_hour,
                 }
-            )
+            )  # full list append to mongodb
 
             # round the salary amount
             sum_salary = round(sum(emp_sum_salary))
@@ -101,7 +105,8 @@ class EmpSalary:
 
     def main(self):
         """导出至 MongoDB"""
-        get_emp_name = self._empinfo.emp_info()
+        _empinfo = EmpInfo()
+        get_emp_name = _empinfo.emp_info()
         emp_name = [x["_id"] for x in get_emp_name]
 
         # 最终输出，计算没人的基本工资

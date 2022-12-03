@@ -93,11 +93,11 @@ def user():
         file_input = request.files["file"]
         try:
             emp_salary = EmpSalary(file_input)
-            if len(emp_salary.not_register) == 0:  # pylint: disable=E1101
+            if len(emp_salary.find_no_emp()) == 0:
                 return render_template("complete.html")
             else:
                 err_title = "This all members not in website:"
-                not_register_emp = emp_salary.not_register  # pylint: disable=E1101
+                not_register_emp = emp_salary.find_no_emp()
         except Exception as err:  # pylint: disable=W0703
             err_title = "You have error message:"
             err_exception_msg = err
@@ -116,9 +116,8 @@ def user():
 @app.route("/add", methods=["GET", "POST"])
 def add_emp():
     """
-    建立员工资料，如果员工已存在就会显示 msg
+    建立员工资料，如果员工已存在就会显示 error
     如果建立成功转至 all.html
-    form = form.py
     """
     title = _cookie.get_cookie("userID")
 

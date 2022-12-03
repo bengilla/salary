@@ -25,14 +25,14 @@ class EmpInfo:
 
     def emp_create(self) -> bool:
         """
-        建立员工资料\n
+        建立员工资料
         """
         form = CreateForm()
         date = dt.datetime.now().strftime("%d-%m-%Y")
 
-        def check_emp():
+        def check_emp() -> list:
             """
-            检查是否员工已经入库
+            检查是否员工已经入库, 检查对象 passport / ic
             """
             store_emp_ic = []
             get_emp = self.emp_info_collection.find({})
@@ -40,6 +40,7 @@ class EmpInfo:
                 store_emp_ic.append(emp_ic["ic"])
             return store_emp_ic
 
+        # 如果没有照片上传，就使用 static/images/no-data.jpg
         if not form.img_employee.data:
             img_upload = "./static/images/no-data.jpg"
         else:
@@ -93,6 +94,7 @@ class EmpInfo:
         """
         get_id = {"_id": ids}
 
+        # 如果没有更改照片，保持原照片
         if img_employee:
             self.emp_info_collection.update_one(
                 get_id,
