@@ -22,14 +22,16 @@ class ReadExcel:
 
     def get_day(self):
         """读取 excel 文件的日期"""
+        num_index = 0
         day_list = [x for x in self._df.loc[2]]
         # 如果 31 生成 16 天，如果没有 31 生成 15 天
-        if 31 not in day_list:
-            num_index = day_list.index(1)
+        if 1 in day_list:
             return day_list[num_index : num_index + 15]
         else:
-            num_index = day_list.index(16)
-            return day_list[num_index : num_index + 16]
+            if 31 in day_list:
+                return day_list[num_index : num_index + 16]
+            else:
+                return day_list[num_index : num_index + 15]
 
     def get_name(self):
         """把所有名字变为列表"""
