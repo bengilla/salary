@@ -25,7 +25,7 @@ class MongoDB:
             ],
             serverSelectionTimeoutMS=5000,
         )
-        
+
         # Collection
         self.collection = conn["TBROS"]
 
