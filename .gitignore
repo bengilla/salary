@@ -7,5 +7,3 @@ env
 *.env
 .idea
 
-work_dir
-camera.py
