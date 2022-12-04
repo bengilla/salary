@@ -1,5 +1,5 @@
 """
-Project for Employees Salary Calculator and Employee Person Info
+User after Login and user page
 """
 
 import os
@@ -13,7 +13,7 @@ from emp import EmpInfo
 from excels import EmpSalary
 from modules.cookie import Cookie
 from modules.form import CreateForm, EditForm, LoginForm, RegisterForm
-from modules.mongodb import MongoDB
+from modules.mongo import MongoDB
 from modules.password import Password
 
 # 设置
@@ -85,6 +85,7 @@ def user():
     get_mongo = _mongodb.work_hour_collection()
     find_all_id = get_mongo.find({})
     all_id = [x["_id"] for x in find_all_id]
+
     err_title = ""
     not_register_emp = ""
     err_exception_msg = ""
@@ -156,8 +157,7 @@ def info_emp(ids: str):
     """
     浏览单位员工
     """
-    cookie_name = request.cookies.get("userID")
-    title = cookie_name
+    title = _cookie.get_cookie("userID")
 
     info = _empinfo.emp_one(ids)
     emp_name = info["name"]

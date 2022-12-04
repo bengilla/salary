@@ -7,7 +7,7 @@ import datetime as dt
 # 自身库
 from modules.form import CreateForm
 from modules.image import ImageConvert
-from modules.mongodb import MongoDB
+from modules.mongo import MongoDB
 
 # 建立员工模组
 

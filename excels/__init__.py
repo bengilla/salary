@@ -6,7 +6,7 @@ import pendulum
 
 from emp import EmpInfo
 from excels.excel_module import ReadExcel, TimeCalculation
-from modules.mongodb import MongoDB
+from modules.mongo import MongoDB
 
 
 class EmpSalary:
