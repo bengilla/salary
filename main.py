@@ -15,6 +15,7 @@ from modules.cookie import Cookie
 from modules.form import CreateForm, EditForm, LoginForm, RegisterForm
 from modules.mongo import MongoDB
 from modules.password import Password
+from user_module import user_login
 
 # 设置
 load_dotenv()
@@ -285,17 +286,17 @@ def logout():
     return resp
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """Page Not Found"""
-    title = _cookie.get_cookie("userID")
-    return render_template("404.html", title=title), 404
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     """Page Not Found"""
+#     title = _cookie.get_cookie("userID")
+#     return render_template("404.html", title=title), 404
 
 
-@app.errorhandler(AttributeError)
-def not_login(e):
-    """Not Login"""
-    return render_template("attrerror.html")
+# @app.errorhandler(AttributeError)
+# def not_login(e):
+#     """Not Login"""
+#     return render_template("attrerror.html")
 
 
 if __name__ == "__main__":
