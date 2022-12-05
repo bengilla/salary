@@ -3,6 +3,7 @@ User Section
 """
 from datetime import datetime
 
+import requests
 from flask import Blueprint, redirect, render_template, request, url_for
 
 # Library from own
@@ -14,7 +15,7 @@ from modules.mongo import MongoDB
 
 user = Blueprint("user", __name__)
 
-# Work List MongoDB connect
+# # Work List MongoDB connect
 _mongodb = MongoDB()
 
 # Get Emp info from MongoDB
@@ -25,6 +26,11 @@ _date_now = datetime.now()
 
 # Cookie
 _cookie = Cookie()
+
+a = requests.get(cookies="userID")
+print(a)
+# title = _cookie.get_cookie("userID")
+# print(title)
 
 
 @user.route("/user", methods=["GET", "POST"])

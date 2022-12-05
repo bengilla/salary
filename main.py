@@ -7,21 +7,27 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
 
-# Library from own
+# Modules from own library
 from modules.cookie import Cookie
 from modules.form import LoginForm, RegisterForm
 from modules.mongo import MongoDB
 from modules.password import Password
+
+# Flask Blueprint
 from user.routes import user
 
-# 设置
+# Setup
 load_dotenv()
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+
+# Add blueprint section
 app.register_blueprint(user)
 
 # Work List MongoDB connect
-_mongodb = MongoDB()
+mongo = MongoDB()
+collection = mongo.conn["USER_DATA"]
+member_db = collection["users"]
 
 # Password
 _pass = Password()
@@ -39,7 +45,7 @@ def index():
     error = ""
 
     form = LoginForm()
-    check_users = _mongodb.user_collection().find({})
+    check_users = member_db.find({})
 
     if request.method == "POST":
         get_username = form.username.data
@@ -74,7 +80,7 @@ def register():
     title = "Employee work system - Register"
 
     form = RegisterForm()
-    get_emp = _mongodb.user_collection().find({})
+    get_emp = member_db.find({})
     error = ""
 
     # From register.html Form
@@ -97,11 +103,11 @@ def register():
 
     if request.method == "POST":
         if len(users_list) == 0:
-            _mongodb.user_collection().insert_one(new_members)
+            member_db.insert_one(new_members)
             return redirect(url_for("index"))
         else:
             if username not in users_list:
-                _mongodb.user_collection().insert_one(new_members)
+                member_db.insert_one(new_members)
                 return redirect(url_for("index"))
             else:
                 error = "You have registed, please login"
