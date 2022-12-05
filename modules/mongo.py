@@ -30,10 +30,10 @@ class MongoDB:
     # After user login
     def info_collection(self):
         """链接至 emp-info"""
-        self.collection = self.conn[os.getenv("USER_CONFIRM")]
-        return self.collection["emp-info"]
+        collection = self.conn["TBROS"]
+        return collection["emp-info"]
 
     def work_hour_collection(self):
         """链接至 emp-<年份>"""
-        self.collection = self.conn[os.getenv("USER_CONFIRM")]
-        return self.collection[f"emp-{dt.datetime.now().year}"]
+        collection = self.conn["TBROS"]
+        return collection[f"emp-{dt.datetime.now().year}"]
