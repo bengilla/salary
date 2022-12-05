@@ -15,6 +15,7 @@ class MongoDB:
 
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
+        load_dotenv()
         self.conn = MongoClient(host="127.0.0.1", port=27017)
 
         # Real Server MongoDB --------------------------------

@@ -2,7 +2,7 @@
 {% block title %}new employee{% endblock %}
 
 {% block header %}
-<a href="{{ url_for('user') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
+<a href="{{ url_for('user.mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
 {% endblock %}
 
 {% block content %}
@@ -13,7 +13,7 @@
             <p class="text-2xl text-red-500 text-center font-bold">{{ error }}</p>
         </div>
 
-        <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
+        <form action="{{ url_for('user.add_emp') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
             {{ form.csrf_token }}
             <div class="pb-6">
                 {{ form.img_employee.label(class="text-sm") }}

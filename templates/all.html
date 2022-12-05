@@ -2,7 +2,7 @@
 {% block title %}employees{% endblock %}
 
 {% block header %}
-<a href="{{ url_for('user') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
+<a href="{{ url_for('user.mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
 {% endblock %}
 
 {% block content %}
@@ -34,7 +34,7 @@
                                 <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
                             </div>
                             <div class="flex justify-center">
-                                <a href="{{ url_for('edit_emp', ids=i._id) }}">
+                                <a href="{{ url_for('user.edit_emp', ids=i._id) }}">
                                     <button class="w-[3rem] h-7 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 select-none sm:rounded-md sm:py-1 sm:w-32 sm:h-8 sm:text-sm">edit</button></a>
                             </div>
                         </td>
@@ -60,7 +60,7 @@
                                     </th>
                                     <td class="w-full pr-2">
                                         {% if key == 'name' %}
-                                        <a href="{{ url_for('info_emp', ids=i._id) }}">
+                                        <a href="{{ url_for('user.info_emp', ids=i._id) }}">
                                             <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
                                         </a>
                                         {% elif key == 'pay' %}
