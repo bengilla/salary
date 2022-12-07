@@ -1,11 +1,6 @@
 ### Python ###
-venv
 __pycache__
 
 ### env ###
 env
 *.env
-.idea
-
-work_dir
-camera.py
