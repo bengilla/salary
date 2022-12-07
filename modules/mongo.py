@@ -27,6 +27,12 @@ class MongoDB:
         #     serverSelectionTimeoutMS=5000,
         # )
 
+    # user data section
+    def user_info(self):
+        """User Data"""
+        collection = self.conn["USER_DATA"]
+        return collection["users"]
+
     # After user login
     def info_collection(self):
         """链接至 emp-info"""

@@ -25,9 +25,7 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.register_blueprint(user)
 
 # Work List MongoDB connect
-mongo = MongoDB()
-collection = mongo.conn["USER_DATA"]
-member_db = collection["users"]
+_mongo = MongoDB()
 
 # Password
 _pass = Password()
@@ -45,14 +43,14 @@ def index():
     error = ""
 
     form = LoginForm()
-    check_users = member_db.find({})
+    check_users = _mongo.user_info().find({})
 
     if request.method == "POST":
         get_username = form.username.data
         get_password = form.password.data
 
         for member in check_users:
-            com = member["company_name"]
+            company_name = member["company_name"]
 
             if member["username"] == get_username and _pass.check_password(
                 get_password, member["password"]
@@ -61,7 +59,7 @@ def index():
                 resp = _cookie.set_cookie(
                     page="user.mainpage",
                     cookie_name="userID",
-                    cookie_value=com,
+                    cookie_value=company_name,
                 )
                 return resp
             else:
@@ -80,7 +78,7 @@ def register():
     title = "Employee work system - Register"
 
     form = RegisterForm()
-    get_emp = member_db.find({})
+    get_emp = _mongo.user_info().find({})
     error = ""
 
     # From register.html Form
@@ -103,11 +101,11 @@ def register():
 
     if request.method == "POST":
         if len(users_list) == 0:
-            member_db.insert_one(new_members)
+            _mongo.user_info().insert_one(new_members)
             return redirect(url_for("index"))
         else:
             if username not in users_list:
-                member_db.insert_one(new_members)
+                _mongo.user_info().insert_one(new_members)
                 return redirect(url_for("index"))
             else:
                 error = "You have registed, please login"
