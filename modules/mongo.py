@@ -26,20 +26,19 @@ class MongoDB:
         #     ],
         #     serverSelectionTimeoutMS=5000,
         # )
+        self.user_info = self.conn["USER_INFO"]
+        self.user_data = self.conn["USER_DATA"]
 
     # user data section
-    def user_info(self):
+    def user_collection(self):
         """User Data"""
-        collection = self.conn["USER_DATA"]
-        return collection["users"]
+        return self.user_info["users"]
 
     # After user login
     def info_collection(self):
         """链接至 emp-info"""
-        collection = self.conn["TBROS"]
-        return collection["emp-info"]
+        return self.user_data["emp-info"]
 
     def work_hour_collection(self):
         """链接至 emp-<年份>"""
-        collection = self.conn["TBROS"]
-        return collection[f"emp-{dt.datetime.now().year}"]
+        return self.user_data[f"emp-{dt.datetime.now().year}"]

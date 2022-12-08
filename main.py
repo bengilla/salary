@@ -12,7 +12,6 @@ from modules.cookie import Cookie
 from modules.form import LoginForm, RegisterForm
 from modules.mongo import MongoDB
 from modules.password import Password
-
 # Flask Blueprint
 from user.routes import user
 
@@ -43,7 +42,7 @@ def index():
     error = ""
 
     form = LoginForm()
-    check_users = _mongo.user_info().find({})
+    check_users = _mongo.user_collection().find({})
 
     if request.method == "POST":
         get_username = form.username.data
@@ -78,7 +77,7 @@ def register():
     title = "Employee work system - Register"
 
     form = RegisterForm()
-    get_emp = _mongo.user_info().find({})
+    get_emp = _mongo.user_collection().find({})
     error = ""
 
     # From register.html Form
@@ -101,11 +100,11 @@ def register():
 
     if request.method == "POST":
         if len(users_list) == 0:
-            _mongo.user_info().insert_one(new_members)
+            _mongo.user_collection().insert_one(new_members)
             return redirect(url_for("index"))
         else:
             if username not in users_list:
-                _mongo.user_info().insert_one(new_members)
+                _mongo.user_collection().insert_one(new_members)
                 return redirect(url_for("index"))
             else:
                 error = "You have registed, please login"
