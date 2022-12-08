@@ -15,15 +15,14 @@ from modules.mongo import MongoDB
 class EmpInfo:
     """工作与员工讯息"""
 
-    def __init__(self) -> None:
+    def __init__(self, db_title: str) -> None:
         """
         加载 mongodb 链接与读取
         """
         mongodb = MongoDB()
-        self.emp_info_collection = mongodb.info_collection()
+        self.db_title = db_title
+        self.emp_info_collection = mongodb.info_collection(self.db_title)
         self.img_convert = ImageConvert()
-
-        print("Emp Info")
 
     def emp_create(self) -> bool:
         """

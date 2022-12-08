@@ -12,11 +12,10 @@ from modules.mongo import MongoDB
 class EmpSalary:
     """这是最终到处所有计算后的数据"""
 
-    def __init__(self, filename) -> None:
+    def __init__(self, filename, db_title: str) -> None:
         self.data = {}
         self.filename = filename
-
-        print("Emp Salary")
+        self.db_title = db_title
 
         # 读取导入的文件
         self.read_excel = ReadExcel(self.filename)
@@ -46,7 +45,7 @@ class EmpSalary:
     def find_no_emp(self) -> list:
         """Find who not in excel file"""
         # 列出没有名字在网站的，等于说没有这个人的工资/天
-        _empinfo = EmpInfo()
+        _empinfo = EmpInfo(self.db_title)
         emp_on_web = [x["name"].lower() for x in _empinfo.emp_info()]
         emp_on_excel = [x for x in self._name]
         not_register = [x for x in emp_on_excel if x not in emp_on_web]
@@ -54,7 +53,7 @@ class EmpSalary:
 
     def make_emp_info(self, name: str) -> None:
         """执行所有的操作"""
-        _empinfo = EmpInfo()
+        _empinfo = EmpInfo(self.db_title)
         emp = _empinfo.emp_one(name)
 
         emp_sum_salary = []
@@ -107,7 +106,7 @@ class EmpSalary:
 
     def main(self):
         """导出至 MongoDB"""
-        _empinfo = EmpInfo()
+        _empinfo = EmpInfo(self.db_title)
         get_emp_name = _empinfo.emp_info()
         emp_name = [x["_id"] for x in get_emp_name]
 
@@ -120,7 +119,7 @@ class EmpSalary:
 
         # 上传至 MongoDB
         mongodb = MongoDB()
-        work_hour_collection = mongodb.work_hour_collection()
+        work_hour_collection = mongodb.work_hour_collection(self.db_title)
         send_data = {
             "_id": self._date.format("MMM DD, YYYY"),
             "emp_work_hours": self.data,

@@ -31,9 +31,10 @@ def mainpage():
     """
     # Get cookie
     title = _cookie.get_cookie("userID")
+    db_title = title.upper().replace(" ", "")
 
     # Get ID from list from data
-    get_mongo = _mongodb.work_hour_collection()
+    get_mongo = _mongodb.work_hour_collection(db_title)
     find_all_id = get_mongo.find({})
     all_id = [x["_id"] for x in find_all_id]
 
@@ -43,16 +44,17 @@ def mainpage():
 
     if request.method == "POST":
         file_input = request.files["file"]
-        try:
-            emp_salary = EmpSalary(file_input)
-            if len(emp_salary.find_no_emp()) == 0:
-                return render_template("complete.html")
-            else:
-                err_title = "This all members not in website:"
-                not_register_emp = emp_salary.find_no_emp()
-        except Exception as err:  # pylint: disable=W0703
-            err_title = "You have error message:"
-            err_exception_msg = err
+        emp_salary = EmpSalary(filename=file_input, db_title=db_title)
+        # try:
+        #     emp_salary = EmpSalary(filename=file_input, db_title=db_title)
+        #     if len(emp_salary.find_no_emp()) == 0:
+        #         return render_template("complete.html")
+        #     else:
+        #         err_title = "This all members not in website:"
+        #         not_register_emp = emp_salary.find_no_emp()
+        # except Exception as err:  # pylint: disable=W0703
+        #     err_title = "You have error message:"
+        #     err_exception_msg = err
 
     return render_template(
         "user.html",
@@ -71,8 +73,9 @@ def add_emp():
     建立员工资料，如果员工已存在就会显示 error
     如果建立成功转至 all.html
     """
-    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
+    db_title = title.upper().replace(" ", "")
+    _empinfo = EmpInfo(db_title)
 
     form = CreateForm()
     error = ""
@@ -92,8 +95,9 @@ def all_emp():
     """
     浏览全部员工
     """
-    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
+    db_title = title.upper().replace(" ", "")
+    _empinfo = EmpInfo(db_title)
 
     count = 0
     for _ in _empinfo.emp_info():
@@ -110,8 +114,9 @@ def info_emp(ids: str):
     """
     浏览单位员工
     """
-    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
+    db_title = title.upper().replace(" ", "")
+    _empinfo = EmpInfo(db_title)
 
     info = _empinfo.emp_one(ids)
     emp_name = info["name"]
@@ -123,8 +128,9 @@ def edit_emp(ids: str):
     """
     修改员工资料, 只是修改 ic, contact, address, pay
     """
-    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
+    db_title = title.upper().replace(" ", "")
+    _empinfo = EmpInfo(db_title)
 
     form = EditForm()
     get_emp = _empinfo.emp_one(ids)
@@ -158,8 +164,9 @@ def all_list(ids: str):
     当月发工资列表
     """
     title = _cookie.get_cookie("userID")
+    db_title = title.upper().replace(" ", "")
 
-    emp_one = _mongodb.work_hour_collection().find_one({"_id": ids})  # 寻找月份工人列表
+    emp_one = _mongodb.work_hour_collection(db_title).find_one({"_id": ids})  # 寻找月份工人列表
     emp_output = emp_one["emp_work_hours"]
     sort_emp_dict = dict(sorted(emp_output.items()))
 
@@ -179,7 +186,7 @@ def all_list(ids: str):
     output_month = ids.split(" ")[0]
 
     # 所有mongoDB资料
-    all_documents = _mongodb.work_hour_collection().find({})
+    all_documents = _mongodb.work_hour_collection(db_title).find({})
     document_id = [x["_id"] for x in all_documents]
 
     return render_template(
