@@ -23,6 +23,8 @@ class EmpInfo:
         self.emp_info_collection = mongodb.info_collection()
         self.img_convert = ImageConvert()
 
+        print("Emp Info")
+
     def emp_create(self) -> bool:
         """
         建立员工资料

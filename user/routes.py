@@ -17,9 +17,6 @@ user = Blueprint("user", __name__)
 # # Work List MongoDB connect
 _mongodb = MongoDB()
 
-# Get Emp info from MongoDB
-_empinfo = EmpInfo()
-
 # Normal get date now
 _date_now = datetime.now()
 
@@ -74,6 +71,7 @@ def add_emp():
     建立员工资料，如果员工已存在就会显示 error
     如果建立成功转至 all.html
     """
+    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
 
     form = CreateForm()
@@ -94,6 +92,7 @@ def all_emp():
     """
     浏览全部员工
     """
+    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
 
     count = 0
@@ -111,6 +110,7 @@ def info_emp(ids: str):
     """
     浏览单位员工
     """
+    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
 
     info = _empinfo.emp_one(ids)
@@ -123,6 +123,7 @@ def edit_emp(ids: str):
     """
     修改员工资料, 只是修改 ic, contact, address, pay
     """
+    _empinfo = EmpInfo()
     title = _cookie.get_cookie("userID")
 
     form = EditForm()
@@ -146,6 +147,7 @@ def delete_emp(ids: str):
     """
     删除员工资料
     """
+    _empinfo = EmpInfo()
     _empinfo.emp_delete(ids)
     return redirect(url_for("user.all_emp"))
 

@@ -16,6 +16,8 @@ class EmpSalary:
         self.data = {}
         self.filename = filename
 
+        print("Emp Salary")
+
         # 读取导入的文件
         self.read_excel = ReadExcel(self.filename)
 
