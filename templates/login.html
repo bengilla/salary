@@ -13,7 +13,6 @@
             {{ form.csrf_token }}
             <div class="pb-2">
                 {{ form.username.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
                 {{ form.username(class="form-input") }}<br>
                 {% for err in form.username.errors %}
                 <p class="form-error">{{ err }}</p>
@@ -22,7 +21,6 @@
 
             <div class="pb-2">
                 {{ form.password.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
                 {{ form.password(class="form-input") }}<br>
                 {% for err in form.password.errors %}
                 <p class="form-error">{{ err }}</p>

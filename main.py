@@ -44,7 +44,7 @@ def index():
     form = LoginForm()
     check_users = _mongo.user_collection().find({})
 
-    if request.method == "POST":
+    if form.validate_on_submit():
         get_username = form.username.data
         get_password = form.password.data
 
@@ -98,7 +98,7 @@ def register():
         "company_name": str(company_name).upper(),
     }
 
-    if request.method == "POST":
+    if form.validate_on_submit():
         if len(users_list) == 0:
             _mongo.user_collection().insert_one(new_members)
             return redirect(url_for("index"))

@@ -1,9 +1,11 @@
 """
 User Section
 """
+import os
 from datetime import datetime
 
-from flask import Blueprint, redirect, render_template, request, url_for
+from flask import (Blueprint, current_app, redirect, render_template, request,
+                   url_for)
 
 # Library from own
 from emp import EmpInfo
@@ -44,17 +46,16 @@ def mainpage():
 
     if request.method == "POST":
         file_input = request.files["file"]
-        emp_salary = EmpSalary(filename=file_input, db_title=db_title)
-        # try:
-        #     emp_salary = EmpSalary(filename=file_input, db_title=db_title)
-        #     if len(emp_salary.find_no_emp()) == 0:
-        #         return render_template("complete.html")
-        #     else:
-        #         err_title = "This all members not in website:"
-        #         not_register_emp = emp_salary.find_no_emp()
-        # except Exception as err:  # pylint: disable=W0703
-        #     err_title = "You have error message:"
-        #     err_exception_msg = err
+        try:
+            emp_salary = EmpSalary(filename=file_input, db_title=db_title)
+            if len(emp_salary.find_no_emp()) == 0:
+                return render_template("complete.html")
+            else:
+                err_title = "This all members not in website:"
+                not_register_emp = emp_salary.find_no_emp()
+        except Exception as err:  # pylint: disable=W0703
+            err_title = "You have error message:"
+            err_exception_msg = err
 
     return render_template(
         "user.html",
@@ -80,7 +81,7 @@ def add_emp():
     form = CreateForm()
     error = ""
 
-    if request.method == "POST":
+    if form.validate_on_submit():
         create_emp = _empinfo.emp_create()
         if create_emp:
             return redirect("/all")
@@ -135,7 +136,7 @@ def edit_emp(ids: str):
     form = EditForm()
     get_emp = _empinfo.emp_one(ids)
 
-    if request.method == "POST":
+    if form.validate_on_submit():
         img_employee = form.img_employee.data
         ic_card = form.ic.data
         contact = form.contact.data
@@ -153,7 +154,10 @@ def delete_emp(ids: str):
     """
     删除员工资料
     """
-    _empinfo = EmpInfo()
+    title = _cookie.get_cookie("userID")
+    db_title = title.upper().replace(" ", "")
+    _empinfo = EmpInfo(db_title)
+    
     _empinfo.emp_delete(ids)
     return redirect(url_for("user.all_emp"))
 

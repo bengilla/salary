@@ -17,7 +17,7 @@
             {{ form.csrf_token }}
             <div class="pb-6">
                 {{ form.img_employee.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
+                <!-- <span class="text-xs text-red-500">(required)</span><br> -->
                 {{ form.img_employee(class="w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-lg file:border-0
@@ -31,7 +31,7 @@
 
             <div class="pb-2">
                 {{ form.name.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
+                <!-- <span class="text-xs text-red-500">(required)</span><br> -->
                 {{ form.name(class="form-input") }}<br>
                 {% for err in form.name.errors %}
                 <p class="form-error">{{ err }}</p>
@@ -40,7 +40,7 @@
 
             <div class="pb-2">
                 {{ form.ic.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
+                <!-- <span class="text-xs text-red-500">(required)</span><br> -->
                 {{ form.ic(class="form-input") }}<br>
                 {% for err in form.ic.errors %}
                 <p class="form-error">{{ err }}</p>
@@ -49,7 +49,7 @@
 
             <div class="pb-2">
                 {{ form.pay_hour.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
+                <!-- <span class="text-xs text-red-500">(required)</span><br> -->
                 {{ form.pay_hour(class="form-input") }}<br>
                 {% for err in form.pay_hour.errors %}
                 <p class="form-error">{{ err }}</p>

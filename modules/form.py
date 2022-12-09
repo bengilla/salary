@@ -4,15 +4,8 @@ CreateForm, EditForm
 """
 
 from flask_wtf import FlaskForm
-from wtforms import (
-    FileField,
-    FloatField,
-    PasswordField,
-    SelectField,
-    StringField,
-    SubmitField,
-)
-from wtforms.validators import DataRequired
+from wtforms import (EmailField, FileField, FloatField, PasswordField,
+                     SelectField, StringField, SubmitField, validators)
 
 
 # Class Edit Form
@@ -32,10 +25,10 @@ class EditForm(FlaskForm):
 class CreateForm(EditForm, FlaskForm):
     """Create Form and inherent to Edit Form"""
 
-    img_employee = FileField("img_employee", validators=[DataRequired()])
-    name = StringField("name", validators=[DataRequired()])
-    pay_hour = FloatField("hour salary", validators=[DataRequired()])
-    ic = StringField("passport / ic", validators=[DataRequired()])
+    img_employee = FileField("img_employee")
+    name = StringField("name", [validators.DataRequired()])
+    pay_hour = FloatField("hour salary", [validators.DataRequired()])
+    ic = StringField("passport / ic", [validators.DataRequired()])
 
     # Optional
     dob = StringField("d.o.b")
@@ -57,8 +50,8 @@ class CreateForm(EditForm, FlaskForm):
 class LoginForm(FlaskForm):
     """Login Form"""
 
-    username = StringField("username", validators=[DataRequired()])
-    password = PasswordField("password", validators=[DataRequired()])
+    username = EmailField("email", [validators.DataRequired()])
+    password = PasswordField("password", [validators.DataRequired()])
 
     submit = SubmitField("submit")
 
@@ -66,8 +59,8 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     """Register Form"""
 
-    username = StringField("username", validators=[DataRequired()])
-    password = PasswordField("password", validators=[DataRequired()])
-    company_name = StringField("company name", validators=[DataRequired()])
+    username = EmailField("email", [validators.DataRequired(), validators.Email()])
+    password = PasswordField("password", [validators.DataRequired(message="Please fill password")])
+    company_name = StringField("company name", [validators.DataRequired(message="Please fill full company name")])
 
     submit = SubmitField("submit")

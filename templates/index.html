@@ -13,19 +13,17 @@
 
         <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
             {{ form.csrf_token }}
-            <div class="pb-2">
-                {{ form.username.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
-                {{ form.username(class="form-input") }}<br>
+            <div class="pb-4">
+                <!-- {{ form.username.label(class="text-sm") }} -->
+                {{ form.username(placeholder="email", class="form-input") }}<br>
                 {% for err in form.username.errors %}
                 <p class="form-error">{{ err }}</p>
                 {% endfor %}
             </div>
 
-            <div class="pb-2">
-                {{ form.password.label(class="text-sm") }}
-                <span class="text-xs text-red-500">(required)</span><br>
-                {{ form.password(class="form-input") }}<br>
+            <div class="pb-4">
+                <!-- {{ form.password.label(class="text-sm") }} -->
+                {{ form.password(placeholder="password", class="form-input") }}<br>
                 {% for err in form.password.errors %}
                 <p class="form-error">{{ err }}</p>
                 {% endfor %}
@@ -33,7 +31,7 @@
 
             <!-- Submit -->
             <div class="flex justify-between">
-                <div class="pb-2">
+                <div class="pb-4">
                     {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
                 </div>
                 <div class="place-self-center">
