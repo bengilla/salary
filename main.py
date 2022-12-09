@@ -41,10 +41,10 @@ def index():
     title = "Employee work system - Login"
     error = ""
 
-    form = LoginForm()
+    form = LoginForm(request.form)
     check_users = _mongo.user_collection().find({})
 
-    if form.validate_on_submit():
+    if request.method == "POST" and form.validate():
         get_username = form.username.data
         get_password = form.password.data
 
@@ -76,29 +76,30 @@ def register():
     """Register"""
     title = "Employee work system - Register"
 
-    form = RegisterForm()
+    form = RegisterForm(request.form)
     get_emp = _mongo.user_collection().find({})
     error = ""
-
-    # From register.html Form
-    username = form.username.data
-    password = form.password.data
-    company_name = form.company_name.data
 
     # Members in list
     users_list = [list_member["username"] for list_member in get_emp]
 
-    # Password to hash
-    generate_password = _pass.create_password(password)
 
-    # dict mongodb
-    new_members = {
-        "username": username,
-        "password": generate_password,
-        "company_name": str(company_name).upper(),
-    }
+    if request.method == "POST" and form.validate():
+        # From register.html Form
+        username = form.username.data.strip()
+        password = form.password.data.strip()
+        company_name = form.company_name.data.strip()
 
-    if form.validate_on_submit():
+        # Password to hash
+        generate_password = _pass.create_password(password)
+
+        # dict mongodb
+        new_members = {
+            "username": username,
+            "password": generate_password,
+            "company_name": str(company_name).upper(),
+        }
+
         if len(users_list) == 0:
             _mongo.user_collection().insert_one(new_members)
             return redirect(url_for("index"))

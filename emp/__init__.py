@@ -4,6 +4,8 @@ Emp operation function
 
 import datetime as dt
 
+from flask import request
+
 # 自身库
 from modules.form import CreateForm
 from modules.image import ImageConvert
