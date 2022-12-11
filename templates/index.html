@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Index{% endblock %}
+{% block title %}Employee Salary System{% endblock %}
 
 <!-- Content -->
 {% block content %}
@@ -14,9 +14,9 @@
         <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
             {{ form.csrf_token }}
             <div class="pb-4">
-                <!-- {{ form.username.label(class="text-sm") }} -->
-                {{ form.username(placeholder="email", class="form-input") }}<br>
-                {% for err in form.username.errors %}
+                <!-- {{ form.email.label(class="text-sm") }} -->
+                {{ form.email(placeholder="email", class="form-input") }}<br>
+                {% for err in form.email.errors %}
                 <p class="form-error">{{ err }}</p>
                 {% endfor %}
             </div>

@@ -54,7 +54,7 @@ class EditForm(FlaskForm):
 class LoginForm(FlaskForm):
     """Login Form"""
 
-    username = EmailField("email", [validators.DataRequired()])
+    email = EmailField("email", [validators.DataRequired()])
     password = PasswordField("password", [validators.DataRequired()])
 
     submit = SubmitField("submit")
@@ -63,7 +63,7 @@ class LoginForm(FlaskForm):
 class RegisterForm(FlaskForm):
     """Register Form"""
 
-    username = EmailField("email", [validators.DataRequired(), validators.Email()])
+    email = EmailField("email", [validators.DataRequired(), validators.Email()])
     password = PasswordField("password", [validators.DataRequired(message="Please fill password")])
     company_name = StringField("company name", [validators.DataRequired(message="Please fill full company name")])
 

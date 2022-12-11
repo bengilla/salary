@@ -44,14 +44,14 @@ def index():
     form = LoginForm(request.form)
     check_users = _mongo.user_collection().find({})
 
-    if request.method == "POST" and form.validate():
-        get_username = form.username.data
+    if form.validate_on_submit():
+        get_email = form.email.data
         get_password = form.password.data
 
         for member in check_users:
             company_name = member["company_name"]
 
-            if member["username"] == get_username and _pass.check_password(
+            if member["email"] == get_email and _pass.check_password(
                 get_password, member["password"]
             ):
                 # set cookie
@@ -81,12 +81,12 @@ def register():
     error = ""
 
     # Members in list
-    users_list = [list_member["username"] for list_member in get_emp]
+    users_list = [list_member["email"] for list_member in get_emp]
 
 
-    if request.method == "POST" and form.validate():
+    if form.validate_on_submit():
         # From register.html Form
-        username = form.username.data.strip()
+        email = form.email.data.strip()
         password = form.password.data.strip()
         company_name = form.company_name.data.strip()
 
@@ -95,7 +95,7 @@ def register():
 
         # dict mongodb
         new_members = {
-            "username": username,
+            "email": email,
             "password": generate_password,
             "company_name": str(company_name).upper(),
         }
@@ -104,7 +104,7 @@ def register():
             _mongo.user_collection().insert_one(new_members)
             return redirect(url_for("index"))
         else:
-            if username not in users_list:
+            if email not in users_list:
                 _mongo.user_collection().insert_one(new_members)
                 return redirect(url_for("index"))
             else:

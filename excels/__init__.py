@@ -104,7 +104,7 @@ class EmpSalary:
         }
         self.data[name.title()] = store_data
 
-    def main(self):
+    def main(self) -> None:
         """导出至 MongoDB"""
         _empinfo = EmpInfo(self.db_title)
         get_emp_name = _empinfo.emp_info()

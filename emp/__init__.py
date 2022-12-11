@@ -4,8 +4,6 @@ Emp operation function
 
 import datetime as dt
 
-from flask import request
-
 # 自身库
 from modules.form import CreateForm
 from modules.image import ImageConvert
@@ -71,27 +69,27 @@ class EmpInfo:
         else:
             return False
 
-    def emp_info(self):
+    def emp_info(self) -> MongoDB:
         """
         读取所有员工资料
         """
         results = self.emp_info_collection.find({})
         return results
 
-    def emp_one(self, ids: str):
+    def emp_one(self, ids: str) -> MongoDB:
         """
         读取单位员工资料
         """
         result = self.emp_info_collection.find_one({"_id": ids})
         return result
 
-    def emp_delete(self, ids: str):
+    def emp_delete(self, ids: str) -> MongoDB:
         """
         删除员工资料
         """
         self.emp_info_collection.delete_one({"_id": ids})
 
-    def emp_edit(self, ids, ic_card, contact, address, pay, img_employee):
+    def emp_edit(self, ids: str, ic_card: str, contact: str, address: str, pay: float, img_employee) -> MongoDB:
         """
         更新员工资料
         """
