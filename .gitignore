@@ -6,3 +6,6 @@ env
 *.env
 
 .vscode
+work_dir
+
+.DS_Store
