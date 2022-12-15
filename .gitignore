@@ -6,4 +6,6 @@ __pycache__
 env
 *.env
 .idea
+.DS_Store
+work_dir
 
