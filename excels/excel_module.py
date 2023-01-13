@@ -23,7 +23,7 @@ class ReadExcel:
     def get_day(self):
         """读取 excel 文件的日期"""
         num_index = 0
-        day_list = [x for x in self._df.loc[2]]
+        day_list = [int(x) for x in self._df.loc[2] if str(x) != "nan"]
         # 如果 31 生成 16 天，如果没有 31 生成 15 天
         if 1 in day_list:
             return day_list[num_index : num_index + 15]

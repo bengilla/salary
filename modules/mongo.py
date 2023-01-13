@@ -8,24 +8,22 @@ import os
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
-
+from pymongo.errors import ServerSelectionTimeoutError
 
 class MongoDB:
     """链接 MongoDB"""
 
     def __init__(self) -> None:
-        # Local Testing MongoDB-------------------------------
         load_dotenv()
-        self.conn = MongoClient(host="127.0.0.1", port=27017)
 
-        # Real Server MongoDB --------------------------------
-        # load_dotenv()
-        # self.conn = MongoClient(
-        #     host=[
-        #         f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
-        #     ],
-        #     serverSelectionTimeoutMS=5000,
-        # )
+        try:
+            # Local Testing MongoDB-------------------------------
+            self.conn = MongoClient(host=[os.getenv('MONGODB_LOCAL')], serverSelectionTimeoutMS=2000)
+        except ServerSelectionTimeoutError:
+            # Real Server MongoDB --------------------------------
+            # self.conn = MongoClient(host=[os.getenv('MONGODB_URL')])
+            print("online host")
+
         self.user_info = self.conn["USER_INFO"]
         self.user_data = self.conn["USER_DATA"]
 

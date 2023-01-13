@@ -16,8 +16,10 @@ from modules.password import Password
 from user.routes import user
 
 # Setup
-load_dotenv()
 app = Flask(__name__)
+load_dotenv()
+
+app.config["TITLE"] = "Worker Day"
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 # Add blueprint section
