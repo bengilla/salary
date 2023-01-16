@@ -5,6 +5,8 @@ __pycache__
 ### env ###
 env
 *.env
+.venv
+
 .idea
 .DS_Store
 work_dir
