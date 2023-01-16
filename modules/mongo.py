@@ -8,7 +8,6 @@ import os
 
 from dotenv import load_dotenv
 from pymongo import MongoClient
-from pymongo.errors import ServerSelectionTimeoutError
 
 class MongoDB:
     """链接 MongoDB"""
@@ -16,13 +15,11 @@ class MongoDB:
     def __init__(self) -> None:
         load_dotenv()
 
-        try:
-            # Local Testing MongoDB-------------------------------
-            self.conn = MongoClient(host=[os.getenv('MONGODB_LOCAL')], serverSelectionTimeoutMS=2000)
-        except ServerSelectionTimeoutError:
-            # Real Server MongoDB --------------------------------
-            # self.conn = MongoClient(host=[os.getenv('MONGODB_URL')])
-            print("online host")
+        # Local Testing MongoDB-------------------------------
+        self.conn = MongoClient(host=[os.getenv('MONGODB_LOCAL')], serverSelectionTimeoutMS=2000)
+
+        # Real Server MongoDB --------------------------------
+        # self.conn = MongoClient(host=[os.getenv('MONGODB_URL')])
 
         self.user_info = self.conn["USER_INFO"]
         self.user_data = self.conn["USER_DATA"]
