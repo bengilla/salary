@@ -4,8 +4,6 @@ User Section
 import os
 from datetime import datetime
 
-from flask import Blueprint, redirect, render_template, request, url_for
-
 # Library from own
 from emp import EmpInfo
 from excels import EmpSalary

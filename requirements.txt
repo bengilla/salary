@@ -1,5 +1,8 @@
-Flask
-Flask-WTF
+fastapi
+Jinja2
+uvicorn
+python-multipart
+
 pymongo
 python-dotenv
 cryptography

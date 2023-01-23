@@ -6,23 +6,25 @@ Create collection system
 import datetime as dt
 import os
 
+from fastapi import FastAPI
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
+app = FastAPI()
 class MongoDB:
-    """链接 MongoDB"""
+    """Connect MongoDB"""
 
     def __init__(self) -> None:
         load_dotenv()
 
         # Local Testing MongoDB-------------------------------
-        self.conn = MongoClient(host=[os.getenv('MONGODB_LOCAL')], serverSelectionTimeoutMS=2000)
+        client = MongoClient('mongodb://127.0.0.1:27017/', serverSelectionTimeoutMS="3000")
 
         # Real Server MongoDB --------------------------------
-        # self.conn = MongoClient(host=[os.getenv('MONGODB_URL')])
+        # client = MongoClient(host=[os.getenv('MONGODB_URL')])
 
-        self.user_info = self.conn["USER_INFO"]
-        self.user_data = self.conn["USER_DATA"]
+        self.user_info = client["USER_INFO"]
+        self.user_data = client["USER_DATA"]
 
     # user data section
     def user_collection(self):

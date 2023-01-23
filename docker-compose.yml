@@ -1,0 +1,10 @@
+version: "3.11"
+name: tbros
+services:
+  app:
+    build: .
+    command: uvicorn main:app --host 0.0.0.0 --reload
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app

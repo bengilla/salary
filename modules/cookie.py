@@ -6,7 +6,6 @@ import os
 from typing import Any
 
 from cryptography.fernet import Fernet
-from flask import make_response, redirect, request, url_for
 
 
 class Cookie:

@@ -1,5 +1,9 @@
 {% extends 'base.html' %}
-{% block title %}Employee Salary System{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}
+<a href="{{ url_for('register') }}" class="transition hover:underline hover:text-slate-200">Register</a>
+{% endblock %}
 
 <!-- Content -->
 {% block content %}
@@ -7,40 +11,18 @@
     <!-- Login -->
     <div class="flex flex-col items-center">
 
-        <div class="pt-8">
-            <p class="text-2xl text-red-500 text-center font-bold">{{ error }}</p>
-        </div>
+        <form action="{{ url_for('index') }}" method="post" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]">
 
-        <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
-            {{ form.csrf_token }}
-            <div class="pb-4">
-                <!-- {{ form.email.label(class="text-sm") }} -->
-                {{ form.email(placeholder="email", class="form-input") }}<br>
-                {% for err in form.email.errors %}
-                <p class="form-error">{{ err }}</p>
-                {% endfor %}
-            </div>
+            <label for="email" class="text-sm">email: </label>
+            <input type="email" name="email" class="mb-2 text-sm form-input" oninvalid="this.setCustomValidity('Enter your email, please')" required><br>
 
-            <div class="pb-4">
-                <!-- {{ form.password.label(class="text-sm") }} -->
-                {{ form.password(placeholder="password", class="form-input") }}<br>
-                {% for err in form.password.errors %}
-                <p class="form-error">{{ err }}</p>
-                {% endfor %}
-            </div>
+            <label for="password" class="text-sm">password: </label>
+            <input type="password" name="password" class="mb-6 text-sm form-input" oninvalid="this.setCustomValidity('Enter your password, please')" required><br>
 
-            <!-- Submit -->
-            <div class="flex justify-between">
-                <div class="pb-4">
-                    {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
-                </div>
-                <div class="place-self-center">
-                    <a href="{{ url_for('register') }}" class="transition hover:underline">register</a>
-                </div>
-            </div>
+            <input type="submit" value="submit" class="px-6 py-1 rounded-md border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
 
-            <br><br>
         </form>
+
     </div>
 
 </section>

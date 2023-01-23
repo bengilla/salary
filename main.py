@@ -3,9 +3,13 @@ User after Login and user page
 """
 
 import os
+import uvicorn
 
 from dotenv import load_dotenv
-from flask import Flask, redirect, render_template, request, url_for
+from fastapi import FastAPI, Request, Depends, status
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 # Modules from own library
 from modules.cookie import Cookie
@@ -13,19 +17,16 @@ from modules.form import LoginForm, RegisterForm
 from modules.mongo import MongoDB
 from modules.password import Password
 # Flask Blueprint
-from user.routes import user
+# from user.routes import user
 
 # Setup
-app = Flask(__name__)
+app = FastAPI(title="TBROS")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
+
 load_dotenv()
 
-app.config["TITLE"] = "Worker Day"
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
-
-# Add blueprint section
-app.register_blueprint(user)
-
-# Work List MongoDB connect
+# MongoDB
 _mongo = MongoDB()
 
 # Password
@@ -34,106 +35,79 @@ _pass = Password()
 # Cookie
 _cookie = Cookie()
 
-
-@app.route("/", methods=["GET", "POST"])
-def index():
-    """
-    链接至 index.html, 同时也输出日期
-    """
+# Index----------------------------------------------------------------------
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    """Main page of tbros website"""
     title = "Employee work system - Login"
-    error = ""
+    
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "title": title
+        }
+    )
 
-    form = LoginForm(request.form)
-    check_users = _mongo.user_collection().find({})
+@app.post("/")
+async def index_post(login_data: LoginForm = Depends(LoginForm.login)):
+    """Get login data and check user does exist"""
+    return {"message": login_data}
 
-    if form.validate_on_submit():
-        get_email = form.email.data
-        get_password = form.password.data
-
-        for member in check_users:
-            company_name = member["company_name"]
-
-            if member["email"] == get_email and _pass.check_password(
-                get_password, member["password"]
-            ):
-                # set cookie
-                resp = _cookie.set_cookie(
-                    page="user.mainpage",
-                    cookie_name="userID",
-                    cookie_value=company_name,
-                )
-                return resp
-            else:
-                error = "Invalid credentials, please register"
-
-    # if login direct to user page else to login page
-    if request.cookies.get("userID"):
-        return redirect(url_for("user.mainpage"))
-    else:
-        return render_template("index.html", title=title, form=form, error=error)
-
-
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    """Register"""
+# Register----------------------------------------------------------------------
+@app.get("/register", response_class=HTMLResponse)
+async def register(request: Request):
+    """register page"""
     title = "Employee work system - Register"
 
-    form = RegisterForm(request.form)
-    get_emp = _mongo.user_collection().find({})
-    error = ""
-
-    # Members in list
-    users_list = [list_member["email"] for list_member in get_emp]
-
-
-    if form.validate_on_submit():
-        # From register.html Form
-        email = form.email.data.strip()
-        password = form.password.data.strip()
-        company_name = form.company_name.data.strip()
-
-        # Password to hash
-        generate_password = _pass.create_password(password)
-
-        # dict mongodb
-        new_members = {
-            "email": email,
-            "password": generate_password,
-            "company_name": str(company_name).upper(),
+    return templates.TemplateResponse(
+        "register.html",
+        {
+            "request": request,
+            "title": title,
         }
+    )
 
-        if len(users_list) == 0:
-            _mongo.user_collection().insert_one(new_members)
-            return redirect(url_for("index"))
-        else:
-            if email not in users_list:
-                _mongo.user_collection().insert_one(new_members)
-                return redirect(url_for("index"))
-            else:
-                error = "You have registed, please login"
+@app.post("/register")
+async def register_post(request: Request, register_data: RegisterForm = Depends(RegisterForm.register)):
+    """Get register data to save on mongodb"""
+    user_list = [user["email"] for user in _mongo.user_collection().find({})]
+    hash_password = _pass.create_password(register_data.password)
 
-    return render_template("register.html", form=form, title=title, error=error)
+    new_user = {
+        "email": register_data.email,
+        "password": hash_password,
+        "company_name": register_data.company_name.replace(" ", "").upper()
+    }
+
+    if register_data.email not in user_list:
+        _mongo.user_collection().insert_one(new_user)
+        redirect_url = request.url_for("index")
+        return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        return templates.TemplateResponse(
+            "register.html",
+            {
+                "request": request,
+                "title": "User is exsit"
+            }
+        )
+
+# @app.route("/logout")
+# def logout():
+#     """Logout"""
+#     resp = _cookie.empty_cookie(page="index", cookie_name="userID")
+#     return resp
 
 
-@app.route("/logout")
-def logout():
-    """Logout"""
-    resp = _cookie.empty_cookie(page="index", cookie_name="userID")
-    return resp
+# @app.errorhandler(404)
+# def page_not_found(e):
+#     """Page Not Found"""
+#     title = _cookie.get_cookie("userID")
+#     return render_template("404.html", title=title), 404
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    """Page Not Found"""
-    title = _cookie.get_cookie("userID")
-    return render_template("404.html", title=title), 404
-
-
-@app.errorhandler(AttributeError)
-def not_login(e):
-    """Not Login"""
-    return render_template("attrerror.html")
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
+# @app.errorhandler(AttributeError)
+# def not_login(e):
+#     """Not Login"""
+#     return render_template("attrerror.html")

@@ -1,0 +1,6 @@
+# From my computer file
+__pycache__
+work_dir
+.env
+.venv
+.DS_Store

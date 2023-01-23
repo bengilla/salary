@@ -10,3 +10,5 @@ env
 work_dir
 
 .DS_Store
+
+test_main.py
