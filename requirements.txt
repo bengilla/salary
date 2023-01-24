@@ -5,7 +5,6 @@ python-multipart
 
 pymongo
 python-dotenv
-cryptography
 WTForms
 Pillow
 bcrypt
