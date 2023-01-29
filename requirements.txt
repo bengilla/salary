@@ -1,10 +1,9 @@
 fastapi
+uvicorn[standard]
 Jinja2
-uvicorn
 python-multipart
+motor
 
-pymongo
-python-dotenv
 WTForms
 Pillow
 bcrypt

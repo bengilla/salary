@@ -1,10 +1,23 @@
 version: "3.11"
 name: tbros
 services:
-  app:
+  web:
     build: .
-    command: uvicorn main:app --host 0.0.0.0 --reload
+    container_name: web
     ports:
       - 8000:8000
+    command: uvicorn main:app --host 0.0.0.0 --reload
+    environment:
+      - DB_URL=mongodb://db/tbros
     volumes:
       - .:/app
+  db:
+    image: mongo
+    container_name: tbros-db
+    ports:
+      - 27017:27017
+    volumes:
+      - ./db-data:/data/db
+
+volumes:
+  db-data:

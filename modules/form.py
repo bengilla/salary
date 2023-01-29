@@ -9,46 +9,82 @@ from pydantic import BaseModel, Field
 
 
 # Class Create Form
-# class CreateForm():
-#     """Create Form and inherent to Edit Form"""
+class CreateForm(BaseModel):
+    """Create Form and inherent to Edit Form"""
 
-#     # validators
-#     img_employee = FileField("img_employee")
-#     name = StringField("name", [validators.DataRequired()])
-#     ic = StringField("passport / ic", [validators.DataRequired()])
-#     pay_hour = FloatField("hour salary", [validators.DataRequired()])
+    # validators
+    # img_employee = FileField("img_employee")
+    name: str = Field(...)
+    ic: str = Field(...)
+    pay_hour: float = Field(...)
 
-#     # Optional
-#     dob = StringField("d.o.b")
-#     gender = SelectField("gender", choices=["Please select", "male", "female"])
-#     nationality = SelectField(
-#         "nationality",
-#         choices=[
-#             "Please select",
-#             "Malaysia",
-#             "Indonesia",
-#             "Bangladesh",
-#             "Rohingya",
-#             "Other",
-#         ],
-#     )
-#     contact = StringField("contact")
-#     address = StringField("address")
+    # Optional
+    dob: str = Field(...)
+    gender: str = Field(...)
+    nationality: str = Field(...)
+    # gender = SelectField("gender", choices=["Please select", "male", "female"])
+    # nationality = SelectField(
+    #     "nationality",
+    #     choices=[
+    #         "Please select",
+    #         "Malaysia",
+    #         "Indonesia",
+    #         "Bangladesh",
+    #         "Rohingya",
+    #         "Other",
+    #     ],
+    # )
+    contact: int | None = Field(...)
+    address: str = Field(...)
 
-#     submit = SubmitField("submit")
+    @classmethod
+    def create_form(
+        cls,
+        name: str = Form(...),
+        ic: str = Form(...),
+        pay_hour: float = Form(...),
+        dob: str = Form(...),
+        gender: str = Form(...),
+        nationality: str = Form(...),
+        contact: int = Form(...),
+        address: str = Form(...)
+    ):
+        return cls(
+            nme=name,
+            ic=ic,
+            pay_hour=pay_hour,
+            dob=dob,
+            gender=gender,
+            nationality=nationality,
+            contact=contact,
+            address=address
+        )
 
 
 # Class Edit Form
-# class EditForm():
-#     """Edit Form"""
+class EditForm(BaseModel):
+    """Edit Form"""
+    # img_employee = FileField("img_employee")
+    ic: str = Field(...)
+    contact: int = Field(...)
+    address: str = Field(...)
+    pay_hour: float = Field(...)
 
-#     img_employee = FileField("img_employee")
-#     ic = StringField("passport / ic")
-#     contact = StringField("contact")
-#     address = StringField("address")
-#     pay_hour = FloatField("pay hour")
+    @classmethod
+    def edit_form(
+        cls,
+        ic: str = Form(...),
+        contact: int = Form(...),
+        address: str = Form(...),
+        pay_hour: float = Form(...)
+    ):
+        return cls(
+            ic=ic,
+            contact=contact,
+            address=address,
+            pay_hour=pay_hour
+        )
 
-#     submit = SubmitField("submit")
 
 
 

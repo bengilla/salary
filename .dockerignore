@@ -1,6 +1,16 @@
 # From my computer file
+*.pyc
+
 __pycache__
+*/__pycache__
+**/__pycache__
+.DS_Store
+*/.DS_Store
+**/.DS_Store
+
 work_dir
+db-data
+
+.git/
 .env
 .venv
-.DS_Store

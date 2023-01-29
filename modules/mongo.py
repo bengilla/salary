@@ -6,11 +6,9 @@ Create collection system
 import datetime as dt
 import os
 
-from fastapi import FastAPI
 from dotenv import load_dotenv
-from pymongo import MongoClient
+import motor.motor_asyncio as motor
 
-app = FastAPI()
 class MongoDB:
     """Connect MongoDB"""
 
@@ -18,10 +16,11 @@ class MongoDB:
         load_dotenv()
 
         # Local Testing MongoDB-------------------------------
-        client = MongoClient('mongodb://127.0.0.1:27017/', serverSelectionTimeoutMS="3000")
+        client = motor.AsyncIOMotorClient(os.environ["DB_URL"])
+        # client = motor.AsyncIOMotorClient(os.getenv("DB_LOCAL"))
 
         # Real Server MongoDB --------------------------------
-        # client = MongoClient(host=[os.getenv('MONGODB_URL')])
+        # client = motor.AsyncIOMotorClient(os.getenv("DB_URL"))
 
         self.user_info = client["USER_INFO"]
         self.user_data = client["USER_DATA"]
