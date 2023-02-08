@@ -1,4 +1,5 @@
 import pendulum
+from fastapi import UploadFile, File
 from excels.excel_module import ReadExcel
 from excels.timecalculation import TimeCalculation
 from models.mongo import MongoDB
@@ -7,38 +8,34 @@ from models.mongo import MongoDB
 class EmpSalary:
     """这是最终到处所有计算后的数据"""
 
-    def __init__(self, db_collection: str, file):
+    def __init__(self, db_collection: str, file: File):
         self.data = {}
+        self.total_amounts = 0
         self.file = file
-
-        # get data from mongodb
-        _mongodb = MongoDB()
-        self._empinfo = _mongodb.emp_info_collection(db_collection)
-        self._work_hour = _mongodb.emp_work_hour_collection(db_collection)
 
         # send excel file to ReadExcel to calculation the data
         self.read_excel = ReadExcel(self.file.file)
 
         # get name, day, month from ReadExcel data
         self._date = self.read_excel.get_date()
-        # print(self._date)
 
-        self._day_list: list = (
-            self.read_excel.get_day_list()
-        )  # Get day uin excel (list)
-        # print(self._day_list)
+        # get data from mongodb
+        _mongodb = MongoDB()
+        self._empinfo = _mongodb.emp_info_collection(db_collection)
+        self._work_hour = _mongodb.emp_work_hour_collection(
+            db_collection, self._date.year
+        )
 
-        # dict -> "name", "time_list"
-        self._get_emp_info = self.read_excel.get_emp_info(7)
-        # print(self._get_emp_info)
+        # get day list from excel top column
+        self._day_list: list = self.read_excel.get_day_list()
+
+        self._get_all_list = self.read_excel.generate_all()
 
         self._get_emp_total_in_excel = self.read_excel.get_emp_total_in_excel()
-        # print(self._get_emp_total)
 
         self._day: int = self._date.day
         self._month: int = self._date.month
         self._year: int = self._date.year
-        # print(f"{self._day}, {self._month}, {self._year}")
 
     def emp_on_web(self) -> list:
         emp_name_on_web = self._empinfo.find({})
@@ -62,13 +59,14 @@ class EmpSalary:
         single_emp_data = self._empinfo.find_one({"_id": id})
 
         pay_hour = single_emp_data["pay_hour"]
+
         emp_sum_salary = []
         total_work_hours = []
-
         send_to_mongodb = []
+
         for index, day in enumerate(self._day_list):
             time_cal = TimeCalculation(
-                emp_time=self._get_emp_info["time_list"], emp_salary=pay_hour
+                emp_time=self._get_all_list[id], emp_salary=pay_hour
             )
 
             pay_day_cost = time_cal.result(index)
@@ -104,27 +102,33 @@ class EmpSalary:
 
         # 存于 MongoDB 的格式
         store_data = {
-            "name": id,
             "pay_hour": pay_hour,
             "total_salary": output_emp_salary,
             "total_work_hours": sum(total_work_hours),
             "output": send_to_mongodb,
         }
-        return store_data
+
+        self.total_amounts += output_emp_salary
+        self.data[id.title()] = store_data
+
 
     def main(self):
-        # 最终输出，计算没人的基本工资
-        data = []
-        for each_emp in self.emp_on_web():
-            single_result = self.emp_final_calculation(each_emp.lower())
-            data.append(single_result)
+        """导出至 MongoDB"""
+        get_emp_name = self._empinfo.find({})
+        emp_name = [x["_id"] for x in get_emp_name]
 
-        print(len(data))
+        # 最终输出，计算没人的基本工资
+        for each_emp in emp_name:
+            try:
+                self.emp_final_calculation(each_emp)
+            except KeyError:
+                continue
+
         # 上传至 MongoDB
         send_data = {
-            "total_emp": self._get_emp_total_in_excel["length"],
-            "date": self._date.format("DD-MM-YYYY"),
-            "emp_work_hours": data,
+            "date": self._date.format("DD-MMM-YYYY"),
+            "total_amounts": self.total_amounts,
+            "emp_work_hours": self.data,
         }
-        # self._work_hour.insert_one(send_data)
-        print(send_data)
+        self._work_hour.insert_one(send_data)
+        # print(send_data)

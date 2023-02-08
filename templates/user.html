@@ -31,7 +31,7 @@
             </a>
         </div>
         <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('all_list', id=last_id) }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+            <a href="{{ url_for('salary_menu') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
                 All List Work Hours
             </a>
         </div>
@@ -53,8 +53,7 @@
                     {% for i in err_emp %}
                     <span>{{ loop.index }}. {{ i }}</span><br>
                     {% endfor %}
-                    {{ err_exception_msg }}
-                </div>
+                    {{ err_exception_msg }} </div>
             </form>
         </div>
     </div>

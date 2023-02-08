@@ -1,9 +1,18 @@
 """
 User After Login Page
 """
-import os
+import pendulum
 from datetime import datetime
-from fastapi import APIRouter, Cookie, Request, Depends, File, UploadFile, status
+from fastapi import (
+    APIRouter,
+    Cookie,
+    Request,
+    Depends,
+    File,
+    UploadFile,
+    HTTPException,
+    status,
+)
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
@@ -24,18 +33,9 @@ _date_now = datetime.now()
 
 
 # User mainpae ------------------------------
-@router.get("/user", tags=["Emp mainpage"], response_class=HTMLResponse)
-async def mainpage(
-    request: Request, company_name: str | None = Cookie(default=None)
-) -> HTMLResponse:
+@router.get("/user", tags=["Emp mainpage"])
+async def mainpage(request: Request, company_name: str | None = Cookie(default=None)):
     """User mainpage"""
-
-    # get cookie
-    db_collection = company_name.upper().replace(" ", "")
-
-    # get salary list last item
-    get_salary_list_id = _mongodb.emp_work_hour_collection(db_collection).find({})
-    list_id = [x["date"] for x in get_salary_list_id]
 
     return templates.TemplateResponse(
         "user.html",
@@ -43,7 +43,6 @@ async def mainpage(
             "request": request,
             "date": _date_now,
             "title": company_name,
-            "last_id": list_id[-1],
         },
     )
 
@@ -60,51 +59,29 @@ async def sendfile(
     # send file to excels models to work
     emp_salary = EmpSalary(file=excels, db_collection=db_collection)
 
-    emp_on_web = emp_salary.emp_on_web()
-    # print(emp_on_web)
+    # main function run
+    emp_salary.main()
 
-    emp_not_in_web = emp_salary.emp_not_in_web()
-    # print(emp_not_in_web)
+    try:
+        if len(emp_salary.emp_not_in_web()) == 0:
+            return templates.TemplateResponse("complete.html", {"request": request})
+        else:
+            err_title = "This all members not in website"
+            not_register_emp = emp_salary.emp_not_in_web()
+    except Exception as err:
+        err_title = "You have error message:"
+        err_exception_msg = err
 
-    emp_list_on_excel = [emp.lower() for emp in emp_salary._get_emp_total_in_excel["name"]]
-    # print(emp_list_on_excel)
-
-    final = emp_salary.main()
-
-    # # 上传至 MongoDB
-    # send_data = {
-    #     # "_id": self._date.format("MMM DD, YYYY"),
-    #     "date": emp_salary._date.format("DD-MM-YYYY"),
-    #     "emp_work_hours": data,
-    # }
-    # # self._work_hour.insert_one(send_data)
-    # print(send_data)
-
-    # try:
-    # if len(await emp_salary.find_no_emp()) == 0:
-    #     return templates.TemplateResponse(
-    #         "complete.html",
-    #         {
-    #         "request": request
-    #         }
-    #     )
-    # else:
-    #     err_title = "This all members not in website"
-    #     not_register_emp = emp_salary.find_no_emp()
-    # except Exception as err:
-    #     err_title = "You have error message:"
-    #     err_exception_msg = err
-
-    # return templates.TemplateResponse(
-    # "index.html",
-    # {
-    # "request": request,
-    # "date": _date_now,
-    # "err_title": err_title,
-    # "err_emp": not_register_emp,
-    # "err_exception_msg": err_exception_msg,
-    # }
-    # )
+    return templates.TemplateResponse(
+        "index.html",
+        {
+            "request": request,
+            "date": _date_now,
+            "err_title": err_title,
+            "err_emp": not_register_emp,
+            # "err_exception_msg": err_exception_msg,
+        },
+    )
 
 
 # Add Employee Info ------------------------------
@@ -291,36 +268,57 @@ def delete_emp(
 
 
 # Employee salary info ------------------------------
-@router.get("/all_list/{id}", tags=["Emp employee salary list"])
-async def all_list(
-    *, request: Request, company_name: str | None = Cookie(default=None), id: str
+@router.get("/salarymenu", tags=["Emp employee salary list"])
+async def salary_menu(
+    *, request: Request, company_name: str | None = Cookie(default=None)
 ):
-    """All Employee Salary info"""
+    # get cookie
+    db_collection_name = company_name.upper().replace(" ", "")
 
+    # get own company year collection and save to list
+    db_list_collection = _mongodb.user_data.list_collection_names()
+    year_collection = []
+    for x in db_list_collection:
+        get_str = x.split("-")
+        if get_str[0] == db_collection_name and get_str[1].isnumeric():
+            year_collection.append(get_str[1])
+
+    return templates.TemplateResponse(
+        "salarymenu.html",
+        {
+            "request": request,
+            "date": _date_now,
+            "title": company_name,
+            "year_collection": year_collection,
+        },
+    )
+
+
+@router.get("/all_list/{year}", tags=["Emp employee salary list"])
+async def all_list(
+    *,
+    request: Request,
+    company_name: str | None = Cookie(default=None),
+    year: str,
+):
     # get cookie
     db_collection = company_name.upper().replace(" ", "")
 
     # all salary list
-    work_hour_collection = _mongodb.emp_work_hour_collection(db_collection)
-    work_hour_list = [list for list in work_hour_collection.find({})]
+    work_hour_collection = _mongodb.emp_work_hour_collection(db_collection, year)
+    work_hour_list = [list["date"] for list in work_hour_collection.find({})]
 
     # get single salary list
-    salary_list = work_hour_collection.find_one({"date": id})
+    salary_list = work_hour_collection.find_one({"date": work_hour_list[-1]})
     salary_output = salary_list["emp_work_hours"]
     sort_emp_dict = dict(sorted(salary_output.items()))
 
-    # salary list amount
-    salary = []
-    for _, value in salary_output.items():
-        output_value = value
-        salary.append(output_value["total_salary"])
-
-    total_cash = f"RM {sum(salary):,.2f}"
+    # get total amounts
+    total_amounts = salary_list["total_amounts"]
+    total_cash = f"RM {total_amounts:,.2f}"
 
     # get month title
-    output_day = salary_list["date"].split("-")[0]
     output_month = salary_list["date"].split("-")[1]
-    output_year = salary_list["date"].split("-")[2]
 
     return templates.TemplateResponse(
         "list.html",
@@ -329,6 +327,49 @@ async def all_list(
             "title": company_name,
             "emp": sort_emp_dict,
             "drop_down": work_hour_list,
+            "year": year,
+            "month": output_month,
+            "total_cash": total_cash,
+            "total_emp_on_list": len(salary_output),
+        },
+    )
+
+
+@router.get("/all_list/{year}/{id}", tags=["Emp employee salary list"])
+async def all_list(
+    *,
+    request: Request,
+    company_name: str | None = Cookie(default=None),
+    id: str,
+    year: str,
+):
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
+
+    # all salary list
+    work_hour_collection = _mongodb.emp_work_hour_collection(db_collection, year)
+    work_hour_list = [list["date"] for list in work_hour_collection.find({})]
+
+    # get single salary list
+    salary_list = work_hour_collection.find_one({"date": id})
+    salary_output = salary_list["emp_work_hours"]
+    sort_emp_dict = dict(sorted(salary_output.items()))
+
+    # get total amounts
+    total_amounts = salary_list["total_amounts"]
+    total_cash = f"RM {total_amounts:,.2f}"
+
+    # get month title
+    output_month = salary_list["date"].split("-")[1]
+
+    return templates.TemplateResponse(
+        "list.html",
+        {
+            "request": request,
+            "title": company_name,
+            "emp": sort_emp_dict,
+            "drop_down": work_hour_list,
+            "year": year,
             "month": output_month,
             "total_cash": total_cash,
             "total_emp_on_list": len(salary_output),

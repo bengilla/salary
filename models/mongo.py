@@ -31,6 +31,6 @@ class MongoDB:
         """链接至 emp-info"""
         return self.user_data[db_title + "-info"]
 
-    def emp_work_hour_collection(self, db_title: str):
+    def emp_work_hour_collection(self, db_title: str, db_year: str):
         """链接至 emp-<年份>"""
-        return self.user_data[f"{db_title}-{dt.datetime.now().year}"]
+        return self.user_data[f"{db_title}-{db_year}"]

@@ -15,7 +15,7 @@
                 <button class="dropbtn rounded-lg">Select Date</button>
                 <div class="dropdown-content">
                     {% for i in drop_down %}
-                    <a href="{{ url_for('all_list', id=i.date) }}">{{ i.date }}</a>
+                    <a href="{{ url_for('all_list', year=year, id=i) }}">{{ i }}</a>
                     {% endfor %}
                 </div>
             </div>

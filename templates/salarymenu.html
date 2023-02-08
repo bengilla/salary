@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block header %}
+<a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
+{% endblock %}
+
+{% block content %}
+<section class="w-full pt-8">
+
+    <div class="w-full mb-8 text-center">
+        <span>Today:</span>
+        <div class="w-full grid grid-cols-1">
+            <div class="grid place-content-center">
+                <hr class="w-[300px] border-[1px] border-amber-600 bg-amber-600">
+            </div>
+        </div>
+        <span class="font-bold m-2">{{ date.date().strftime("%d-%m-%Y") }} ({{ date.today().strftime('%A') }})</span>
+    </div>
+
+    <div class="w-full grid grid-cols-1 lg:grid-cols-1">
+
+        {% for year in year_collection %}
+        <div class="grid py-2 place-content-center">
+            <a href="{{ url_for('all_list', year=year) }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+                {{ year }}
+            </a>
+        </div>
+        {% endfor %}
+
+        <div class="px-2 mt-4 grid grid-cols-1 place-items-center">
+            <hr class="w-3/5 border-slate-700">
+        </div>
+
+    </div>
+
+</section>
+<!-- Testing -->
+{% endblock %}

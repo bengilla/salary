@@ -25,13 +25,22 @@ class ReadExcel:
         name = [name for name in items]
         return {"length": len(items), "name": name}
 
-    def get_emp_info(self, columns: int):
-        emp_name: str = self._df.loc[columns][10].lower()
-        emp_time_list = [0 if str(x) == "nan" else x for x in self._df.loc[columns + 1]]
+    def get_name(self):
+        """把所有名字变为列表"""
+        column_name = [i for i in self._df.columns]
+        get_name_columns = self._df.loc[3::2][column_name[10]]  # col and row number
+        name_list = [i.lower() for i in get_name_columns]
+        return name_list
 
+    def get_time(self, row_num: int):
+        """获取时间"""
         store_time = []
 
-        for each_time in emp_time_list:
+        get_time_from_excel = [
+            0 if str(x) == "nan" else x for x in self._df.loc[row_num]
+        ]
+
+        for each_time in get_time_from_excel:
             if each_time == 0:
                 store_time.append(0)
             else:
@@ -39,6 +48,22 @@ class ReadExcel:
                     store_time.append([each_time])
                 else:
                     store_time.append([each_time[0:5], each_time[-5:]])
+        return store_time
 
-        emp_list = {"name": emp_name, "time_list": store_time}
-        return emp_list
+    def generate_all(self):
+        """输出全部列表，如果列表全 0 就排除"""
+        all_list = {}
+        num = 4
+        for emp_name in self.get_name():
+            all_list[emp_name] = self.get_time(num)
+            num += 2
+
+        # 删除没上班的员工
+        del_emp_no_working = []
+        for key, value in all_list.items():
+            if all(elem == 0 for elem in value):
+                del_emp_no_working.append(key)
+        for i in del_emp_no_working:
+            del all_list[i]
+
+        return all_list
