@@ -1,21 +1,10 @@
-"""
-Image Modules
-"""
-
 import base64
 from io import BytesIO
-from typing import Any
-
 from PIL import Image
-
 
 class ImageConvert:
     """Image convert class"""
-
-    def __init__(self) -> None:
-        pass
-
-    def img_base64(self, img: Any) -> str:
+    def img_base64(self, img) -> base64:
         """Image convert to base64"""
         with Image.open(img) as im:
             MAX_SIZE = (240, 240)

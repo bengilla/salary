@@ -2,15 +2,13 @@ fastapi
 uvicorn[standard]
 Jinja2
 python-multipart
-motor
-
+# motor
 WTForms
 Pillow
 bcrypt
 pendulum
 pandas
 email-validator
-
 dnspython
 gunicorn
 xlrd

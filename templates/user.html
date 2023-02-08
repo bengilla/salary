@@ -21,7 +21,7 @@
     <div class="w-full grid grid-cols-1 lg:grid-cols-1">
         <div></div>
         <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('mainpage') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+            <a href="{{ url_for('all_emp') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
                 Read All Employee
             </a>
         </div>
@@ -31,7 +31,7 @@
             </a>
         </div>
         <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('all_list') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+            <a href="{{ url_for('all_list', id=last_id) }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
                 All List Work Hours
             </a>
         </div>
@@ -41,7 +41,7 @@
         </div>
 
         <div class="pt-4 pb-8 grid grid-cols-1 place-items-center">
-            <form action="{{ url_for('mainpage') }}" method="POST" enctype="multipart/form-data" class="w-4/5 sm:w-[400px]">
+            <form action="{{ url_for('sendfile') }}" method="POST" enctype="multipart/form-data" class="w-4/5 sm:w-[400px]">
                 <p class="text-sm text-red-500">Upload salary file</p>
                 <input type="file" name="file" class="px-4 py-4 rounded-xl border-2 border-slate-500 block w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0

@@ -13,4 +13,4 @@ db-data
 
 .git/
 .env
-.venv
+venv

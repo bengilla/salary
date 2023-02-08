@@ -1,79 +1,86 @@
-"""
-Main work for work with exce lfil
-"""
-
 import pendulum
-
-from emp import EmpInfo
-from excels.excel_module import ReadExcel, TimeCalculation
-from modules.mongo import MongoDB
+from excels.excel_module import ReadExcel
+from excels.timecalculation import TimeCalculation
+from models.mongo import MongoDB
 
 
 class EmpSalary:
     """这是最终到处所有计算后的数据"""
 
-    def __init__(self, filename, db_title: str) -> None:
+    def __init__(self, db_collection: str, file):
         self.data = {}
-        self.filename = filename
-        self.db_title = db_title
+        self.file = file
 
-        # 读取导入的文件
-        self.read_excel = ReadExcel(self.filename)
+        # get data from mongodb
+        _mongodb = MongoDB()
+        self._empinfo = _mongodb.emp_info_collection(db_collection)
+        self._work_hour = _mongodb.emp_work_hour_collection(db_collection)
 
-        # 读取文件的日和月
-        self._name: list = self.read_excel.get_name()  # Get all name in excel (list)
-        self._month: int = self.read_excel._date.month  # Get month in excel
-        self._day: list = self.read_excel.get_day()  # Get day uin excel (list)
+        # send excel file to ReadExcel to calculation the data
+        self.read_excel = ReadExcel(self.file.file)
 
-        self._date_from_readexcel: str = (
-            self.read_excel._date.date()
-        )  # Get full date in excel
-        self._date = pendulum.datetime(
-            self._date_from_readexcel.year,
-            self._date_from_readexcel.month,
-            self._date_from_readexcel.day,
-        )  # Turn date to pendulum format
+        # get name, day, month from ReadExcel data
+        self._date = self.read_excel.get_date()
+        # print(self._date)
 
-        # 读取全部列表
-        self._get_all_list = (
-            self.read_excel.generate_all()
-        )  # Get name and work hours in dict
+        self._day_list: list = (
+            self.read_excel.get_day_list()
+        )  # Get day uin excel (list)
+        # print(self._day_list)
 
-        # 执行 main 功能
-        self.main()
+        # dict -> "name", "time_list"
+        self._get_emp_info = self.read_excel.get_emp_info(7)
+        # print(self._get_emp_info)
 
-    def find_no_emp(self) -> list:
-        """Find who not in excel file"""
-        # 列出没有名字在网站的，等于说没有这个人的工资/天
-        _empinfo = EmpInfo(self.db_title)
-        emp_on_web = [x["name"].lower() for x in _empinfo.emp_info()]
-        emp_on_excel = [x for x in self._name]
-        not_register = [x for x in emp_on_excel if x not in emp_on_web]
-        return not_register
+        self._get_emp_total_in_excel = self.read_excel.get_emp_total_in_excel()
+        # print(self._get_emp_total)
 
-    def make_emp_info(self, name: str) -> None:
-        """执行所有的操作"""
-        _empinfo = EmpInfo(self.db_title)
-        emp = _empinfo.emp_one(name)
+        self._day: int = self._date.day
+        self._month: int = self._date.month
+        self._year: int = self._date.year
+        # print(f"{self._day}, {self._month}, {self._year}")
 
+    def emp_on_web(self) -> list:
+        emp_name_on_web = self._empinfo.find({})
+        emp_on_web = [emp["_id"] for emp in emp_name_on_web]
+        return emp_on_web
+
+    def emp_not_in_web(self) -> list:
+        # get all employee on web
+        emp_name_on_web = self._empinfo.find({})
+        emp_on_web = [emp["_id"] for emp in emp_name_on_web]
+
+        # get employee on excel
+        emp_on_excel = [emp.lower() for emp in self._get_emp_total_in_excel["name"]]
+
+        # check employee in excels is it on web
+        result = [emp for emp in emp_on_excel if emp not in emp_on_web]
+        return result
+
+    def emp_final_calculation(self, id: str):
+        # get single employee data
+        single_emp_data = self._empinfo.find_one({"_id": id})
+
+        pay_hour = single_emp_data["pay_hour"]
         emp_sum_salary = []
-        pay_hour = emp["pay_hour"]
         total_work_hours = []
 
         send_to_mongodb = []
-        for index, day in enumerate(self._day):
+        for index, day in enumerate(self._day_list):
             time_cal = TimeCalculation(
-                emp_time=self._get_all_list[name], emp_salary=pay_hour
+                emp_time=self._get_emp_info["time_list"], emp_salary=pay_hour
             )
+
             pay_day_cost = time_cal.result(index)
             emp_sum_salary.append(pay_day_cost)
             total_work_hours.append(time_cal.emp_work_hour)
 
-            # 做星期几的列表
+            # create day list
             day_of_week = pendulum.from_format(
-                f"{self._month}-{self._day[index]}", "MM-DD"
+                f"{self._month}-{self._day_list[index]}", "MM-DD"
             )
 
+            # append full list to mongodb
             send_to_mongodb.append(
                 {
                     "day": day,
@@ -82,7 +89,7 @@ class EmpSalary:
                     "work_time": time_cal.emp_time[index],
                     "daily_work_hours": time_cal.emp_work_hour,
                 }
-            )  # full list append to mongodb
+            )
 
             # round the salary amount
             sum_salary = round(sum(emp_sum_salary))
@@ -97,31 +104,27 @@ class EmpSalary:
 
         # 存于 MongoDB 的格式
         store_data = {
+            "name": id,
             "pay_hour": pay_hour,
             "total_salary": output_emp_salary,
             "total_work_hours": sum(total_work_hours),
             "output": send_to_mongodb,
         }
-        self.data[name.title()] = store_data
+        return store_data
 
-    def main(self) -> None:
-        """导出至 MongoDB"""
-        _empinfo = EmpInfo(self.db_title)
-        get_emp_name = _empinfo.emp_info()
-        emp_name = [x["_id"] for x in get_emp_name]
-
+    def main(self):
         # 最终输出，计算没人的基本工资
-        for each_emp in emp_name:
-            try:
-                self.make_emp_info(each_emp)
-            except KeyError:
-                continue
+        data = []
+        for each_emp in self.emp_on_web():
+            single_result = self.emp_final_calculation(each_emp.lower())
+            data.append(single_result)
 
+        print(len(data))
         # 上传至 MongoDB
-        mongodb = MongoDB()
-        work_hour_collection = mongodb.work_hour_collection(self.db_title)
         send_data = {
-            "_id": self._date.format("MMM DD, YYYY"),
-            "emp_work_hours": self.data,
+            "total_emp": self._get_emp_total_in_excel["length"],
+            "date": self._date.format("DD-MM-YYYY"),
+            "emp_work_hours": data,
         }
-        work_hour_collection.insert_one(send_data)
+        # self._work_hour.insert_one(send_data)
+        print(send_data)

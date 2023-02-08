@@ -2,7 +2,7 @@
 {% block title %}Salary list{% endblock %}
 
 {% block header %}
-<a href="{{ url_for('user.mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
+<a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
 {% endblock %}
 
 {% block content %}
@@ -14,15 +14,15 @@
             <div class="grid place-items-start">
                 <button class="dropbtn rounded-lg">Select Date</button>
                 <div class="dropdown-content">
-                    {% for i in document_id %}
-                    <a href="{{ url_for('user.all_list', ids=i) }}">{{ i }}</a>
+                    {% for i in drop_down %}
+                    <a href="{{ url_for('all_list', id=i.date) }}">{{ i.date }}</a>
                     {% endfor %}
                 </div>
             </div>
             <div class="grid place-items-end">
                 <h4 class="pb-10">
                     <span class="text-lg">month: </span>
-                    <span class="text-xl text-amber-600 font-bold">{{ output_id }}</span>
+                    <span class="text-xl text-amber-600 font-bold">{{ month }}</span>
                 </h4>
             </div>
         </div>

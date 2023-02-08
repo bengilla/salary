@@ -14,10 +14,10 @@
         <form action="{{ url_for('index') }}" method="post" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]">
 
             <label for="email" class="text-sm">email: </label>
-            <input type="email" name="email" class="mb-2 text-sm form-input" oninvalid="this.setCustomValidity('Enter your email, please')" required><br>
+            <input type="email" name="email" class="mb-2 text-sm form-input" required><br>
 
             <label for="password" class="text-sm">password: </label>
-            <input type="password" name="password" class="mb-6 text-sm form-input" oninvalid="this.setCustomValidity('Enter your password, please')" required><br>
+            <input type="password" name="password" class="mb-6 text-sm form-input" required><br>
 
             <input type="submit" value="submit" class="px-6 py-1 rounded-md border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
 

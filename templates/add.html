@@ -2,55 +2,28 @@
 {% block title %}Add employee{% endblock %}
 
 {% block header %}
-<a href="{{ url_for('user.mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
+<a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
 {% endblock %}
 
 {% block content %}
 <section id="add" class="w-full">
     <div class="flex flex-col items-center">
 
-        <div class="pt-8">
-            <p class="text-2xl text-red-500 text-center font-bold">{{ error }}</p>
-        </div>
+        <form action="{{ url_for('add_emp_post') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
 
-        <form action="{{ url_for('user.add_emp') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
-            {{ form.csrf_token }}
-            <div class="pb-6">
-                {{ form.img_employee.label(class="text-sm") }}
-                {{ form.img_employee(class="w-full text-sm text-slate-500
+            <label for="img_emp" class="text-sm">image: </label>
+            <input type="file" name="img_emp" accept="image/jpeg, iamge/jpg, image/png" class="mb-4 w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-lg file:border-0
                 file:text-sm file:font-semibold
                 file:bg-blue-300 file:text-slate-700
-                hover:file:bg-blue-700 hover:file:text-white") }}
-                {% for err in form.img_employee.errors %}
-                <p class="form-error">{{ err }}</p>
-                {% endfor %}
-            </div>
+                hover:file:bg-blue-700 hover:file:text-white">
 
-            <div class="pb-2">
-                {{ form.name.label(class="text-sm") }}
-                {{ form.name(class="form-input") }}<br>
-                {% for err in form.name.errors %}
-                <p class="form-error">{{ err }}</p>
-                {% endfor %}
-            </div>
+            <label for="name" class="text-sm">name: </label>
+            <input type="text" name="name" class="mb-2 form-input">
 
-            <div class="pb-2">
-                {{ form.ic.label(class="text-sm") }}
-                {{ form.ic(class="form-input") }}<br>
-                {% for err in form.ic.errors %}
-                <p class="form-error">{{ err }}</p>
-                {% endfor %}
-            </div>
-
-            <div class="pb-2">
-                {{ form.pay_hour.label(class="text-sm") }}
-                {{ form.pay_hour(class="form-input") }}<br>
-                {% for err in form.pay_hour.errors %}
-                <p class="form-error">{{ err }}</p>
-                {% endfor %}
-            </div>
+            <label for="pay_hour" class="text-sm">pay hour: </label>
+            <input type="text" name="pay_hour" class="mb-2 form-input">
 
             <!-- HR -->
             <div class="mt-4 mb-8">
@@ -59,28 +32,39 @@
             </div>
 
             <!-- Optional -->
-            <div class="pb-2">
-                {{ form.dob.label(class="text-sm") }} {{ form.dob(class="form-input") }}<br>
-            </div>
-            <div class="pb-2">
-                {{ form.nationality.label(class="text-sm") }} {{ form.nationality(class="form-input") }}<br>
-            </div>
-            <div class="pb-2">
-                {{ form.gender.label(class="text-sm") }} {{ form.gender(class="form-input") }}<br>
-            </div>
-            <div class="pb-2">
-                {{ form.contact.label(class="text-sm") }} {{ form.contact(class="form-input") }}<br>
-            </div>
-            <div class="pb-2">
-                {{ form.address.label(class="text-sm") }} {{ form.address(class="form-input") }}<br>
-            </div>
+            <label for="ic" class="text-sm">ic / passport: </label>
+            <input type="text" name="ic" class="mb-2 form-input">
+
+            <label for="dob" class="text-sm">d.o.b.: </label>
+            <input type="date" name="dob" class="mb-2 form-input">
+
+            <label for="nationality" class="text-sm">nationality: </label>
+            <select name="nationality" id="" class="mb-2 form-input">
+                <option value="">select</option>
+                <option value="Malaysia">Malaysia</option>
+                <option value="Indonesia">Indonesia</option>
+                <option value="Bangladesh">Bangladesh</option>
+                <option value="Rohingya">Rohingya</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="gender" class="text-sm">gender: </label>
+            <select name="gender" id="" class="mb-2 form-input">
+                <option value="">select</option>
+                <option value="male">male</option>
+                <option value="female">female</option>
+            </select>
+
+            <label for="contact" class="text-sm">contact: </label>
+            <input type="text" name="contact" class="mb-2 form-input">
+
+            <label for="address" class="text-sm">address: </label>
+            <input type="text" name="address" class="mb-2 form-input">
 
             <!-- Submit -->
-            <div class="pb-2">
-                {{ form.submit(class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100") }}
-            </div>
+            <input type="submit" name="" id="" value="submit" class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
 
-            <br><br>
+            <br><br><br><br>
         </form>
     </div>
 

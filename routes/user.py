@@ -1,17 +1,17 @@
 """
-User Section
+User After Login Page
 """
 import os
 from datetime import datetime
-from fastapi import APIRouter, Cookie, Request, status
+from fastapi import APIRouter, Cookie, Request, Depends, File, UploadFile, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 # Library from own
-from emp import EmpInfo
 from excels import EmpSalary
-from modules.form import CreateForm, EditForm
-from modules.mongo import MongoDB
+from models.form import CreateForm, EditForm
+from models.image import ImageConvert
+from models.mongo import MongoDB
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -22,215 +22,315 @@ _mongodb = MongoDB()
 # Normal get date now
 _date_now = datetime.now()
 
-@router.get("/user", tags=["user"])
-async def mainpage(request: Request, company_name: str | None = Cookie(default=None)):
-    """
-    链接至 index.html, 同时也输出日期
-    """
-    # Get cookie
-    title = company_name
-    db_title = title.upper().replace(" ", "")
 
-    get_mongo = _mongodb.work_hour_collection(db_title)
-    find_all_id = get_mongo.find({})
-    all_id = [x["_id"] async for x in find_all_id]
+# User mainpae ------------------------------
+@router.get("/user", tags=["Emp mainpage"], response_class=HTMLResponse)
+async def mainpage(
+    request: Request, company_name: str | None = Cookie(default=None)
+) -> HTMLResponse:
+    """User mainpage"""
 
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
+
+    # get salary list last item
+    get_salary_list_id = _mongodb.emp_work_hour_collection(db_collection).find({})
+    list_id = [x["date"] for x in get_salary_list_id]
 
     return templates.TemplateResponse(
-        "user.html", 
+        "user.html",
         {
             "request": request,
             "date": _date_now,
-            "title": title,
-            "all_id": all_id,
-            # "err_title"=err_title,
-            # "err_emp"=not_register_emp,
-            # "err_exception_msg"=err_exception_msg,
-        }
+            "title": company_name,
+            "last_id": list_id[-1],
+        },
     )
 
-@router.post("/user")
-async def mainpage_sendfile():
-    # Get ID from list from data
-    # get_mongo = _mongodb.work_hour_collection(db_title)
-    # find_all_id = get_mongo.find({})
-    # all_id = [x["_id"] async for x in find_all_id]
 
-    # if request.method == "POST":
-    #     file_input = request.files["file"]
-    #     try:
-    #         emp_salary = EmpSalary(filename=file_input, db_title=db_title)
-    #         if len(emp_salary.find_no_emp()) == 0:
-    #             return render_template("complete.html")
-    #         else:
-    #             err_title = "This all members not in website:"
-    #             not_register_emp = emp_salary.find_no_emp()
-    #     except Exception as err:  # pylint: disable=W0703
-    #         err_title = "You have error message:"
-    #         err_exception_msg = err
-    pass
+@router.post("/user", tags=["Emp mainpage"], response_class=HTMLResponse)
+async def sendfile(
+    request: Request,
+    company_name: str | None = Cookie(default=None),
+    excels: UploadFile = File(None),
+) -> HTMLResponse:
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
+
+    # send file to excels models to work
+    emp_salary = EmpSalary(file=excels, db_collection=db_collection)
+
+    emp_on_web = emp_salary.emp_on_web()
+    # print(emp_on_web)
+
+    emp_not_in_web = emp_salary.emp_not_in_web()
+    # print(emp_not_in_web)
+
+    emp_list_on_excel = [emp.lower() for emp in emp_salary._get_emp_total_in_excel["name"]]
+    # print(emp_list_on_excel)
+
+    final = emp_salary.main()
+
+    # # 上传至 MongoDB
+    # send_data = {
+    #     # "_id": self._date.format("MMM DD, YYYY"),
+    #     "date": emp_salary._date.format("DD-MM-YYYY"),
+    #     "emp_work_hours": data,
+    # }
+    # # self._work_hour.insert_one(send_data)
+    # print(send_data)
+
+    # try:
+    # if len(await emp_salary.find_no_emp()) == 0:
+    #     return templates.TemplateResponse(
+    #         "complete.html",
+    #         {
+    #         "request": request
+    #         }
+    #     )
+    # else:
+    #     err_title = "This all members not in website"
+    #     not_register_emp = emp_salary.find_no_emp()
+    # except Exception as err:
+    #     err_title = "You have error message:"
+    #     err_exception_msg = err
+
+    # return templates.TemplateResponse(
+    # "index.html",
+    # {
+    # "request": request,
+    # "date": _date_now,
+    # "err_title": err_title,
+    # "err_emp": not_register_emp,
+    # "err_exception_msg": err_exception_msg,
+    # }
+    # )
 
 
-
-@router.get("/add")
-async def add_emp(request: Request, company_name: str | None = Cookie(default=None)):
-    """
-    建立员工资料，如果员工已存在就会显示 error
-    如果建立成功转至 all.html
-    """
-    title = company_name
-    db_title = title.upper().replace(" ", "")
-    _empinfo = EmpInfo(db_title)
-
-    form = CreateForm()
-    error = ""
-
-    if form.validate_on_submit():
-        create_emp = _empinfo.emp_create()
-        if create_emp:
-            redirect_url = request.url_for("all_emp")
-            response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
-            return response
-        else:
-            error = "Employee Exists"
+# Add Employee Info ------------------------------
+@router.get("/add", tags=["Emp add employee"], response_class=HTMLResponse)
+async def add_emp(
+    request: Request,
+    company_name: str | None = Cookie(default=None),
+) -> HTMLResponse:
+    """Add Employee info page"""
 
     return templates.TemplateResponse(
         "add.html",
         {
             "request": request,
-            "form": form,
-            "title": title,
-            "error": error
-        }
-        )
+            "title": company_name,
+        },
+    )
 
 
-@router.get("/all")
-async def all_emp(request: Request, company_name: str | None = Cookie(default=None)):
-    """
-    浏览全部员工
-    """
-    title = company_name
-    db_title = title.upper().replace(" ", "")
-    _empinfo = EmpInfo(db_title)
+@router.post("/add", tags=["Emp add employee"])
+async def add_emp_post(
+    request: Request,
+    company_name: str | None = Cookie(default=None),
+    add_emp: CreateForm = Depends(CreateForm.create),
+) -> RedirectResponse:
+    """Post Employee info to server"""
 
-    count = 0
-    for _ in _empinfo.emp_info():
-        count += 1
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
 
-    info_from_db = _empinfo.emp_info()
-    info = info_from_db.sort("_id", 1)
+    # Image concert and resize
+    if add_emp.img_emp.filename:
+        image_data = ImageConvert().img_base64(add_emp.img_emp.file)
+    else:
+        empty_image = "./static/images/no-data.jpg"
+        image_data = ImageConvert().img_base64(empty_image)
+
+    new_emp = {
+        "_id": add_emp.name.replace(" ", "").lower(),
+        "img_employee": image_data,
+        "name": add_emp.name.title(),
+        "pay_hour": add_emp.pay_hour,
+        "ic": add_emp.ic,
+        "dob": add_emp.dob,
+        "nationality": add_emp.nationality,
+        "gender": add_emp.gender,
+        "contact": add_emp.contact,
+        "address": add_emp.address,
+        "sign_date": _date_now.date().strftime("%d-%m-%Y"),
+    }
+
+    _mongodb.emp_info_collection(db_collection).insert_one(new_emp)
+    redirect_url = request.url_for("mainpage")
+    return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+
+
+# List all Employee Info ------------------------------
+@router.get("/all", tags=["Emp all employee"], response_class=HTMLResponse)
+async def all_emp(
+    request: Request, company_name: str | None = Cookie(default=None)
+) -> HTMLResponse:
+    """List all Employee info"""
+
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
+
+    empinfo = _mongodb.emp_info_collection(db_collection)
+    list_empinfo = empinfo.find({})
+
+    list_empinfo = [i for i in list_empinfo.sort("_id", 1)]
+    list_count = len(list_empinfo)
 
     return templates.TemplateResponse(
         "all.html",
-         { 
-            "info": info,
-            "count": count,
-            "title": title
-        }
-        )
+        {
+            "request": request,
+            "info": list_empinfo,
+            "count": list_count,
+            "title": company_name,
+        },
+    )
 
 
-@router.get("/info/{ids}")
-async def info_emp(ids: str, request: Request, company_name: str | None = Cookie(default=None)):
-    """
-    浏览单位员工
-    """
-    title = company_name
-    db_title = title.upper().replace(" ", "")
-    _empinfo = EmpInfo(db_title)
+# Single employee info ------------------------------
+@router.get("/info/{id}", tags=["Emp single employee"])
+async def info_emp(
+    *, request: Request, company_name: str | None = Cookie(default=None), id: str
+):
+    """Show single Employee info"""
 
-    info = _empinfo.emp_one(ids)
-    emp_name = info["name"]
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
+
+    empinfo = _mongodb.emp_info_collection(db_collection)
+    single_emp = empinfo.find_one({"_id": id})
+
     return templates.TemplateResponse(
         "emp.html",
         {
             "request": request,
-            "info": info,
-            "emp_name": emp_name,
-            "title": title
-        }
+            "info": single_emp,
+            "emp_name": single_emp,
+            "title": company_name,
+        },
     )
 
 
-# @user.route("/edit/<ids>", methods=["GET", "POST"])
-# def edit_emp(ids: str):
-#     """
-#     修改员工资料, 只是修改 ic, contact, address, pay
-#     """
-#     title = _cookie.get_cookie("userID")
-#     db_title = title.upper().replace(" ", "")
-#     _empinfo = EmpInfo(db_title)
+# Single employee EDIT ------------------------------
+@router.get("/edit/{id}", tags=["Emp edit employee"], response_class=HTMLResponse)
+async def edit_emp(
+    *, request: Request, company_name: str | None = Cookie(default=None), id: str
+) -> HTMLResponse:
+    """Edit Employee info"""
 
-#     form = EditForm()
-#     get_emp = _empinfo.emp_one(ids)
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
 
-#     if form.validate_on_submit():
-#         img_employee = form.img_employee.data
-#         ic_card = form.ic.data
-#         contact = form.contact.data
-#         address = form.address.data
-#         pay = form.pay_hour.data
+    # Get Employee info
+    empinfo = _mongodb.emp_info_collection(db_collection)
+    single_emp = empinfo.find_one({"_id": id})
 
-#         _empinfo.emp_edit(ids, ic_card, contact, address, pay, img_employee)
-
-#         return redirect(url_for("user.all_emp"))
-#     return render_template("edit.html", form=form, edit_emp=get_emp, title=title)
+    return templates.TemplateResponse(
+        "edit.html", {"request": request, "edit_emp": single_emp, "title": company_name}
+    )
 
 
-# @user.route("/delete/<ids>")
-# def delete_emp(ids: str):
-#     """
-#     删除员工资料
-#     """
-#     title = _cookie.get_cookie("userID")
-#     db_title = title.upper().replace(" ", "")
-#     _empinfo = EmpInfo(db_title)
-    
-#     _empinfo.emp_delete(ids)
-#     return redirect(url_for("user.all_emp"))
+@router.post("/edit/{id}", tags=["Emp edit employee"], response_class=RedirectResponse)
+async def edit_emp_post(
+    *,
+    request: Request,
+    company_name: str | None = Cookie(default=None),
+    edit_emp: EditForm = Depends(EditForm.edit),
+    id: str,
+) -> RedirectResponse:
+    """Post edit Employee info"""
+
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
+
+    # if send image
+    if edit_emp.img_emp.filename:
+        edit_emp = {
+            "img_employee": ImageConvert().img_base64(edit_emp.img_emp.file),
+            "pay_hour": edit_emp.pay_hour,
+            "ic": edit_emp.ic,
+            "contact": edit_emp.contact,
+            "address": edit_emp.address,
+        }
+    # if NO image
+    else:
+        edit_emp = {
+            "pay_hour": edit_emp.pay_hour,
+            "ic": edit_emp.ic,
+            "contact": edit_emp.contact,
+            "address": edit_emp.address,
+        }
+
+    # update emp info
+    _mongodb.emp_info_collection(db_collection).update_one(
+        {"_id": id}, {"$set": edit_emp}
+    )
+
+    redirect_url = request.url_for("all_emp")
+    return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
-@router.get("/all_list", response_class=HTMLResponse)
-def all_list(ids: str, request: Request, company_name: str | None = Cookie(default=None)):
-    """
-    当月发工资列表
-    """
-    title = company_name
-    db_title = title.upper().replace(" ", "")
+# Delete employee ------------------------------
+@router.get(
+    "/delete/{id}", tags=["Emp delete employee"], response_class=RedirectResponse
+)
+def delete_emp(
+    *, request: Request, company_name: str | None = Cookie(default=None), id: str
+) -> RedirectResponse:
+    """Delete Employee"""
 
-    emp_one = _mongodb.work_hour_collection(db_title).find_one({"_id": ids})  # 寻找月份工人列表
-    emp_output = emp_one["emp_work_hours"]
-    sort_emp_dict = dict(sorted(emp_output.items()))
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
 
-    # 呈现所有员工总数工资
+    # delete emp info
+    _mongodb.emp_info_collection(db_collection).delete_one({"_id": id})
+
+    redirect_url = request.url_for("all_emp")
+    return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+
+
+# Employee salary info ------------------------------
+@router.get("/all_list/{id}", tags=["Emp employee salary list"])
+async def all_list(
+    *, request: Request, company_name: str | None = Cookie(default=None), id: str
+):
+    """All Employee Salary info"""
+
+    # get cookie
+    db_collection = company_name.upper().replace(" ", "")
+
+    # all salary list
+    work_hour_collection = _mongodb.emp_work_hour_collection(db_collection)
+    work_hour_list = [list for list in work_hour_collection.find({})]
+
+    # get single salary list
+    salary_list = work_hour_collection.find_one({"date": id})
+    salary_output = salary_list["emp_work_hours"]
+    sort_emp_dict = dict(sorted(salary_output.items()))
+
+    # salary list amount
     salary = []
-    for _, value in emp_output.items():
+    for _, value in salary_output.items():
         output_value = value
         salary.append(output_value["total_salary"])
 
-    # 名单总数
-    total_emp_on_list = len(emp_output)
-
-    # 工资总数
     total_cash = f"RM {sum(salary):,.2f}"
 
-    # 取文件月份
-    output_month = ids.split(" ")[0]
-
-    # 所有mongoDB资料
-    all_documents = _mongodb.work_hour_collection(db_title).find({})
-    document_id = [x["_id"] for x in all_documents]
+    # get month title
+    output_day = salary_list["date"].split("-")[0]
+    output_month = salary_list["date"].split("-")[1]
+    output_year = salary_list["date"].split("-")[2]
 
     return templates.TemplateResponse(
         "list.html",
         {
             "request": request,
-            "title": title,
+            "title": company_name,
             "emp": sort_emp_dict,
-            "document_id": document_id,
-            "output_id": output_month,
+            "drop_down": work_hour_list,
+            "month": output_month,
             "total_cash": total_cash,
-            "total_emp_on_list": total_emp_on_list,
-        }
+            "total_emp_on_list": len(salary_output),
+        },
     )

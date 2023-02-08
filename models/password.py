@@ -1,10 +1,8 @@
-"""
-Password Section
-"""
 import bcrypt
 
 class Password:
     """Hash Password"""
+
     def create_password(self, password):
         """Create Password"""
         str_password = str(password)

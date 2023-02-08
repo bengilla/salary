@@ -1,67 +1,85 @@
 {% extends 'base.html' %}
-{% block title %}{{ emp_name }}{% endblock %}
+{% block title %}{{ info.name }}{% endblock %}
+
+{% block header %}
+<a href="{{ url_for('all_emp') }}" class="transition hover:underline hover:text-slate-200">Back</a>
+{% endblock %}
 
 {% block content %}
-<section id="all" class="py-[2%] px-[5%] lg:px-[15%]">
+<section id="all" class="py-[2%] lg:px-[15%] flex justify-center">
 
     <!-- {{ info }} -->
-    <div class="mt-2 w-full border border-1 border-slate-900">
-        <table class="table-auto w-full">
-            <tbody>
-                <tr>
-                    <!--image -->
-                    <td class="w-20 px-4">
-                        <div class="grid place-content-center">
-                            <img src="data:;base64, {{ info['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
-                        </div>
-                        <div class="grid grid-rows-1 place-content-center">
-                            <a href="{{ url_for('user.edit_emp', ids=info._id) }}">
-                                <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
-                        </div>
-                    </td>
+    <div class="mt-2 mx-2 w-full max-w-5xl">
 
-                    <!--Info -->
-                    <td>
-                        <table class="auto">
-                            {% set cols={
-                            'id': info._id,
-                            'name': info.name,
-                            'pay': info.pay_hour,
-                            'passport/ic': info.ic,
-                            'nationality': info.nationality,
-                            'gender': info.gender,
-                            'd.o.b': info.dob,
-                            'contact': info.contact,
-                            'address': info.address,
-                            'sign date': info.sign_date
-                            } %}
-                            {% for key, value in cols.items() %}
-                            <tr>
-                                <th class="text-right">
-                                    <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
-                                </th>
-                                <td class="w-full">
-                                    {% if key == 'name' %}
-                                    <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
-                                    {% elif key == 'pay' %}
-                                    <span class="text-xs text-red-500 sm:text-sm">RM
-                                        <span class="font-bold underline select-all sm:text-sm">
-                                            {{ value }}
-                                        </span> / hour</span>
-                                    {% else %}
-                                    <span class="text-xs select-all sm:text-sm">{{ value }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </td>
-                    <!-- End info -->
+        <div class="mt-2 w-full border border-1 border-slate-900">
+            <table class="w-full">
+                <thead class="bg-slate-600">
+                    <tr class="text-xs text-white text-center sm:text-sm">
+                        <th class="p-1 select-none w-[5rem] sm:w-44">Photo</th>
+                        <th class="p-1 select-none">Info</th>
+                    </tr>
+                </thead>
+            
+                <tbody>
+                    <tr>
+                        <!--image -->
+                        <td class="w-20 px-4">
+                            <div class="grid place-content-center">
+                                <img src="data:;base64, {{ info['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
+                            </div>
+                            <div class="grid grid-rows-1 place-content-center">
+                                <a href="{{ url_for('edit_emp', id=info._id) }}">
+                                    <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
+                                </div>
+                                <div class="grid grid-rows-1 place-content-center">
+                                    <a href="{{ url_for('delete_emp', id=info._id) }}">
+                                        <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">delete</button></a>
+                                </div>
+                        </td>
 
-                </tr>
-            </tbody>
+                        <!--Info -->
+                        <td>
+                            <table class="auto">
+                                {% set cols={
+                                'id': info._id,
+                                'name': info.name,
+                                'pay': info.pay_hour,
+                                'passport/ic': info.ic,
+                                'nationality': info.nationality,
+                                'gender': info.gender,
+                                'd.o.b': info.dob,
+                                'contact': info.contact,
+                                'address': info.address,
+                                'sign date': info.sign_date
+                                } %}
+                                {% for key, value in cols.items() %}
+                                <tr>
+                                    <th class="text-right">
+                                        <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                                    </th>
+                                    <td class="w-full">
+                                        {% if key == 'name' %}
+                                        <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
+                                        {% elif key == 'pay' %}
+                                        <span class="text-xs text-red-500 sm:text-sm">RM
+                                            <span class="font-bold underline select-all sm:text-sm">
+                                                {{ value }}
+                                            </span> / hour</span>
+                                        {% else %}
+                                        <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                        <!-- End info -->
 
-        </table>
+                    </tr>
+                    </tbody>
+
+            </table>
+        </div>
 
     </div>
     <!-- Work Hour -->
