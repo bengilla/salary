@@ -1,7 +1,5 @@
-"""
-User After Login Page
-"""
-import pendulum
+"""User Page"""
+# import library
 from datetime import datetime
 from fastapi import (
     APIRouter,
@@ -10,13 +8,13 @@ from fastapi import (
     Depends,
     File,
     UploadFile,
-    HTTPException,
     status,
 )
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from starlette.templating import _TemplateResponse
 
-# Library from own
+# library from own
 from excels import EmpSalary
 from models.form import CreateForm, EditForm
 from models.image import ImageConvert
@@ -25,14 +23,14 @@ from models.mongo import MongoDB
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# # Work List MongoDB connect
+# work list mongodb connect
 _mongodb = MongoDB()
 
-# Normal get date now
+# normal get date now
 _date_now = datetime.now()
 
 
-# User mainpae ------------------------------
+# user main_page ------------------------------
 @router.get("/user", tags=["Emp mainpage"])
 async def mainpage(request: Request, company_name: str | None = Cookie(default=None)):
     """User mainpage"""
@@ -48,11 +46,11 @@ async def mainpage(request: Request, company_name: str | None = Cookie(default=N
 
 
 @router.post("/user", tags=["Emp mainpage"], response_class=HTMLResponse)
-async def sendfile(
+async def send_file(
     request: Request,
     company_name: str | None = Cookie(default=None),
     excels: UploadFile = File(None),
-) -> HTMLResponse:
+) -> _TemplateResponse:
     # get cookie
     db_collection = company_name.upper().replace(" ", "")
 
@@ -84,12 +82,12 @@ async def sendfile(
     )
 
 
-# Add Employee Info ------------------------------
+# add employee info ------------------------------
 @router.get("/add", tags=["Emp add employee"], response_class=HTMLResponse)
 async def add_emp(
     request: Request,
     company_name: str | None = Cookie(default=None),
-) -> HTMLResponse:
+) -> _TemplateResponse:
     """Add Employee info page"""
 
     return templates.TemplateResponse(
@@ -105,7 +103,7 @@ async def add_emp(
 async def add_emp_post(
     request: Request,
     company_name: str | None = Cookie(default=None),
-    add_emp: CreateForm = Depends(CreateForm.create),
+    add_emp_form: CreateForm = Depends(CreateForm.create),
 ) -> RedirectResponse:
     """Post Employee info to server"""
 
@@ -113,23 +111,23 @@ async def add_emp_post(
     db_collection = company_name.upper().replace(" ", "")
 
     # Image concert and resize
-    if add_emp.img_emp.filename:
-        image_data = ImageConvert().img_base64(add_emp.img_emp.file)
+    if add_emp_form.img_emp.filename:
+        image_data = ImageConvert().img_base64(add_emp_form.img_emp.file)
     else:
         empty_image = "./static/images/no-data.jpg"
         image_data = ImageConvert().img_base64(empty_image)
 
     new_emp = {
-        "_id": add_emp.name.replace(" ", "").lower(),
+        "_id": add_emp_form.name.replace(" ", "").lower(),
         "img_employee": image_data,
-        "name": add_emp.name.title(),
-        "pay_hour": add_emp.pay_hour,
-        "ic": add_emp.ic,
-        "dob": add_emp.dob,
-        "nationality": add_emp.nationality,
-        "gender": add_emp.gender,
-        "contact": add_emp.contact,
-        "address": add_emp.address,
+        "name": add_emp_form.name.title(),
+        "pay_hour": add_emp_form.pay_hour,
+        "ic": add_emp_form.ic,
+        "dob": add_emp_form.dob,
+        "nationality": add_emp_form.nationality,
+        "gender": add_emp_form.gender,
+        "contact": add_emp_form.contact,
+        "address": add_emp_form.address,
         "sign_date": _date_now.date().strftime("%d-%m-%Y"),
     }
 
@@ -138,45 +136,45 @@ async def add_emp_post(
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
-# List all Employee Info ------------------------------
+# list all employee info ------------------------------
 @router.get("/all", tags=["Emp all employee"], response_class=HTMLResponse)
 async def all_emp(
     request: Request, company_name: str | None = Cookie(default=None)
-) -> HTMLResponse:
+) -> _TemplateResponse:
     """List all Employee info"""
 
     # get cookie
     db_collection = company_name.upper().replace(" ", "")
 
-    empinfo = _mongodb.emp_info_collection(db_collection)
-    list_empinfo = empinfo.find({})
+    emp_info = _mongodb.emp_info_collection(db_collection)
+    list_emp_info = emp_info.find({})
 
-    list_empinfo = [i for i in list_empinfo.sort("_id", 1)]
-    list_count = len(list_empinfo)
+    list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
+    list_count = len(list_emp_info)
 
     return templates.TemplateResponse(
         "all.html",
         {
             "request": request,
-            "info": list_empinfo,
+            "info": list_emp_info,
             "count": list_count,
             "title": company_name,
         },
     )
 
 
-# Single employee info ------------------------------
+# single employee info ------------------------------
 @router.get("/info/{id}", tags=["Emp single employee"])
 async def info_emp(
-    *, request: Request, company_name: str | None = Cookie(default=None), id: str
+    *, request: Request, company_name: str | None = Cookie(default=None), ids: str
 ):
     """Show single Employee info"""
 
     # get cookie
     db_collection = company_name.upper().replace(" ", "")
 
-    empinfo = _mongodb.emp_info_collection(db_collection)
-    single_emp = empinfo.find_one({"_id": id})
+    emp_info = _mongodb.emp_info_collection(db_collection)
+    single_emp = emp_info.find_one({"_id": ids})
 
     return templates.TemplateResponse(
         "emp.html",
@@ -189,19 +187,19 @@ async def info_emp(
     )
 
 
-# Single employee EDIT ------------------------------
+# single employee edit ------------------------------
 @router.get("/edit/{id}", tags=["Emp edit employee"], response_class=HTMLResponse)
 async def edit_emp(
-    *, request: Request, company_name: str | None = Cookie(default=None), id: str
-) -> HTMLResponse:
+    *, request: Request, company_name: str | None = Cookie(default=None), ids: str
+) -> _TemplateResponse:
     """Edit Employee info"""
 
     # get cookie
     db_collection = company_name.upper().replace(" ", "")
 
     # Get Employee info
-    empinfo = _mongodb.emp_info_collection(db_collection)
-    single_emp = empinfo.find_one({"_id": id})
+    emp_info = _mongodb.emp_info_collection(db_collection)
+    single_emp = emp_info.find_one({"_id": ids})
 
     return templates.TemplateResponse(
         "edit.html", {"request": request, "edit_emp": single_emp, "title": company_name}
@@ -213,8 +211,8 @@ async def edit_emp_post(
     *,
     request: Request,
     company_name: str | None = Cookie(default=None),
-    edit_emp: EditForm = Depends(EditForm.edit),
-    id: str,
+    edit_emp_form: EditForm = Depends(EditForm.edit),
+    ids: str,
 ) -> RedirectResponse:
     """Post edit Employee info"""
 
@@ -222,38 +220,38 @@ async def edit_emp_post(
     db_collection = company_name.upper().replace(" ", "")
 
     # if send image
-    if edit_emp.img_emp.filename:
-        edit_emp = {
-            "img_employee": ImageConvert().img_base64(edit_emp.img_emp.file),
-            "pay_hour": edit_emp.pay_hour,
-            "ic": edit_emp.ic,
-            "contact": edit_emp.contact,
-            "address": edit_emp.address,
+    if edit_emp_form.img_emp.filename:
+        edit_emp_form = {
+            "img_employee": ImageConvert().img_base64(edit_emp_form.img_emp.file),
+            "pay_hour": edit_emp_form.pay_hour,
+            "ic": edit_emp_form.ic,
+            "contact": edit_emp_form.contact,
+            "address": edit_emp_form.address,
         }
     # if NO image
     else:
-        edit_emp = {
-            "pay_hour": edit_emp.pay_hour,
-            "ic": edit_emp.ic,
-            "contact": edit_emp.contact,
-            "address": edit_emp.address,
+        edit_emp_form = {
+            "pay_hour": edit_emp_form.pay_hour,
+            "ic": edit_emp_form.ic,
+            "contact": edit_emp_form.contact,
+            "address": edit_emp_form.address,
         }
 
     # update emp info
     _mongodb.emp_info_collection(db_collection).update_one(
-        {"_id": id}, {"$set": edit_emp}
+        {"_id": ids}, {"$set": edit_emp_form}
     )
 
     redirect_url = request.url_for("all_emp")
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
-# Delete employee ------------------------------
+# delete employee ------------------------------
 @router.get(
     "/delete/{id}", tags=["Emp delete employee"], response_class=RedirectResponse
 )
 def delete_emp(
-    *, request: Request, company_name: str | None = Cookie(default=None), id: str
+    *, request: Request, company_name: str | None = Cookie(default=None), ids: str
 ) -> RedirectResponse:
     """Delete Employee"""
 
@@ -261,14 +259,14 @@ def delete_emp(
     db_collection = company_name.upper().replace(" ", "")
 
     # delete emp info
-    _mongodb.emp_info_collection(db_collection).delete_one({"_id": id})
+    _mongodb.emp_info_collection(db_collection).delete_one({"_id": ids})
 
     redirect_url = request.url_for("all_emp")
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
-# Employee salary info ------------------------------
-@router.get("/salarymenu", tags=["Emp employee salary list"])
+# employee salary info ------------------------------
+@router.get("/salary-list", tags=["Emp employee salary list"])
 async def salary_menu(
     *, request: Request, company_name: str | None = Cookie(default=None)
 ):
@@ -284,7 +282,7 @@ async def salary_menu(
             year_collection.append(get_str[1])
 
     return templates.TemplateResponse(
-        "salarymenu.html",
+        "salary-list.html",
         {
             "request": request,
             "date": _date_now,
@@ -306,7 +304,7 @@ async def all_list(
 
     # all salary list
     work_hour_collection = _mongodb.emp_work_hour_collection(db_collection, year)
-    work_hour_list = [list["date"] for list in work_hour_collection.find({})]
+    work_hour_list = [work_hour_list["date"] for work_hour_list in work_hour_collection.find({})]
 
     # get single salary list
     salary_list = work_hour_collection.find_one({"date": work_hour_list[-1]})
@@ -340,7 +338,7 @@ async def all_list(
     *,
     request: Request,
     company_name: str | None = Cookie(default=None),
-    id: str,
+    ids: str,
     year: str,
 ):
     # get cookie
@@ -348,10 +346,10 @@ async def all_list(
 
     # all salary list
     work_hour_collection = _mongodb.emp_work_hour_collection(db_collection, year)
-    work_hour_list = [list["date"] for list in work_hour_collection.find({})]
+    work_hour_list = [work_hour_list["date"] for work_hour_list in work_hour_collection.find({})]
 
     # get single salary list
-    salary_list = work_hour_collection.find_one({"date": id})
+    salary_list = work_hour_collection.find_one({"date": ids})
     salary_output = salary_list["emp_work_hours"]
     sort_emp_dict = dict(sorted(salary_output.items()))
 

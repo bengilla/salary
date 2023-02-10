@@ -1,12 +1,8 @@
 import os
-import datetime as dt
 from dotenv import load_dotenv
 from pymongo import MongoClient
 
-
 class MongoDB:
-    """Connect MongoDB"""
-
     def __init__(self) -> None:
         load_dotenv()
 

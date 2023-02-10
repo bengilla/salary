@@ -35,10 +35,10 @@ class CreateForm(EmpForm):
     @classmethod
     def create(
         cls,
-        img_emp: UploadFile = File(None),
         name: str = Form(...),
         pay_hour: float = Form(...),
         # Optional
+        img_emp: UploadFile = File(None),
         ic: str = Form(None),
         dob: str = Form(None),
         gender: str = Form(None),
@@ -76,6 +76,3 @@ class EditForm(EmpForm):
             contact=contact,
             address=address,
         )
-
-
-

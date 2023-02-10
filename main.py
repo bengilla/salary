@@ -1,38 +1,58 @@
-"""
-User Login and Register Page
-"""
-from fastapi import FastAPI, Request, Response, Depends, Cookie, status
+"""User Login and Register Page"""
+# import library
+from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.templating import _TemplateResponse
 
-# Modules from own library
+# modules from own library
 from models.mongo import MongoDB
 from models.form import LoginForm, RegisterForm
 from models.password import Password
 from routes.user import router
 
-# Setup
-app = FastAPI(title="TBROS Worker", version=1.0)
+
+# setup
+app = FastAPI(title="TBROS Worker", version="1.0")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# MongoDB
+# mongoDB
 _mongo = MongoDB()
 
 
-# Index----------------------------------------------------------------------
+# error handle
+@app.exception_handler(StarletteHTTPException)
+async def my_exception_handler(request: Request, exc):
+    return templates.TemplateResponse(
+        "error/error.html",
+        {"request": request, "status_code": exc.status_code, "error": exc.detail},
+    )
+
+
+# index----------------------------------------------------------------------
 @app.get(
     "/", tags=["User Login"], response_class=HTMLResponse, description="User login page"
 )
-async def index(request: Request, response: Response) -> HTMLResponse:
+async def index(request: Request) -> _TemplateResponse:
     title = "Employee work system - Login"
+
+    # ------------------------------------------------------------------------------------------------
+    # total = 0
+    # data = _mongo.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
+    # find_data = data.find_one({"date": "16-Jan-2023"})
+    # look_emp = find_data["emp_work_hours"]
+    # for name in look_emp:
+    #     total += look_emp[name]["total_salary"]
+    # print(total)
+    # ------------------------------------------------------------------------------------------------
 
     response = templates.TemplateResponse(
         "index.html", {"request": request, "title": title}
     )
     response.delete_cookie(key="company_name")
-    response.delete_cookie(key="error_msg")
     return response
 
 
@@ -68,27 +88,19 @@ async def index_post(
                 response.set_cookie(key="company_name", value=title)
                 return response
             else:
-                redirect_url = request.url_for("error")
-                response = RedirectResponse(
-                    redirect_url, status_code=status.HTTP_303_SEE_OTHER
-                )
-                response.set_cookie(key="error_msg", value="Password not correct!")
-                return response
+                raise HTTPException(status_code=401, detail="Password Incorrect!!!")
 
-    redirect_url = request.url_for("error")
-    response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
-    response.set_cookie(key="error_msg", value="User doesn't exists")
-    return response
+    raise HTTPException(status_code=404, detail="User doesn't exist, please register")
 
 
-# Register----------------------------------------------------------------------
+# register----------------------------------------------------------------------
 @app.get(
     "/register",
     tags=["User Register"],
     response_class=HTMLResponse,
     description="Register page",
 )
-async def register(request: Request) -> HTMLResponse:
+async def register(request: Request) -> _TemplateResponse:
     title = "Employee work system - Register"
 
     return templates.TemplateResponse(
@@ -102,48 +114,35 @@ async def register(request: Request) -> HTMLResponse:
 
 @app.post("/register", tags=["User Register"], description="Register post data")
 async def register_post(
-    request: Request, register: RegisterForm = Depends(RegisterForm.register)
+    request: Request, register_info: RegisterForm = Depends(RegisterForm.register)
 ) -> RedirectResponse:
     user_list = [user["email"] for user in _mongo.user_collection().find({})]
-    hash_password = Password().create_password(register.password)
+    hash_password = Password().create_password(register_info.password)
 
     new_user = {
-        "email": register.email,
+        "email": register_info.email,
         "password": hash_password,
-        "company_name": register.company_name,
+        "company_name": register_info.company_name,
     }
 
-    if register.email not in user_list:
+    if register_info.email not in user_list:
         _mongo.user_collection().insert_one(new_user)
         redirect_url = request.url_for("index")
         return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     else:
-        return templates.TemplateResponse(
-            "register.html", {"request": request, "title": "User is exsit"}
+        raise HTTPException(
+            status_code=401, detail="User is exists, please use other email"
         )
 
 
-# # Logout----------------------------------------------------------------------
+# logout----------------------------------------------------------------------
 @app.get("/logout", tags=["User Logout"], description="Logout user")
 async def logout(request: Request):
     redirect_url = request.url_for("index")
     response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     response.delete_cookie(key="company_name")
-    response.delete_cookie(key="error_msg")
     return response
 
 
-# # Error----------------------------------------------------------------------
-@app.get(
-    "/error", tags=["User Error"], response_class=HTMLResponse, description="Error page"
-)
-async def error(
-    request: Request, error_msg: str | None = Cookie(default=None)
-) -> HTMLResponse:
-    return templates.TemplateResponse(
-        "error.html", {"request": request, "error_msg": error_msg}
-    )
-
-
-# Routes to user section
+# routes to user section
 app.include_router(router)

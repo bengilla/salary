@@ -1,14 +1,35 @@
+# fastapi
 fastapi
+starlette
 uvicorn[standard]
+
+# jinja2
 Jinja2
+
+# form multipart
 python-multipart
-# motor
-WTForms
+
+# image
 Pillow
-bcrypt
+
+# date
 pendulum
+
+# excel 
 pandas
+xlrd
+
+# email
 email-validator
 dnspython
 gunicorn
-xlrd
+
+# password
+bcrypt
+
+#mongodb
+pymongo
+
+# JWT Token
+# python-jose[cryptography]
+# passlib[bcrypt]

@@ -41,7 +41,7 @@
         </div>
 
         <div class="pt-4 pb-8 grid grid-cols-1 place-items-center">
-            <form action="{{ url_for('sendfile') }}" method="POST" enctype="multipart/form-data" class="w-4/5 sm:w-[400px]">
+            <form action="{{ url_for('send_file') }}" method="POST" enctype="multipart/form-data" class="w-4/5 sm:w-[400px]">
                 <p class="text-sm text-red-500">Upload salary file</p>
                 <input type="file" name="file" class="px-4 py-4 rounded-xl border-2 border-slate-500 block w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0

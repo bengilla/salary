@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Error Page{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<section id="add" class="w-full">
+    <div class="w-full flex justify-center">
+        <div>
+            <h1 class="pt-12 text-4xl font-bold text-center">{{ status_code }}</h1>
+            <h1 class="pt-4 text-2xl font-bold text-center">{{ error }}</h1>
+            <div class="text-center">
+                <a href="{{ url_for('index') }}" class="text-orange-700 underline">mainpage</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
