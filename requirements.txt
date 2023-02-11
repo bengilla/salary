@@ -22,7 +22,6 @@ xlrd
 # email
 email-validator
 dnspython
-gunicorn
 
 # password
 bcrypt

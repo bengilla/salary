@@ -18,7 +18,6 @@ class RegisterForm(LoginForm):
         return cls(email=email, password=password, company_name=company_name)
 
 # Users create, edit and delete forms ------------------------------
-
 class EmpForm(BaseModel):
     img_emp: UploadFile
     pay_hour: float = None
@@ -75,4 +74,17 @@ class EditForm(EmpForm):
             pay_hour=pay_hour,
             contact=contact,
             address=address,
+        )
+
+# form for upload excel file ------------------------------
+class ExcelForm(BaseModel):
+    excel: UploadFile
+
+    @classmethod
+    def excel_upload(
+            cls,
+            excel: UploadFile = File(None),
+    ):
+        return cls(
+            excel=excel,
         )

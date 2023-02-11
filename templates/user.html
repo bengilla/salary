@@ -31,7 +31,7 @@
             </a>
         </div>
         <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('salary_menu') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+            <a href="{{ url_for('salary_list') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
                 All List Work Hours
             </a>
         </div>
@@ -43,17 +43,17 @@
         <div class="pt-4 pb-8 grid grid-cols-1 place-items-center">
             <form action="{{ url_for('send_file') }}" method="POST" enctype="multipart/form-data" class="w-4/5 sm:w-[400px]">
                 <p class="text-sm text-red-500">Upload salary file</p>
-                <input type="file" name="file" class="px-4 py-4 rounded-xl border-2 border-slate-500 block w-full text-sm text-slate-500
+                <input type="file" name="excel" accept="application/vnd.ms-excel" class="px-4 py-4 rounded-xl border-2 border-slate-500 block w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
                 file:text-sm file:font-semibold file:bg-blue-300 file:text-slate-700
                 hover:file:bg-blue-700 hover:file:text-white"><br>
-                <input type="submit" class="p-2 w-full bg-slate-300 rounded hover:bg-red-400 ease-in-out duration-300">
-                <p class="text-ls font-bold text-red-700">{{ err_title }}</p>
+                <input type="submit" value="submit" class="p-2 w-full bg-slate-300 rounded hover:bg-red-400 ease-in-out duration-300">
                 <div class="pb-8 px-8">
-                    {% for i in err_emp %}
+                    <span class="text-red-500">{{ msg_output }}</span><br>
+                    {% for i in emp_not_in_web %}
                     <span>{{ loop.index }}. {{ i }}</span><br>
                     {% endfor %}
-                    {{ err_exception_msg }} </div>
+                </div>
             </form>
         </div>
     </div>

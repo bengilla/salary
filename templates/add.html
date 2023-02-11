@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Add employee{% endblock %}
+{% block title %}{{ title }}-Add employee{% endblock %}
 
 {% block header %}
 <a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
@@ -12,7 +12,7 @@
         <form action="{{ url_for('add_emp_post') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]" novalidate>
 
             <label for="img_emp" class="text-sm">image: </label>
-            <input type="file" name="img_emp" accept="image/jpeg, iamge/jpg, image/png" class="mb-4 w-full text-sm text-slate-500
+            <input type="file" name="img_emp" accept="image/jpeg, image/jpg, image/png" class="mb-4 w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-lg file:border-0
                 file:text-sm file:font-semibold

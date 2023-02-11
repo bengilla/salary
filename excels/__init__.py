@@ -1,5 +1,4 @@
 import pendulum
-from fastapi import UploadFile, File
 from excels.excel_module import ReadExcel
 from excels.timecalculation import TimeCalculation
 from models.mongo import MongoDB
@@ -8,16 +7,16 @@ from models.mongo import MongoDB
 class EmpSalary:
     """这是最终到处所有计算后的数据"""
 
-    def __init__(self, db_collection: str, file: File):
+    def __init__(self, db_collection: str, excel_file):
         self.data = {}
         self.total_amounts = 0
-        self.file = file
 
         # send excel file to ReadExcel to calculation the data
-        self.read_excel = ReadExcel(self.file.file)
+        self.read_excel = ReadExcel(excel_file)
 
         # get name, day, month from ReadExcel data
         self._date = self.read_excel.get_date()
+        print(self._date)
 
         # get data from mongodb
         _mongodb = MongoDB()
@@ -37,6 +36,9 @@ class EmpSalary:
         self._month: int = self._date.month
         self._year: int = self._date.year
 
+        # run main section
+        self.main()
+
     def emp_on_web(self) -> list:
         emp_name_on_web = self._empinfo.find({})
         emp_on_web = [emp["_id"] for emp in emp_name_on_web]
@@ -52,6 +54,7 @@ class EmpSalary:
 
         # check employee in excels is it on web
         result = [emp for emp in emp_on_excel if emp not in emp_on_web]
+        print(result)
         return result
 
     def emp_final_calculation(self, id: str):

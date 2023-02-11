@@ -20,10 +20,10 @@
 
     <div class="w-full grid grid-cols-1 lg:grid-cols-1">
 
-        {% for year in year_collection %}
+        {% for key, value in year_collection.items() %}
         <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('all_list', year=year) }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
-                {{ year }}
+            <a href="{{ url_for('all_list', year=key, ids=value[-1]) }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+                {{ key }}
             </a>
         </div>
         {% endfor %}

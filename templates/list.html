@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Salary list{% endblock %}
+{% block title %}Salary list={{ year }}{% endblock %}
 
 {% block header %}
 <a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
@@ -14,8 +14,8 @@
             <div class="grid place-items-start">
                 <button class="dropbtn rounded-lg">Select Date</button>
                 <div class="dropdown-content">
-                    {% for i in drop_down %}
-                    <a href="{{ url_for('all_list', year=year, id=i) }}">{{ i }}</a>
+                    {% for date in drop_down %}
+                    <a href="{{ url_for('all_list', year=year, ids=date) }}">{{ date }}</a>
                     {% endfor %}
                 </div>
             </div>

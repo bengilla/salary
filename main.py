@@ -7,10 +7,12 @@ from fastapi.templating import Jinja2Templates
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.templating import _TemplateResponse
 
-# modules from own library
+# models from own library
 from models.mongo import MongoDB
 from models.form import LoginForm, RegisterForm
 from models.password import Password
+
+# router
 from routes.user import router
 
 
@@ -22,10 +24,15 @@ templates = Jinja2Templates(directory="templates")
 # mongoDB
 _mongo = MongoDB()
 
+# user list from mongodb
+# _user_exists = [user["email"] for user in _mongo.user_collection().find({})]
+
 
 # error handle
 @app.exception_handler(StarletteHTTPException)
 async def my_exception_handler(request: Request, exc):
+    """error handle"""
+
     return templates.TemplateResponse(
         "error/error.html",
         {"request": request, "status_code": exc.status_code, "error": exc.detail},
@@ -37,8 +44,9 @@ async def my_exception_handler(request: Request, exc):
     "/", tags=["User Login"], response_class=HTMLResponse, description="User login page"
 )
 async def index(request: Request) -> _TemplateResponse:
-    title = "Employee work system - Login"
+    """index page"""
 
+    title = "Employee work system - Login"
     # ------------------------------------------------------------------------------------------------
     # total = 0
     # data = _mongo.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
@@ -48,7 +56,6 @@ async def index(request: Request) -> _TemplateResponse:
     #     total += look_emp[name]["total_salary"]
     # print(total)
     # ------------------------------------------------------------------------------------------------
-
     response = templates.TemplateResponse(
         "index.html", {"request": request, "title": title}
     )
@@ -65,13 +72,15 @@ async def index(request: Request) -> _TemplateResponse:
 async def index_post(
     request: Request, login: LoginForm = Depends(LoginForm.login)
 ) -> RedirectResponse:
-    # Password generated
+    """index post section"""
+
+    # password generated
     _pass = Password()
 
-    # Check user is it exists
+    # check user is it exists
     check_users = _mongo.user_collection().find({})
 
-    # Get data from form post section
+    # get data from form post section
     login_email = login.email
     login_password = login.password
 
@@ -88,7 +97,7 @@ async def index_post(
                 response.set_cookie(key="company_name", value=title)
                 return response
             else:
-                raise HTTPException(status_code=401, detail="Password Incorrect!!!")
+                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
 
     raise HTTPException(status_code=404, detail="User doesn't exist, please register")
 
@@ -101,6 +110,8 @@ async def index_post(
     description="Register page",
 )
 async def register(request: Request) -> _TemplateResponse:
+    """register page"""
+
     title = "Employee work system - Register"
 
     return templates.TemplateResponse(
@@ -116,6 +127,8 @@ async def register(request: Request) -> _TemplateResponse:
 async def register_post(
     request: Request, register_info: RegisterForm = Depends(RegisterForm.register)
 ) -> RedirectResponse:
+    """register post section"""
+
     user_list = [user["email"] for user in _mongo.user_collection().find({})]
     hash_password = Password().create_password(register_info.password)
 
@@ -138,6 +151,8 @@ async def register_post(
 # logout----------------------------------------------------------------------
 @app.get("/logout", tags=["User Logout"], description="Logout user")
 async def logout(request: Request):
+    """logout section"""
+
     redirect_url = request.url_for("index")
     response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     response.delete_cookie(key="company_name")

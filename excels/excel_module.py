@@ -5,13 +5,13 @@ import pendulum
 class ReadExcel:
     """读取 excel 文件"""
 
-    def __init__(self, file):
+    def __init__(self, excel_file):
         # 选择 excel 的第二页和 excel 文件名
         self._sheet_num = 2
-        self._file = file
+        self._excel_file = excel_file
 
         # pandas 生成和生成日期
-        self._df = pd.read_excel(self._file, sheet_name=self._sheet_num)
+        self._df = pd.read_excel(self._excel_file, sheet_name=self._sheet_num)
 
     def get_date(self):
         return pendulum.from_format(self._df.loc[1][2].split(" ")[0], "YYYY-MM-DD")
