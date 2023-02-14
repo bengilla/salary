@@ -23,12 +23,11 @@ xlrd
 email-validator
 dnspython
 
-# password
-bcrypt
-
-#mongodb
+# mongodb
 pymongo
 
+# password
+passlib[bcrypt]
+
 # JWT Token
-# python-jose[cryptography]
-# passlib[bcrypt]
+python-jose[cryptography]

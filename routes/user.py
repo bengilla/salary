@@ -11,6 +11,7 @@ from fastapi import (
 )
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.security import OAuth2PasswordBearer
 from starlette.templating import _TemplateResponse
 
 # library from own
@@ -22,8 +23,11 @@ from models.mongo import MongoDB
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
+# oauth
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 # work list mongodb connect
-_mongodb = MongoDB()
+_DB = MongoDB()
 
 # normal get date now
 _date_now = datetime.now()
@@ -31,13 +35,11 @@ _date_now = datetime.now()
 
 # user main_page ------------------------------
 @router.get("/user", tags=["Emp mainpage"])
-async def mainpage(request: Request, company_name: str | None = Cookie(default=None)):
+async def mainpage(
+        request: Request,
+        company_name: str | None = Cookie(default=None),
+):
     """user mainpage"""
-
-    # testing
-    db_collection_name = company_name.upper().replace(" ", "")
-    a = _mongodb.collection_name(db_collection_name)
-    print(a)
 
     return templates.TemplateResponse(
         "user.html",
@@ -131,7 +133,7 @@ async def add_emp_post(
         "sign_date": _date_now.date().strftime("%d-%m-%Y"),
     }
 
-    _mongodb.emp_info_collection(db_collection_name).insert_one(new_emp)
+    _DB.emp_info_collection(db_collection_name).insert_one(new_emp)
     redirect_url = request.url_for("mainpage")
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 
@@ -146,7 +148,7 @@ async def all_emp(
     # get cookie
     db_collection_name = company_name.upper().replace(" ", "")
 
-    emp_info = _mongodb.emp_info_collection(db_collection_name)
+    emp_info = _DB.emp_info_collection(db_collection_name)
     list_emp_info = emp_info.find({})
 
     list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
@@ -173,7 +175,7 @@ async def info_emp(
     # get cookie
     db_collection_name = company_name.upper().replace(" ", "")
 
-    emp_info = _mongodb.emp_info_collection(db_collection_name)
+    emp_info = _DB.emp_info_collection(db_collection_name)
     single_emp = emp_info.find_one({"_id": ids})
 
     return templates.TemplateResponse(
@@ -198,7 +200,7 @@ async def edit_emp(
     db_collection_name = company_name.upper().replace(" ", "")
 
     # Get Employee info
-    emp_info = _mongodb.emp_info_collection(db_collection_name)
+    emp_info = _DB.emp_info_collection(db_collection_name)
     single_emp = emp_info.find_one({"_id": ids})
 
     return templates.TemplateResponse(
@@ -238,7 +240,7 @@ async def edit_emp_post(
         }
 
     # update emp info
-    _mongodb.emp_info_collection(db_collection_name).update_one(
+    _DB.emp_info_collection(db_collection_name).update_one(
         {"_id": ids}, {"$set": edit_emp_form}
     )
 
@@ -259,7 +261,7 @@ def delete_emp(
     db_collection_name = company_name.upper().replace(" ", "")
 
     # delete emp info
-    _mongodb.emp_info_collection(db_collection_name).delete_one({"_id": ids})
+    _DB.emp_info_collection(db_collection_name).delete_one({"_id": ids})
 
     redirect_url = request.url_for("all_emp")
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
@@ -275,7 +277,7 @@ async def salary_list(
     # get cookie
     db_collection_name = company_name.upper().replace(" ", "")
 
-    year_collection = _mongodb.collection_name(db_collection_name)
+    year_collection = _DB.collection_name(db_collection_name)
 
     return templates.TemplateResponse(
         "salary-list.html",
@@ -303,13 +305,13 @@ async def all_list(
 
     # drop down list
     def drop_down_list():
-        date_list = _mongodb.collection_name(db_collection_name)
+        date_list = _DB.collection_name(db_collection_name)
         for key, value in date_list.items():
             if key == year:
                 return value
 
     # get single salary list
-    work_hour_collection = _mongodb.emp_work_hour_collection(db_collection_name, year)
+    work_hour_collection = _DB.emp_work_hour_collection(db_collection_name, year)
 
     salary_list = work_hour_collection.find_one({"date": ids})
     salary_output = salary_list["emp_work_hours"]

@@ -21,12 +21,11 @@ app = FastAPI(title="TBROS Worker", version="1.0")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+# password hash and verify
+_pass = Password()
+
 # mongoDB
-_mongo = MongoDB()
-
-# user list from mongodb
-# _user_exists = [user["email"] for user in _mongo.user_collection().find({})]
-
+_DB = MongoDB()
 
 # error handle
 @app.exception_handler(StarletteHTTPException)
@@ -38,7 +37,6 @@ async def my_exception_handler(request: Request, exc):
         {"request": request, "status_code": exc.status_code, "error": exc.detail},
     )
 
-
 # index----------------------------------------------------------------------
 @app.get(
     "/", tags=["User Login"], response_class=HTMLResponse, description="User login page"
@@ -49,7 +47,7 @@ async def index(request: Request) -> _TemplateResponse:
     title = "Employee work system - Login"
     # ------------------------------------------------------------------------------------------------
     # total = 0
-    # data = _mongo.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
+    # data = _DB.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
     # find_data = data.find_one({"date": "16-Jan-2023"})
     # look_emp = find_data["emp_work_hours"]
     # for name in look_emp:
@@ -60,6 +58,7 @@ async def index(request: Request) -> _TemplateResponse:
         "index.html", {"request": request, "title": title}
     )
     response.delete_cookie(key="company_name")
+    response.delete_cookie(key="access_token")
     return response
 
 
@@ -70,15 +69,13 @@ async def index(request: Request) -> _TemplateResponse:
     description="User post login data",
 )
 async def index_post(
-    request: Request, login: LoginForm = Depends(LoginForm.login)
+    request: Request, login: LoginForm = Depends(LoginForm.login),
 ) -> RedirectResponse:
     """index post section"""
 
-    # password generated
-    _pass = Password()
 
     # check user is it exists
-    check_users = _mongo.user_collection().find({})
+    check_users = _DB.user_collection().find({})
 
     # get data from form post section
     login_email = login.email
@@ -86,9 +83,8 @@ async def index_post(
 
     for user in check_users:
         if login_email == user["email"]:
-            password = _pass.check_password(login_password, user["password"])
 
-            if password:
+            if _pass.verify_password(login_password, user["password"]):
                 title = user["company_name"]
                 redirect_url = request.url_for("mainpage")
                 response = RedirectResponse(
@@ -129,17 +125,16 @@ async def register_post(
 ) -> RedirectResponse:
     """register post section"""
 
-    user_list = [user["email"] for user in _mongo.user_collection().find({})]
-    hash_password = Password().create_password(register_info.password)
+    user_list = [user["email"] for user in _DB.user_collection().find({})]
 
     new_user = {
         "email": register_info.email,
-        "password": hash_password,
+        "password": _pass.get_password_hash(register_info.password),
         "company_name": register_info.company_name,
     }
 
     if register_info.email not in user_list:
-        _mongo.user_collection().insert_one(new_user)
+        _DB.user_collection().insert_one(new_user)
         redirect_url = request.url_for("index")
         return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     else:
@@ -156,6 +151,7 @@ async def logout(request: Request):
     redirect_url = request.url_for("index")
     response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     response.delete_cookie(key="company_name")
+    response.delete_cookie(key="access_token")
     return response
 
 
