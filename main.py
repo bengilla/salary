@@ -15,13 +15,15 @@ from models.password import Password
 # router
 from routes.user import router
 
+# token
+from datetime import timedelta
 
 # setup
 app = FastAPI(title="TBROS Worker", version="1.0")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
-# password hash and verify
+# password hash and verify class
 _pass = Password()
 
 # mongoDB
@@ -58,7 +60,6 @@ async def index(request: Request) -> _TemplateResponse:
         "index.html", {"request": request, "title": title}
     )
     response.delete_cookie(key="company_name")
-    response.delete_cookie(key="access_token")
     return response
 
 
@@ -86,6 +87,10 @@ async def index_post(
 
             if _pass.verify_password(login_password, user["password"]):
                 title = user["company_name"]
+
+                # if login success get routes
+                app.include_router(router)
+
                 redirect_url = request.url_for("mainpage")
                 response = RedirectResponse(
                     redirect_url, status_code=status.HTTP_303_SEE_OTHER
@@ -151,9 +156,8 @@ async def logout(request: Request):
     redirect_url = request.url_for("index")
     response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     response.delete_cookie(key="company_name")
-    response.delete_cookie(key="access_token")
     return response
 
 
 # routes to user section
-app.include_router(router)
+# app.include_router(router)

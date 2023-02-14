@@ -1,17 +1,16 @@
 """User Page"""
 # import library
-import pendulum
 from datetime import datetime
 from fastapi import (
     APIRouter,
     Cookie,
     Request,
     Depends,
+    HTTPException,
     status,
 )
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.security import OAuth2PasswordBearer
 from starlette.templating import _TemplateResponse
 
 # library from own
@@ -23,15 +22,15 @@ from models.mongo import MongoDB
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# oauth
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 # work list mongodb connect
 _DB = MongoDB()
 
 # normal get date now
 _date_now = datetime.now()
 
+# turn cookie name to db_collection name
+def cookie_2_dbname(cookie):
+    return cookie.upper().replace(" ", "")
 
 # user main_page ------------------------------
 @router.get("/user", tags=["Emp mainpage"])
@@ -41,14 +40,17 @@ async def mainpage(
 ):
     """user mainpage"""
 
-    return templates.TemplateResponse(
-        "user.html",
-        {
-            "request": request,
-            "date": _date_now,
-            "title": company_name,
-        },
-    )
+    if company_name:
+        return templates.TemplateResponse(
+            "user.html",
+            {
+                "request": request,
+                "date": _date_now,
+                "title": company_name,
+            },
+        )
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
 
 
 @router.post("/user", tags=["Emp mainpage"], response_class=HTMLResponse)
@@ -59,12 +61,9 @@ async def send_file(
 ) -> _TemplateResponse:
     """user post section"""
 
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
-
     try:
         # send file to excels models to work
-        emp_salary = EmpSalary(excel_file=upload_file.excel.file, db_collection=db_collection_name)
+        emp_salary = EmpSalary(excel_file=upload_file.excel.file, db_collection=cookie_2_dbname(company_name))
 
         # check employee not in web
         emp_not_in_web = emp_salary.emp_not_in_web()
@@ -92,13 +91,16 @@ async def add_emp(
 ) -> _TemplateResponse:
     """add employee info page"""
 
-    return templates.TemplateResponse(
-        "add.html",
-        {
-            "request": request,
-            "title": company_name,
-        },
-    )
+    if company_name:
+        return templates.TemplateResponse(
+            "add.html",
+            {
+                "request": request,
+                "title": company_name,
+            },
+        )
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
 
 
 @router.post("/add", tags=["Emp add employee"])
@@ -108,9 +110,6 @@ async def add_emp_post(
     add_emp_form: CreateForm = Depends(CreateForm.create),
 ) -> RedirectResponse:
     """post employee info to server"""
-
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
 
     # Image concert and resize
     if add_emp_form.img_emp.filename:
@@ -133,7 +132,7 @@ async def add_emp_post(
         "sign_date": _date_now.date().strftime("%d-%m-%Y"),
     }
 
-    _DB.emp_info_collection(db_collection_name).insert_one(new_emp)
+    _DB.emp_info_collection(cookie_2_dbname(company_name)).insert_one(new_emp)
     redirect_url = request.url_for("mainpage")
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 
@@ -145,24 +144,24 @@ async def all_emp(
 ) -> _TemplateResponse:
     """list all employee info"""
 
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
-
-    emp_info = _DB.emp_info_collection(db_collection_name)
+    emp_info = _DB.emp_info_collection(cookie_2_dbname(company_name))
     list_emp_info = emp_info.find({})
 
     list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
     list_count = len(list_emp_info)
 
-    return templates.TemplateResponse(
-        "all.html",
-        {
-            "request": request,
-            "info": list_emp_info,
-            "count": list_count,
-            "title": company_name,
-        },
-    )
+    if company_name:
+        return templates.TemplateResponse(
+            "all.html",
+            {
+                "request": request,
+                "info": list_emp_info,
+                "count": list_count,
+                "title": company_name,
+            },
+        )
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
 
 
 # single employee info ------------------------------
@@ -172,21 +171,21 @@ async def info_emp(
 ):
     """show single employee info"""
 
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
-
-    emp_info = _DB.emp_info_collection(db_collection_name)
+    emp_info = _DB.emp_info_collection(cookie_2_dbname(company_name))
     single_emp = emp_info.find_one({"_id": ids})
 
-    return templates.TemplateResponse(
-        "emp.html",
-        {
-            "request": request,
-            "info": single_emp,
-            "emp_name": single_emp,
-            "title": company_name,
-        },
-    )
+    if company_name:
+        return templates.TemplateResponse(
+            "emp.html",
+            {
+                "request": request,
+                "info": single_emp,
+                "emp_name": single_emp,
+                "title": company_name,
+            },
+        )
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
 
 
 # single employee edit ------------------------------
@@ -196,16 +195,16 @@ async def edit_emp(
 ) -> _TemplateResponse:
     """edit employee info"""
 
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
-
     # Get Employee info
-    emp_info = _DB.emp_info_collection(db_collection_name)
+    emp_info = _DB.emp_info_collection(cookie_2_dbname(company_name))
     single_emp = emp_info.find_one({"_id": ids})
 
-    return templates.TemplateResponse(
-        "edit.html", {"request": request, "edit_emp": single_emp, "title": company_name}
-    )
+    if company_name:
+        return templates.TemplateResponse(
+            "edit.html", {"request": request, "edit_emp": single_emp, "title": company_name}
+        )
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
 
 
 @router.post("/edit/{ids}", tags=["Emp edit employee"], response_class=RedirectResponse)
@@ -217,9 +216,6 @@ async def edit_emp_post(
     ids: str,
 ) -> RedirectResponse:
     """post edit employee info"""
-
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
 
     # if send image
     if edit_emp_form.img_emp.filename:
@@ -240,7 +236,7 @@ async def edit_emp_post(
         }
 
     # update emp info
-    _DB.emp_info_collection(db_collection_name).update_one(
+    _DB.emp_info_collection(cookie_2_dbname(company_name)).update_one(
         {"_id": ids}, {"$set": edit_emp_form}
     )
 
@@ -257,14 +253,14 @@ def delete_emp(
 ) -> RedirectResponse:
     """delete employee"""
 
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
-
     # delete emp info
-    _DB.emp_info_collection(db_collection_name).delete_one({"_id": ids})
+    _DB.emp_info_collection(cookie_2_dbname(company_name)).delete_one({"_id": ids})
 
-    redirect_url = request.url_for("all_emp")
-    return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+    if company_name:
+        redirect_url = request.url_for("all_emp")
+        return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
 
 
 # employee salary info ------------------------------
@@ -274,20 +270,20 @@ async def salary_list(
 ):
     """salary list select year section"""
 
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
+    year_collection = _DB.collection_name(cookie_2_dbname(company_name))
 
-    year_collection = _DB.collection_name(db_collection_name)
-
-    return templates.TemplateResponse(
-        "salary-list.html",
-        {
-            "request": request,
-            "date": _date_now,
-            "title": company_name,
-            "year_collection": year_collection,
-        },
-    )
+    if company_name:
+        return templates.TemplateResponse(
+            "salary-list.html",
+            {
+                "request": request,
+                "date": _date_now,
+                "title": company_name,
+                "year_collection": year_collection,
+            },
+        )
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
 
 
 @router.get("/all_list/{year}/{ids}", tags=["Emp employee salary list"])
@@ -300,18 +296,15 @@ async def all_list(
 ):
     """list every month of employee salary 2"""
 
-    # get cookie
-    db_collection_name = company_name.upper().replace(" ", "")
-
     # drop down list
     def drop_down_list():
-        date_list = _DB.collection_name(db_collection_name)
+        date_list = _DB.collection_name(cookie_2_dbname(company_name))
         for key, value in date_list.items():
             if key == year:
                 return value
 
     # get single salary list
-    work_hour_collection = _DB.emp_work_hour_collection(db_collection_name, year)
+    work_hour_collection = _DB.emp_work_hour_collection(cookie_2_dbname(company_name), year)
 
     salary_list = work_hour_collection.find_one({"date": ids})
     salary_output = salary_list["emp_work_hours"]
@@ -324,16 +317,19 @@ async def all_list(
     # get month title
     output_month = salary_list["date"].split("-")[1]
 
-    return templates.TemplateResponse(
-        "list.html",
-        {
-            "request": request,
-            "title": company_name,
-            "emp": sort_emp_dict,
-            "drop_down": drop_down_list(),
-            "year": year,
-            "month": output_month,
-            "total_cash": total_cash,
-            "total_emp_on_list": len(salary_output),
-        },
-    )
+    if company_name:
+        return templates.TemplateResponse(
+            "list.html",
+            {
+                "request": request,
+                "title": company_name,
+                "emp": sort_emp_dict,
+                "drop_down": drop_down_list(),
+                "year": year,
+                "month": output_month,
+                "total_cash": total_cash,
+                "total_emp_on_list": len(salary_output),
+            },
+        )
+    else:
+        raise HTTPException(status_code=404, detail="The Page not found!")
