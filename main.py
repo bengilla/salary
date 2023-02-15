@@ -39,6 +39,22 @@ async def my_exception_handler(request: Request, exc):
         {"request": request, "status_code": exc.status_code, "error": exc.detail},
     )
 
+def get_user_data(email: str):
+    user_list = _DB.user_collection().find({})
+    for user in user_list:
+        if email in user['email']:
+            return RegisterForm(**user)
+
+# db modify ----------------------------------------------------------------------
+# total = 0
+# data = _DB.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
+# find_data = data.find_one({"date": "16-Jan-2023"})
+# look_emp = find_data["emp_work_hours"]
+# for name in look_emp:
+#     total += look_emp[name]["total_salary"]
+# print(total)
+# db modify ----------------------------------------------------------------------
+
 # index----------------------------------------------------------------------
 @app.get(
     "/", tags=["User Login"], response_class=HTMLResponse, description="User login page"
@@ -47,15 +63,7 @@ async def index(request: Request) -> _TemplateResponse:
     """index page"""
 
     title = "Employee work system - Login"
-    # ------------------------------------------------------------------------------------------------
-    # total = 0
-    # data = _DB.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
-    # find_data = data.find_one({"date": "16-Jan-2023"})
-    # look_emp = find_data["emp_work_hours"]
-    # for name in look_emp:
-    #     total += look_emp[name]["total_salary"]
-    # print(total)
-    # ------------------------------------------------------------------------------------------------
+
     response = templates.TemplateResponse(
         "index.html", {"request": request, "title": title}
     )
@@ -71,37 +79,26 @@ async def index(request: Request) -> _TemplateResponse:
 )
 async def index_post(
     request: Request, login: LoginForm = Depends(LoginForm.login),
-) -> RedirectResponse:
+):
     """index post section"""
 
+    user_in_db = get_user_data(login.email)
 
-    # check user is it exists
-    check_users = _DB.user_collection().find({})
+    if user_in_db:
+        if _pass.verify_password(login.password, user_in_db.password):
+            title = user_in_db.company_name
 
-    # get data from form post section
-    login_email = login.email
-    login_password = login.password
-
-    for user in check_users:
-        if login_email == user["email"]:
-
-            if _pass.verify_password(login_password, user["password"]):
-                title = user["company_name"]
-
-                # if login success get routes
-                app.include_router(router)
-
-                redirect_url = request.url_for("mainpage")
-                response = RedirectResponse(
-                    redirect_url, status_code=status.HTTP_303_SEE_OTHER
-                )
-                response.set_cookie(key="company_name", value=title)
-                return response
-            else:
-                raise HTTPException(status_code=401, detail="Invalid authentication credentials")
-
-    raise HTTPException(status_code=404, detail="User doesn't exist, please register")
-
+            # response
+            redirect_url = request.url_for("mainpage")
+            response = RedirectResponse(
+                redirect_url, status_code=status.HTTP_302_FOUND
+            )
+            response.set_cookie(key="company_name", value=title)
+            return response
+        else:
+            raise HTTPException(status_code=401, detail="Invalid username or password")
+    else:
+        raise HTTPException(status_code=404, detail="User doesn't exist, please register")
 
 # register----------------------------------------------------------------------
 @app.get(
@@ -141,7 +138,7 @@ async def register_post(
     if register_info.email not in user_list:
         _DB.user_collection().insert_one(new_user)
         redirect_url = request.url_for("index")
-        return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+        return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     else:
         raise HTTPException(
             status_code=401, detail="User is exists, please use other email"
@@ -154,10 +151,10 @@ async def logout(request: Request):
     """logout section"""
 
     redirect_url = request.url_for("index")
-    response = RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+    response = RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     response.delete_cookie(key="company_name")
     return response
 
 
 # routes to user section
-# app.include_router(router)
+app.include_router(router)

@@ -29,8 +29,8 @@ _DB = MongoDB()
 _date_now = datetime.now()
 
 # turn cookie name to db_collection name
-def cookie_2_dbname(cookie):
-    return cookie.upper().replace(" ", "")
+def cookie_2_dbname(cookie_name: str) -> str:
+    return cookie_name.upper().replace(" ", "")
 
 # user main_page ------------------------------
 @router.get("/user", tags=["Emp mainpage"])
@@ -144,8 +144,7 @@ async def all_emp(
 ) -> _TemplateResponse:
     """list all employee info"""
 
-    emp_info = _DB.emp_info_collection(cookie_2_dbname(company_name))
-    list_emp_info = emp_info.find({})
+    list_emp_info =_DB.emp_info_collection(cookie_2_dbname(company_name)).find({})
 
     list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
     list_count = len(list_emp_info)
@@ -180,7 +179,6 @@ async def info_emp(
             {
                 "request": request,
                 "info": single_emp,
-                "emp_name": single_emp,
                 "title": company_name,
             },
         )
