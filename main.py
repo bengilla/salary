@@ -1,4 +1,6 @@
 """User Login and Register Page"""
+from config import settings
+
 # import library
 from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -13,10 +15,8 @@ from models.form import LoginForm, RegisterForm
 from models.password import Password
 
 # router
-from routes.user import router
-
-# token
-from datetime import timedelta
+from routes.user_mainpage import user_mainpage
+from models.jwt_token import Token
 
 # setup
 app = FastAPI(title="TBROS Worker", version="1.0")
@@ -27,7 +27,10 @@ templates = Jinja2Templates(directory="templates")
 _pass = Password()
 
 # mongoDB
-_DB = MongoDB()
+_db = MongoDB()
+
+# token
+_token = Token()
 
 # error handle
 @app.exception_handler(StarletteHTTPException)
@@ -40,7 +43,7 @@ async def my_exception_handler(request: Request, exc):
     )
 
 def get_user_data(email: str):
-    user_list = _DB.user_collection().find({})
+    user_list = _db.user_collection().find({})
     for user in user_list:
         if email in user['email']:
             return RegisterForm(**user)
@@ -56,28 +59,20 @@ def get_user_data(email: str):
 # db modify ----------------------------------------------------------------------
 
 # index----------------------------------------------------------------------
-@app.get(
-    "/", tags=["User Login"], response_class=HTMLResponse, description="User login page"
-)
+@app.get("/", tags=["User Login"], response_class=HTMLResponse)
 async def index(request: Request) -> _TemplateResponse:
     """index page"""
 
-    title = "Employee work system - Login"
-
     response = templates.TemplateResponse(
-        "index.html", {"request": request, "title": title}
+        "index.html", {"request": request, "title": settings.LOGIN_TITLE}
     )
     response.delete_cookie(key="company_name")
+    response.delete_cookie(key="access_token")
     return response
 
 
-@app.post(
-    "/",
-    tags=["User Login"],
-    response_class=RedirectResponse,
-    description="User post login data",
-)
-async def index_post(
+@app.post("/", tags=["User Login"], response_class=RedirectResponse)
+async def index(
     request: Request, login: LoginForm = Depends(LoginForm.login),
 ):
     """index post section"""
@@ -88,12 +83,16 @@ async def index_post(
         if _pass.verify_password(login.password, user_in_db.password):
             title = user_in_db.company_name
 
+            # token create
+            access_token = _token.create_access_token(title)
+
             # response
             redirect_url = request.url_for("mainpage")
             response = RedirectResponse(
                 redirect_url, status_code=status.HTTP_302_FOUND
             )
             response.set_cookie(key="company_name", value=title)
+            response.set_cookie(key="access_token", value=f"{access_token}", httponly=True)
             return response
         else:
             raise HTTPException(status_code=401, detail="Invalid username or password")
@@ -101,33 +100,26 @@ async def index_post(
         raise HTTPException(status_code=404, detail="User doesn't exist, please register")
 
 # register----------------------------------------------------------------------
-@app.get(
-    "/register",
-    tags=["User Register"],
-    response_class=HTMLResponse,
-    description="Register page",
-)
+@app.get("/register", tags=["User Register"], response_class=HTMLResponse)
 async def register(request: Request) -> _TemplateResponse:
     """register page"""
-
-    title = "Employee work system - Register"
 
     return templates.TemplateResponse(
         "register.html",
         {
             "request": request,
-            "title": title,
+            "title": settings.REGISTER_TITLE,
         },
     )
 
 
-@app.post("/register", tags=["User Register"], description="Register post data")
-async def register_post(
+@app.post("/register", tags=["User Register"])
+async def register(
     request: Request, register_info: RegisterForm = Depends(RegisterForm.register)
 ) -> RedirectResponse:
     """register post section"""
 
-    user_list = [user["email"] for user in _DB.user_collection().find({})]
+    user_list = [user["email"] for user in _db.user_collection().find({})]
 
     new_user = {
         "email": register_info.email,
@@ -136,7 +128,7 @@ async def register_post(
     }
 
     if register_info.email not in user_list:
-        _DB.user_collection().insert_one(new_user)
+        _db.user_collection().insert_one(new_user)
         redirect_url = request.url_for("index")
         return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     else:
@@ -146,15 +138,16 @@ async def register_post(
 
 
 # logout----------------------------------------------------------------------
-@app.get("/logout", tags=["User Logout"], description="Logout user")
+@app.get("/logout", tags=["User Logout"])
 async def logout(request: Request):
     """logout section"""
 
     redirect_url = request.url_for("index")
     response = RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     response.delete_cookie(key="company_name")
+    response.delete_cookie(key="access_token")
     return response
 
 
 # routes to user section
-app.include_router(router)
+app.include_router(user_mainpage)

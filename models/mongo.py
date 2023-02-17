@@ -1,20 +1,13 @@
-import os
+from config import settings
+
 import pendulum
-from dotenv import load_dotenv
 from pymongo import MongoClient
 
 
 class MongoDB:
     def __init__(self) -> None:
-        load_dotenv()
-
         # Local Testing MongoDB-------------------------------
-        client = MongoClient(os.getenv("DB_LOCAL"))
-        # client = motor.AsyncIOMotorClient(os.environ["DB_LOCAL"])
-
-        # Real Server MongoDB --------------------------------
-        # client = MongoClient(os.getenv("DB_URL"))
-        # client = motor.AsyncIOMotorClient(os.getenv("DB_URL"))
+        client = MongoClient(settings.DB_LOCAL)
 
         self.user_info = client["USER_INFO"]
         self.user_data = client["USER_DATA"]
