@@ -7,7 +7,7 @@ class Token:
     def create_access_token(self, company_name: str):
         data: dict = {"name": company_name}
         to_encode = data.copy()
-        expire = datetime.utcnow() + timedelta(minutes=1)
+        expire = datetime.utcnow() + timedelta(minutes=60)
         to_encode.update({"exp": expire})
 
         encode_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)

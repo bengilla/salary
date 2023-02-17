@@ -1,11 +1,4 @@
-from fastapi import (
-    APIRouter,
-    Cookie,
-    Request,
-    Depends,
-    HTTPException,
-    status
-)
+from fastapi import APIRouter, Cookie, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
@@ -25,55 +18,66 @@ _db = MongoDB()
 # token
 _token = Token()
 
+
 # single employee info ------------------------------
 @single_emp_router.get("/info/{ids}", tags=["Emp single employee"])
 async def info_emp(
-        *, request: Request, company_name: str | None = Cookie(default=None), ids: str
+    *, request: Request, access_token: str | None = Cookie(default=None), ids: str
 ):
     """show single employee info"""
 
-    emp_info = _db.emp_info_collection(_token.cookie_2_dbname(company_name))
-    single_emp = emp_info.find_one({"_id": ids})
+    try:
+        get_token = _token.verify_access_token(access_token)
+        emp_info = _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"]))
+        single_emp = emp_info.find_one({"_id": ids})
 
-    if company_name:
         return templates.TemplateResponse(
             "emp.html",
             {
                 "request": request,
                 "info": single_emp,
-                "title": company_name,
+                "title": get_token["name"],
             },
         )
-    else:
+    except:
         raise HTTPException(status_code=404, detail="Not Found")
 
 
 # single employee edit ------------------------------
-@single_emp_router.get("/edit/{ids}", tags=["Emp edit employee"], response_class=HTMLResponse)
+@single_emp_router.get(
+    "/edit/{ids}", tags=["Emp edit employee"], response_class=HTMLResponse
+)
 async def edit_emp(
-        *, request: Request, company_name: str | None = Cookie(default=None), ids: str
+    *, request: Request, access_token: str | None = Cookie(default=None), ids: str
 ) -> _TemplateResponse:
     """edit employee info"""
 
     # Get Employee info
-    emp_info = _db.emp_info_collection(_token.cookie_2_dbname(company_name))
-    single_emp = emp_info.find_one({"_id": ids})
+    try:
+        get_token = _token.verify_access_token(access_token)
+        emp_info = _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"]))
+        single_emp = emp_info.find_one({"_id": ids})
 
-    if company_name:
         return templates.TemplateResponse(
-            "edit.html", {"request": request, "edit_emp": single_emp, "title": company_name}
+            "edit.html",
+            {"request": request, "edit_emp": single_emp, "title": get_token["name"]},
         )
-    else:
+    except:
         raise HTTPException(status_code=404, detail="Not Found")
 
 
-@single_emp_router.post("/edit/{ids}", tags=["Emp edit employee"], response_class=RedirectResponse, include_in_schema=False)
+@single_emp_router.post(
+    "/edit/{ids}",
+    tags=["Emp edit employee"],
+    response_class=RedirectResponse,
+    include_in_schema=False,
+)
 async def edit_emp(
-        *,
-        request: Request,
-        company_name: str | None = Cookie(default=None),
-        edit_emp_form: EditForm = Depends(EditForm.edit),
-        ids: str,
+    *,
+    request: Request,
+    access_token: str | None = Cookie(default=None),
+    edit_emp_form: EditForm = Depends(EditForm.edit),
+    ids: str,
 ) -> RedirectResponse:
     """post edit employee info"""
 
@@ -96,7 +100,8 @@ async def edit_emp(
         }
 
     # update emp info
-    _db.emp_info_collection(_token.cookie_2_dbname(company_name)).update_one(
+    get_token = _token.verify_access_token(access_token)
+    _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"])).update_one(
         {"_id": ids}, {"$set": edit_emp_form}
     )
 

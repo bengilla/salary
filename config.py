@@ -3,7 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-class Settings():
+
+class Settings:
     TITLE = "Employee System"
     VERSION = "0.1"
     DESCRIPTION = "Hello World"
@@ -16,5 +17,6 @@ class Settings():
 
     DB_LOCAL = os.getenv("DB_LOCAL")
     DB_URL = os.getenv("DB_URL")
+
 
 settings = Settings()

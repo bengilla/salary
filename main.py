@@ -32,6 +32,7 @@ _db = MongoDB()
 # token
 _token = Token()
 
+
 # error handle
 @app.exception_handler(StarletteHTTPException)
 async def my_exception_handler(request: Request, exc):
@@ -42,11 +43,13 @@ async def my_exception_handler(request: Request, exc):
         {"request": request, "status_code": exc.status_code, "error": exc.detail},
     )
 
+
 def get_user_data(email: str):
     user_list = _db.user_collection().find({})
     for user in user_list:
-        if email in user['email']:
+        if email in user["email"]:
             return RegisterForm(**user)
+
 
 # db modify ----------------------------------------------------------------------
 # total = 0
@@ -58,6 +61,7 @@ def get_user_data(email: str):
 # print(total)
 # db modify ----------------------------------------------------------------------
 
+
 # index----------------------------------------------------------------------
 @app.get("/", tags=["User Login"], response_class=HTMLResponse)
 async def index(request: Request) -> _TemplateResponse:
@@ -66,14 +70,14 @@ async def index(request: Request) -> _TemplateResponse:
     response = templates.TemplateResponse(
         "index.html", {"request": request, "title": settings.LOGIN_TITLE}
     )
-    response.delete_cookie(key="company_name")
     response.delete_cookie(key="access_token")
     return response
 
 
 @app.post("/", tags=["User Login"], response_class=RedirectResponse)
 async def index(
-    request: Request, login: LoginForm = Depends(LoginForm.login),
+    request: Request,
+    login: LoginForm = Depends(LoginForm.login),
 ):
     """index post section"""
 
@@ -88,16 +92,18 @@ async def index(
 
             # response
             redirect_url = request.url_for("mainpage")
-            response = RedirectResponse(
-                redirect_url, status_code=status.HTTP_302_FOUND
+            response = RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+            response.set_cookie(
+                key="access_token", value=f"{access_token}", httponly=True
             )
-            response.set_cookie(key="company_name", value=title)
-            response.set_cookie(key="access_token", value=f"{access_token}", httponly=True)
             return response
         else:
             raise HTTPException(status_code=401, detail="Invalid username or password")
     else:
-        raise HTTPException(status_code=404, detail="User doesn't exist, please register")
+        raise HTTPException(
+            status_code=404, detail="User doesn't exist, please register"
+        )
+
 
 # register----------------------------------------------------------------------
 @app.get("/register", tags=["User Register"], response_class=HTMLResponse)
@@ -144,7 +150,6 @@ async def logout(request: Request):
 
     redirect_url = request.url_for("index")
     response = RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
-    response.delete_cookie(key="company_name")
     response.delete_cookie(key="access_token")
     return response
 

@@ -11,7 +11,6 @@ from fastapi import (
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
-from jose import JWTError
 
 # library from own
 from excels import EmpSalary
@@ -42,37 +41,42 @@ _date_now = datetime.now()
 # user main_page ------------------------------
 @user_mainpage.get("/user", tags=["Emp mainpage"])
 async def mainpage(
-        request: Request,
-        company_name: str | None = Cookie(default=None),
-        access_token: str | None = Cookie(default=None),
+    request: Request,
+    access_token: str | None = Cookie(default=None),
 ):
     """user mainpage"""
-    # get_token = _token.verify_access_token(access_token)
 
-    if company_name:
+    try:
+        get_token = _token.verify_access_token(access_token)
         return templates.TemplateResponse(
             "user.html",
             {
                 "request": request,
                 "date": _date_now,
-                "title": company_name,
+                "title": get_token["name"],
             },
         )
-    else:
-        raise HTTPException(status_code=404, detail="Not Found")
+    except:
+        raise HTTPException(status_code=404, detail="Please Login")
 
 
-@user_mainpage.post("/user", tags=["Emp mainpage"], response_class=HTMLResponse, include_in_schema=False)
+@user_mainpage.post(
+    "/user", tags=["Emp mainpage"], response_class=HTMLResponse, include_in_schema=False
+)
 async def send_file(
     request: Request,
-    company_name: str | None = Cookie(default=None),
+    access_token: str | None = Cookie(default=None),
     upload_file: ExcelForm = Depends(ExcelForm.excel_upload),
 ) -> _TemplateResponse:
     """user post section"""
 
+    # send file to excels models to work
     try:
-        # send file to excels models to work
-        emp_salary = EmpSalary(excel_file=upload_file.excel.file, db_collection=_token.cookie_2_dbname(company_name))
+        get_token = _token.verify_access_token(access_token)
+        emp_salary = EmpSalary(
+            excel_file=upload_file.excel.file,
+            db_collection=_token.cookie_2_dbname(get_token["name"]),
+        )
 
         # check employee not in web
         emp_not_in_web = emp_salary.emp_not_in_web()
@@ -90,6 +94,7 @@ async def send_file(
             "msg_output": msg_output,
         },
     )
+
 
 user_mainpage.include_router(add_emp_router)
 user_mainpage.include_router(all_emp_router)

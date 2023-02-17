@@ -2,14 +2,10 @@
 *.pyc
 
 __pycache__
-*/__pycache__
-**/__pycache__
+.pytest_cache
 .DS_Store
-*/.DS_Store
-**/.DS_Store
 
 work_dir
-db-data
 
 .git/
 .env

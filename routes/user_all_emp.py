@@ -25,24 +25,27 @@ _token = Token()
 # list all employee info ------------------------------
 @all_emp_router.get("/all", tags=["Emp all employee"], response_class=HTMLResponse)
 async def all_emp(
-        request: Request, company_name: str | None = Cookie(default=None)
+    request: Request, access_token: str | None = Cookie(default=None)
 ) -> _TemplateResponse:
     """list all employee info"""
 
-    list_emp_info =_db.emp_info_collection(_token.cookie_2_dbname(company_name)).find({})
+    try:
+        get_token = _token.verify_access_token(access_token)
 
-    list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
-    list_count = len(list_emp_info)
+        list_emp_info = _db.emp_info_collection(
+            _token.cookie_2_dbname(get_token["name"])
+        ).find({})
 
-    if company_name:
+        list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
+        list_count = len(list_emp_info)
         return templates.TemplateResponse(
             "all.html",
             {
                 "request": request,
                 "info": list_emp_info,
                 "count": list_count,
-                "title": company_name,
+                "title": get_token["name"],
             },
         )
-    else:
+    except:
         raise HTTPException(status_code=404, detail="Not Found")
