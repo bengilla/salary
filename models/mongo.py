@@ -1,6 +1,5 @@
-from config import settings
-
 import pendulum
+from config.settings import settings
 from pymongo import MongoClient
 
 
@@ -8,6 +7,7 @@ class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
         client = MongoClient(settings.DB_LOCAL)
+        # client = MongoClient(os.environ["DB_URL"])
 
         self.user_info = client["USER_INFO"]
         self.user_data = client["USER_DATA"]

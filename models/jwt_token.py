@@ -1,7 +1,8 @@
-from config import settings
+from config.settings import settings
 
 from datetime import datetime, timedelta
 from jose import jwt, JWTError
+
 
 class Token:
     def create_access_token(self, company_name: str):
@@ -10,11 +11,15 @@ class Token:
         expire = datetime.utcnow() + timedelta(minutes=60)
         to_encode.update({"exp": expire})
 
-        encode_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+        encode_jwt = jwt.encode(
+            to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
+        )
         return encode_jwt
 
     def verify_access_token(self, token: str):
-        decode_jwt = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.ALGORITHM)
+        decode_jwt = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=settings.ALGORITHM
+        )
         return decode_jwt
 
     def cookie_2_dbname(self, cookie_name: str) -> str:

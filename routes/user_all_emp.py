@@ -2,6 +2,7 @@ from fastapi import (
     APIRouter,
     Cookie,
     Request,
+    Form,
     HTTPException,
 )
 from fastapi.responses import HTMLResponse
@@ -37,15 +38,22 @@ async def all_emp(
         ).find({})
 
         list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
+        list_emp_name = [name["name"].lower() for name in list_emp_info]
         list_count = len(list_emp_info)
         return templates.TemplateResponse(
             "all.html",
             {
                 "request": request,
                 "info": list_emp_info,
+                "name": list_emp_name,
                 "count": list_count,
                 "title": get_token["name"],
             },
         )
     except:
         raise HTTPException(status_code=404, detail="Not Found")
+
+
+@all_emp_router.post("/all", tags=["Emp all employee"], include_in_schema=False)
+async def all_emp(emp_name: str = Form(None)):
+    return {"employee name": emp_name}

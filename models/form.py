@@ -1,6 +1,7 @@
 from fastapi import Form, File, UploadFile
 from pydantic import BaseModel
 
+
 # Login and Register Form Sections ------------------------------
 class LoginForm(BaseModel):
     email: str
@@ -10,12 +11,19 @@ class LoginForm(BaseModel):
     def login(cls, email: str = Form(...), password: str = Form(...)):
         return cls(email=email, password=password)
 
+
 class RegisterForm(LoginForm):
     company_name: str
 
     @classmethod
-    def register(cls, email: str = Form(...), password: str = Form(...), company_name: str = Form(...)):
+    def register(
+        cls,
+        email: str = Form(...),
+        password: str = Form(...),
+        company_name: str = Form(...),
+    ):
         return cls(email=email, password=password, company_name=company_name)
+
 
 # Users create, edit and delete forms ------------------------------
 class EmpForm(BaseModel):
@@ -24,6 +32,7 @@ class EmpForm(BaseModel):
     ic: str = None
     contact: str = None
     address: str = None
+
 
 class CreateForm(EmpForm):
     name: str
@@ -43,7 +52,7 @@ class CreateForm(EmpForm):
         gender: str = Form(None),
         nationality: str = Form(None),
         contact: str = Form(None),
-        address: str = Form(None)
+        address: str = Form(None),
     ):
         return cls(
             img_emp=img_emp,
@@ -54,11 +63,11 @@ class CreateForm(EmpForm):
             gender=gender,
             nationality=nationality,
             contact=contact,
-            address=address
+            address=address,
         )
 
+
 class EditForm(EmpForm):
-    
     @classmethod
     def edit(
         cls,
@@ -76,14 +85,15 @@ class EditForm(EmpForm):
             address=address,
         )
 
+
 # form for upload excel file ------------------------------
 class ExcelForm(BaseModel):
     excel: UploadFile
 
     @classmethod
     def excel_upload(
-            cls,
-            excel: UploadFile = File(None),
+        cls,
+        excel: UploadFile = File(None),
     ):
         return cls(
             excel=excel,

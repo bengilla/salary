@@ -114,7 +114,6 @@ class EmpSalary:
         self.total_amounts += output_emp_salary
         self.data[id.title()] = store_data
 
-
     def main(self):
         """导出至 MongoDB"""
         get_emp_name = self._empinfo.find({})

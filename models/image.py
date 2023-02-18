@@ -2,6 +2,7 @@ import base64
 from io import BytesIO
 from PIL import Image
 
+
 class ImageConvert:
     def img_base64(self, img) -> base64:
         """Image convert to base64"""

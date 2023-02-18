@@ -4,21 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width={device-width}, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="{{ url_for('static', path='/css/style.css') }}">
     <link rel="shortcut icon" href="images/tb.ico" type="image/x-icon">
 </head>
 
-<body class="w-full bg-slate-200 flex justify-center">
+<body class="w-full bg-slate-300 flex justify-center">
     <div class="w-[1024px]">
 
         <header id="header" class="h-20 bg-slate-400 rounded-b-2xl print:hidden">
             <div class="h-full flex flex-row justify-between place-self-center">
                 <div class="rounded-b-[1rem] place-self-center">
                     <div class="w-full px-4 font-bold">
-                        <h1 class="px-6 text-xl sm:text-2xl">{{ title }}</h1>
+                        <h1 class="px-6 text-xl sm:text-1xl">{{ title }}</h1>
                     </div>
                 </div>
                 <div class="mr-4 px-4 flex gap-4 place-self-center">
@@ -33,9 +32,9 @@
             {% block content %}{% endblock %}
         </main>
 
-        <footer id="footer" class="w-full h-10 pt-2 bg-slate-200 border-t-[1px] border-slate-800 fixed bottom-0 print:hidden lg:w-[1024px]">
+        <footer id="footer" class="w-full h-10 pt-2 bg-slate-400 rounded-t-2xl border-t-[1px] border-slate-800 fixed bottom-0 print:hidden lg:w-[1024px]">
             <div class="text-center">
-                <span class="text-[0.6rem] font-bold xl:text-[0.8rem]">{{ title }}</span>
+                <span class="text-[0.6rem] font-bold xl:text-[0.7rem]">{{ title }}</span>
             </div>
         </footer>
 

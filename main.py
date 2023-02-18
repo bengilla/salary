@@ -1,5 +1,5 @@
 """User Login and Register Page"""
-from config import settings
+from config.settings import settings
 
 # import library
 from fastapi import FastAPI, Request, Depends, HTTPException, status
@@ -94,7 +94,7 @@ async def index(
             redirect_url = request.url_for("mainpage")
             response = RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
             response.set_cookie(
-                key="access_token", value=f"{access_token}", httponly=True
+                key="access_token", value=f"{access_token}", httponly=True, secure=True
             )
             return response
         else:
