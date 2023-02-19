@@ -1,3 +1,4 @@
+import os
 import pendulum
 from config.settings import settings
 from pymongo import MongoClient
@@ -6,8 +7,8 @@ from pymongo import MongoClient
 class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
-        client = MongoClient(settings.DB_LOCAL)
-        # client = MongoClient(os.environ["DB_URL"])
+        # client = MongoClient(settings.DB_LOCAL)
+        client = MongoClient(os.environ["DB_LOCAL"])
 
         self.user_info = client["USER_INFO"]
         self.user_data = client["USER_DATA"]

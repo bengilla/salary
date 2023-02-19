@@ -4,6 +4,6 @@ work_dir
 venv
 
 .DS_Store
-.git/
+.git
 .env
 .idea
