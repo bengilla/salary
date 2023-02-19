@@ -1,23 +1,13 @@
 const search = () => {
-  const searchbox = document.getElementById("search-item").value.toUpperCase();
-  const allemp = document.getElementById("allemp");
-  const emp = document.querySelectorAll(".emp");
-  const name = allemp.getElementsByTagName("h2");
+  const searchbox = document.getElementById("search-item").value.toLowerCase();
+  const listItems = document.querySelectorAll(".emp");
 
-  for (var i = 0; i < name.length; i++) {
-    console.log(emp[0]);
-  }
-  // for (var i = 0; i < name.length; i++) {
-  //   let match = emp[i].getElementByTagName("h2")[0];
-
-  //   if (match) {
-  //     let textvalue = match.textContent || match.innerHTML;
-
-  //     if (textvalue.toUpperCase().indexOf(searchbox) > -1) {
-  //       emp[i].style.display = "";
-  //     } else {
-  //       emp[i].style.display = "none";
-  //     }
-  //   }
-  // }
+  listItems.forEach((item) => {
+    let text = item.textContent;
+    if (text.toLowerCase().includes(searchbox.toLowerCase())) {
+      item.style.display = "";
+    } else {
+      item.style.display = "none";
+    }
+  });
 };

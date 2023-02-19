@@ -49,74 +49,73 @@
             </div>
         </div>
 
-        <div id="allemp">
-            <!-- {{ info }} -->
-            {% for i in info %}
-            <div class="mt-2 w-full emp">
-                <table class="w-full rounded-xl">
+        <!-- {{ info }} -->
+        {% for i in info %}
+        <div class="mt-2 w-full emp">
+            <table class="w-full rounded-xl">
 
-                    <thead class="bg-slate-500">
-                        <tr class="text-xs text-white text-center sm:text-sm">
-                            <th class="p-1 select-none w-[5rem] rounded-tl-xl sm:w-44">Photo</th>
-                            <th class="p-1 select-none rounded-tr-xl">Info</th>
-                        </tr>
-                    </thead>
+                <thead class="bg-slate-500">
+                    <tr class="text-xs text-white text-center sm:text-sm">
+                        <th class="p-1 select-none w-[5rem] rounded-tl-xl sm:w-44">Photo</th>
+                        <th class="p-1 select-none rounded-tr-xl">Info</th>
+                    </tr>
+                </thead>
 
-                    <tbody class="border-dotted border-x-2 border-b-2 border-slate-600">
-                        <tr>
-                            <!--image -->
-                            <td>
-                                <div class="flex justify-center">
-                                    <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
-                                </div>
-                            </td>
+                <tbody class="border-dotted border-x-2 border-b-2 border-slate-600">
+                    <tr>
+                        <!--image -->
+                        <td>
+                            <div class="flex justify-center">
+                                <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
+                            </div>
+                        </td>
 
-                            <!--Info -->
-                            <td>
-                                <table>
-                                    {% set cols={
-                                    'name': i.name,
-                                    'pay': i.pay_hour,
-                                    'passport/ic': i.ic,
-                                    'nationality': i.nationality,
-                                    'gender': i.gender,
-                                    'd.o.b': i.dob,
-                                    'contact': i.contact,
-                                    'address': i.address,
-                                    'sign date': i.sign_date
-                                    } %}
-                                    {% for key, value in cols.items() %}
-                                    <tr>
-                                        <th class="text-right">
-                                            <span class="mr-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
-                                        </th>
-                                        <td class="w-full pr-2">
-                                            {% if key == 'name' %}
-                                            <a href="{{ url_for('info_emp', ids=i._id) }}">
-                                                <h2 class="font-bold text-sm select-all sm:text-lg" id="testname">{{ value }}</h2>
-                                            </a>
-                                            {% elif key == 'pay' %}
-                                            <span class="text-xs text-red-500 sm:text-sm">RM
-                                                <span class="font-bold underline select-all sm:text-sm">
-                                                    {{ value }}
-                                                </span> / hour</span>
-                                            {% else %}
-                                            <span class="text-xs select-all sm:text-sm">{{ value }}</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </table>
-                            </td>
-                            <!-- End info -->
-                        </tr>
-                    </tbody>
+                        <!--Info -->
+                        <td>
+                            <table>
+                                {% set cols={
+                                'name': i.name,
+                                'pay': i.pay_hour,
+                                'passport/ic': i.ic,
+                                'nationality': i.nationality,
+                                'gender': i.gender,
+                                'd.o.b': i.dob,
+                                'contact': i.contact,
+                                'address': i.address,
+                                'sign date': i.sign_date
+                                } %}
+                                {% for key, value in cols.items() %}
+                                <tr>
+                                    <th class="text-right">
+                                        <span class="mr-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                                    </th>
+                                    <td class="w-full pr-2">
+                                        {% if key == 'name' %}
+                                        <span class="font-bold text-sm select-all sm:text-lg" id="testname">{{ value }}</span>
+                                        <a href="{{ url_for('info_emp', ids=i._id) }}">
+                                            <span class="italic underline text-xs text-orange-700">edit</span>
+                                        </a>
+                                        {% elif key == 'pay' %}
+                                        <span class="text-xs text-red-500 sm:text-sm">RM
+                                            <span class="font-bold underline select-all sm:text-sm">
+                                                {{ value }}
+                                            </span> / hour</span>
+                                        {% else %}
+                                        <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                        <!-- End info -->
+                    </tr>
+                </tbody>
 
-                </table>
+            </table>
 
-            </div>
-            {% endfor %}
         </div>
+        {% endfor %}
 
     </div>
 </section>
