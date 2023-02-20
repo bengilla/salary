@@ -7,7 +7,3 @@ venv/
 .git/
 .env
 .idea/
-
-Dockerfile
-docket-compose.yml
-.dockerignore
