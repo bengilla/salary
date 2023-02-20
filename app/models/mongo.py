@@ -8,7 +8,7 @@ class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
         # client = MongoClient(os.environ["DB_LOCAL"])
-        client = MongoClient(os.getenv(settings.DB_URL))
+        client = MongoClient(settings.DB_URL)
 
         self.user_info = client["USER_INFO"]
         self.user_data = client["USER_DATA"]
