@@ -31,3 +31,6 @@ passlib[bcrypt]
 
 # JWT Token
 python-jose[cryptography]
+
+# gunicorn
+gunicorn
