@@ -7,23 +7,29 @@
 
 {% block content %}
 <section id="add" class="w-full">
-
     <div class="flex flex-col items-center">
-        <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" class="w-full pt-12 px-2 sm:w-[500px]">
 
-            <label for="img_emp" class="text-sm">image: </label>
-            <input type="file" name="img_emp" accept="image/jpeg, image/jpg, image/png" class="mb-4 w-full text-sm text-slate-500
+        <form action="{{ url_for('add_emp') }}" method="POST" enctype="multipart/form-data" class="w-full space-y-4 mt-12 px-2 text-sm sm:w-[500px]">
+
+            <div>
+                <label for="img_emp" class="text-sm">image: </label>
+                <input type="file" name="img_emp" accept="image/jpeg, image/jpg, image/png" class="w-full block text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-lg file:border-0
                 file:text-sm file:font-semibold
                 file:bg-blue-300 file:text-slate-700
                 hover:file:bg-blue-700 hover:file:text-white">
+            </div>
 
-            <label for="name" class="text-sm">name: </label>
-            <input type="text" name="name" class="mb-2 form-input" required>
+            <div>
+                <label for="name">name: </label>
+                <input type="text" name="name" class="w-full block form-input rounded-lg" required>
+            </div>
 
-            <label for="pay_hour" class="text-sm">pay hour: </label>
-            <input type="text" name="pay_hour" class="mb-2 form-input" required>
+            <div>
+                <label for="pay_hour">pay hour: (amount)</label>
+                <input type="number" step=any name="pay_hour" class="w-full block form-input rounded-lg" required>
+            </div>
 
             <!-- HR -->
             <div class="mt-4 mb-8">
@@ -32,37 +38,51 @@
             </div>
 
             <!-- Optional -->
-            <label for="ic" class="text-sm">ic / passport: </label>
-            <input type="text" name="ic" class="mb-2 form-input">
+            <div>
+                <label for="ic">ic / passport: </label>
+                <input type="text" name="ic" class="w-full block form-input rounded-lg">
+            </div>
 
-            <label for="dob" class="text-sm">d.o.b.: </label>
-            <input type="date" name="dob" class="mb-2 form-input">
+            <div>
+                <label for="dob">d.o.b.: </label>
+                <input type="date" name="dob" class="w-full block form-input rounded-lg">
+            </div>
 
-            <label for="nationality" class="text-sm">nationality: </label>
-            <select name="nationality" id="" class="mb-2 form-input">
-                <option value="">select</option>
-                <option value="Malaysia">Malaysia</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="Bangladesh">Bangladesh</option>
-                <option value="Rohingya">Rohingya</option>
-                <option value="Other">Other</option>
-            </select>
+            <div>
+                <label for="nationality">nationality: </label>
+                <select name="nationality" id="" class="w-full block form-select rounded-lg">
+                    <option value="">select</option>
+                    <option value="Malaysia">Malaysia</option>
+                    <option value="Indonesia">Indonesia</option>
+                    <option value="Bangladesh">Bangladesh</option>
+                    <option value="Rohingya">Rohingya</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
 
-            <label for="gender" class="text-sm">gender: </label>
-            <select name="gender" id="" class="mb-2 form-input">
-                <option value="">select</option>
-                <option value="male">male</option>
-                <option value="female">female</option>
-            </select>
+            <div>
+                <label for="gender">gender: </label>
+                <select name="gender" id="" class="w-full block form-select rounded-lg">
+                    <option value="">select</option>
+                    <option value="male">male</option>
+                    <option value="female">female</option>
+                </select>
+            </div>
 
-            <label for="contact" class="text-sm">contact: </label>
-            <input type="text" name="contact" class="mb-2 form-input">
+            <div>
+                <label for="contact">contact: </label>
+                <input type="text" name="contact" class="w-full block form-input rounded-lg">
+            </div>
 
-            <label for="address" class="text-sm">address: </label>
-            <input type="text" name="address" class="mb-2 form-input">
+            <div>
+                <label for="address">address: </label>
+                <input type="text" name="address" class="w-full block form-input rounded-lg">
+            </div>
 
             <!-- Submit -->
-            <input type="submit" name="" id="" value="submit" class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
+            <div>
+                <input type="submit" value="submit" class="px-8 py-2 rounded-lg border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
+            </div>
 
             <br><br><br><br>
         </form>

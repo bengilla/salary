@@ -9,33 +9,46 @@
 <section id="edit" class="w-full">
     <div class="flex flex-col items-center">
 
-        <div class="pt-4 text-3xl text-center font-bold">EDIT: {{ edit_emp.name }}</div>
-        <div class="pb-8 text-sm text-center italic">ID: {{ edit_emp._id}}</div>
+        <div class="mt-12 text-3xl text-center font-bold">EDIT: {{ edit_emp.name }}</div>
+        <div class="mb-8 text-sm text-center italic">ID: {{ edit_emp._id}}</div>
 
-        <form action="{{ url_for('edit_emp', ids=edit_emp._id) }}" method="POST" enctype="multipart/form-data" class="w-full px-2 sm:w-[500px]" novalidate>
-        
-            <label for="img_emp" class="text-sm">image: </label>
-            <input type="file" name="img_emp" accept="image/jpeg, iamge/jpg, image/png" class="mb-4 w-full text-sm text-slate-500
+        <form action="{{ url_for('edit_emp', ids=edit_emp._id) }}" method="POST" enctype="multipart/form-data" class="w-full space-y-4 px-2 text-sm sm:w-[500px]" novalidate>
+
+            <div>
+                <label for="img_emp">image: </label>
+                <input type="file" name="img_emp" accept="image/jpeg, iamge/jpg, image/png" class="w-full block text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-lg file:border-0
                 file:text-sm file:font-semibold
                 file:bg-blue-300 file:text-slate-700
                 hover:file:bg-blue-700 hover:file:text-white">
+            </div>
 
-            <label for="pay_hour" class="text-sm">pay hour: </label>
-            <input type="text" name="pay_hour" class="mb-2 form-input" value="{{edit_emp.pay_hour}}">
+            <div>
+                <label for="pay_hour">pay hour: </label>
+                <input type="text" name="pay_hour" class="w-full block form-input rounded-lg" value="{{edit_emp.pay_hour}}">
+            </div>
 
-            <label for="ic" class="text-sm">ic / passport: </label>
-            <input type="text" name="ic" class="mb-2 form-input" value="{{edit_emp.ic}}">
+            <div>
+                <label for="ic">ic / passport: </label>
+                <input type="text" name="ic" class="w-full block form-input rounded-lg" value="{{edit_emp.ic}}">
+            </div>
 
-            <label for="contact" class="text-sm">contact: </label>
-            <input type="text" name="contact" class="mb-2 form-input" value="{{edit_emp.contact}}">
+            <div>
+                <label for="contact">contact: </label>
+                <input type="text" name="contact" class="w-full block form-input rounded-lg" value="{{edit_emp.contact}}">
+            </div>
 
-            <label for="address" class="text-sm">address: </label>
-            <input type="text" name="address" class="mb-2 form-input" value="{{edit_emp.address}}">
+            <div>
 
+                <label for="address">address: </label>
+                <input type="text" name="address" class="w-full block form-input rounded-lg" value="{{edit_emp.address}}">
+            </div>
+
+            <div>
+                <input type="submit" value="submit" class="px-8 py-2 rounded-lg border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
+            </div>
             <!-- Submit -->
-            <input type="submit" name="" id="" value="submit" class="mt-4 px-6 py-2 rounded-xl border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
 
             <br><br><br><br>
         </form>

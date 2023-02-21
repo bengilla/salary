@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
-{% block title %}Salary list={{ year }}{% endblock %}
+{% block title %}Salary list-{{ year }}{% endblock %}
 
 {% block header %}
 <a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
 {% endblock %}
 
+<!-- Content -->
 {% block content %}
-<section id="list" class="pt-8 mb-16 flex justify-center">
+<section class="pt-8 mb-16 flex justify-center">
     <div class="max-w-5xl">
         <!-- Dropdown Menu -->
 
@@ -67,7 +68,7 @@
 
             <hr class="border-red-800">
 
-            <table class="w-full list-table">
+            <table class="w-full">
                 <tr>
                     {% for v in idata["output"] %}
                     <td class="text-xs text-red-700 sm:text-sm">

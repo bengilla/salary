@@ -6,82 +6,91 @@
 {% endblock %}
 
 {% block content %}
-<section id="all" class="py-[2%] lg:px-[15%] flex justify-center">
+<section id="all" class="pt-8 mb-16 flex justify-center">
 
     <!-- {{ info }} -->
-    <div class="mt-2 mx-2 w-full max-w-5xl">
+    <div class="w-full mt-2 px-4 sm:px-20">
 
-        <div class="mt-2 w-full border border-1 border-slate-900">
-            <table class="w-full">
-                <thead class="bg-slate-600">
-                    <tr class="text-xs text-white text-center sm:text-sm">
-                        <th class="p-1 select-none w-[5rem] sm:w-44">Photo</th>
-                        <th class="p-1 select-none">Info</th>
-                    </tr>
-                </thead>
-            
-                <tbody>
-                    <tr>
-                        <!--image -->
-                        <td class="w-20 px-4">
-                            <div class="grid place-content-center">
-                                <img src="data:;base64, {{ info['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
-                            </div>
-                            <div class="grid grid-rows-1 place-content-center">
-                                <a href="{{ url_for('edit_emp', ids=info._id) }}">
-                                    <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
-                                </div>
-                                <div class="grid grid-rows-1 place-content-center">
-                                    <a href="{{ url_for('delete_emp', ids=info._id) }}">
-                                        <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">delete</button></a>
-                                </div>
-                        </td>
+        <div class="w-full mt-2 px-4 sm:px-2 emp">
 
-                        <!--Info -->
-                        <td>
-                            <table class="auto">
-                                {% set cols={
-                                'ids': info._id,
-                                'name': info.name,
-                                'pay': info.pay_hour,
-                                'passport/ic': info.ic,
-                                'nationality': info.nationality,
-                                'gender': info.gender,
-                                'd.o.b': info.dob,
-                                'contact': info.contact,
-                                'address': info.address,
-                                'sign date': info.sign_date
-                                } %}
-                                {% for key, value in cols.items() %}
-                                <tr>
-                                    <th class="text-right">
-                                        <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
-                                    </th>
-                                    <td class="w-full">
-                                        {% if key == 'name' %}
-                                        <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
-                                        {% elif key == 'pay' %}
-                                        <span class="text-xs text-red-500 sm:text-sm">RM
-                                            <span class="font-bold underline select-all sm:text-sm">
-                                                {{ value }}
-                                            </span> / hour</span>
-                                        {% else %}
-                                        <span class="text-xs select-all sm:text-sm">{{ value }}</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        </td>
-                        <!-- End info -->
+            <div class="flex py-1 text-center text-white text-sm bg-slate-700 rounded-t-lg">
+                <div class="w-1/4">Photo</div>
+                <div class="w-3/4">Info</div>
+            </div>
 
-                    </tr>
-                    </tbody>
+            <div class="flex border-b border-x border-dotted border-slate-700 rounded-b-lg">
 
-            </table>
+                <!-- Left Section -->
+                <div class="w-30 p-4 space-y-4 sm:1/4">
+                    <div class="grid place-items-center">
+                        <img src="data:image/jpeg;base64, {{ info['img_employee'] }}" class="w-full h-full object-cover rounded-lg select-none sm:w-40 sm:h-40" />
+                    </div>
+                    <div>
+                        <a href="{{ url_for('edit_emp', ids=info._id) }}">
+                            <button class="w-full py-1 text-xs border border-1 border-slate-900 rounded-lg hover:bg-sky-700 hover:text-slate-100 sm:w-40 sm:text-sm">edit</button></a>
+                    </div>
+                    <!-- <div>
+                        <a href="{{ url_for('delete_emp', ids=info._id) }}">
+                            <button class="w-full py-1 text-xs border border-1 border-slate-900 rounded-lg hover:bg-sky-700 hover:text-slate-100 sm:w-40 sm:text-sm" onclick="confirm_delete()">delete</button></a>
+                    </div> -->
+                    <div>
+                        <button class="w-full py-1 text-xs border border-1 border-slate-900 rounded-lg hover:bg-sky-700 hover:text-slate-100 sm:w-40 sm:text-sm" onclick="confirm_delete()">delete</button></a>
+                    </div>
+                </div>
+
+                <!--Right section -->
+                <div class="w-3/4 py-2">
+                    <table>
+                        {% set cols={
+                        'name': info.name,
+                        'pay': info.pay_hour,
+                        'passport/ic': info.ic,
+                        'nationality': info.nationality,
+                        'gender': info.gender,
+                        'd.o.b': info.dob,
+                        'contact': info.contact,
+                        'address': info.address,
+                        'sign date': info.sign_date
+                        } %}
+                        {% for key, value in cols.items() %}
+                        <tr>
+                            <th class="px-2 text-right">
+                                <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                            </th>
+                            <td class="w-full">
+                                {% if key == 'name' %}
+                                <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
+                                {% elif key == 'pay' %}
+                                <span class="text-xs text-red-500 sm:text-sm">RM
+                                    <span class="font-bold underline select-all sm:text-sm">
+                                        {{ value }}
+                                    </span> / hour</span>
+                                {% else %}
+                                <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
         </div>
 
-    </div>
-    <!-- Work Hour -->
 </section>
+
+<form action="{{ url_for('delete_emp', ids=info._id) }}" method="POST" id="popup" hidden>
+    <div class="absolute w-screen h-screen top-0 right-0 bottom-0 left-0 bg-black/75 grid place-content-center">
+        <span class="font-bold text-white text-center">
+            <span class="text-sm">
+                You sure want to delete <span class="font-bold text-orange-500">({{ info.name.upper() }})</span>
+            </span>
+            <div class="flex justify-center space-x-4 mt-4">
+                <button name="access" value="access" class="px-6 py-2 outline outline-white text-white">Access</button>
+                <button class="px-6 py-2 outline outline-white text-white">Cancel</button>
+            </div>
+    </div>
+</form>
+
+<script src="{{ url_for('static', path='js/delete.js')}}"></script>
+
 {% endblock %}

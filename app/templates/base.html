@@ -5,12 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="../static/css/style.css">
-    <link rel="stylesheet" href="../static/css/output.css">
+    <link rel="stylesheet" href="{{ url_for('static', path='./css/style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', path='./css/output.css')}}">
     <link rel="shortcut icon" href="images/tb.ico" type="image/x-icon">
 </head>
 
-<body class="w-full bg-slate-300 flex justify-center">
+<body class="w-full bg-slate-300 flex justify-center relative">
     <div class="w-[1024px]">
 
         <header id="header" class="h-20 bg-slate-400 rounded-b-2xl border-b-[1px] border-slate-800 print:hidden">
@@ -28,13 +28,18 @@
             </div>
         </header>
 
-        <main id="content" class="">
+        <main id="content">
             {% block content %}{% endblock %}
         </main>
 
         <footer id="footer" class="w-full h-10 pt-2 bg-slate-400 rounded-t-2xl border-t-[1px] border-slate-800 fixed bottom-0 print:hidden lg:w-[1024px]">
             <div class="text-center">
-                <span class="text-[0.6rem] font-bold xl:text-[0.7rem]">{{ title }}</span>
+                <span class="text-[0.6rem] font-bold xl:text-[0.7rem]">{{ title }} | </span>
+                {% if db %}
+                <span class="text-[0.6rem] font-bold xl:text-[0.7rem]">Database: 🟢️</span>
+                {% else %}
+                <span class="text-[0.6rem] font-bold xl:text-[0.7rem]">Database: 🔴</span>
+                {% endif %}
             </div>
         </footer>
 

@@ -1,5 +1,6 @@
 """User Login and Register Page"""
 from config.settings import settings
+from pymongo.errors import ServerSelectionTimeoutError
 
 # import library
 from fastapi import FastAPI, Request, Depends, HTTPException, status
@@ -20,7 +21,7 @@ from models.jwt_token import Token
 
 # setup
 app = FastAPI(title="TBROS Worker", version="1.0")
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="static", html=True), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # password hash and verify class
@@ -67,11 +68,21 @@ def get_user_data(email: str):
 async def index(request: Request) -> _TemplateResponse:
     """index page"""
 
-    response = templates.TemplateResponse(
-        "index.html", {"request": request, "title": settings.LOGIN_TITLE}
-    )
-    response.delete_cookie(key="access_token")
-    return response
+    try:
+        _db.status()
+        response = templates.TemplateResponse(
+            "index.html",
+            {"request": request, "title": settings.LOGIN_TITLE, "db": True},
+        )
+        response.delete_cookie(key="access_token")
+        return response
+    except ServerSelectionTimeoutError:
+        response = templates.TemplateResponse(
+            "index.html",
+            {"request": request, "title": settings.LOGIN_TITLE, "db": False},
+        )
+        response.delete_cookie(key="access_token")
+        return response
 
 
 @app.post("/", tags=["User Login"], response_class=RedirectResponse)

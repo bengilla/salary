@@ -6,11 +6,14 @@ from pymongo import MongoClient
 class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
-        client = MongoClient(settings.DB_LOCAL)
+        self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
         # client = MongoClient(settings.DB_URL)
 
-        self.user_info = client["USER_INFO"]
-        self.user_data = client["USER_DATA"]
+        self.user_info = self.client["USER_INFO"]
+        self.user_data = self.client["USER_DATA"]
+
+    def status(self):
+        return self.client.server_info()
 
     # user data section
     def user_collection(self):

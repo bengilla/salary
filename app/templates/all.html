@@ -5,20 +5,21 @@
 <a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
 {% endblock %}
 
+<!-- Content -->
 {% block content %}
 <section id="all" class="pt-8 mb-16 flex justify-center">
-    <div class="w-full max-w-5xl mx-2">
+    <div class="w-full px-4">
 
         <div class="sm:flex sm:justify-center">
-            <div class="w-full py-4 mx-2 flex gap-4 items-center">
+            <div class="w-full py-2 mx-2 flex gap-4 items-center">
                 <div><span class="text-sm">Total Employees: </span></div>
                 <div><span class="py-1 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span>
                 </div>
             </div>
 
-            <div class="w-full flex items-center">
+            <div class="w-full flex px-2 items-center sm:p-0">
                 <div class="w-full py-4 mx-2 grid grid-cols-1 place-items-end">
-                    <div class="sm:pl-10 w-full">
+                    <div class="w-full sm:pl-10">
 
                         <!--{{ search }}-->
                         <form class="w-full flex items-center" method="POST">
@@ -32,7 +33,7 @@
                                 <input type="text" name="emp_name" id="search-item" class="bg-gray-50 border border-gray-300 text-gray-900
                                 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5
                                 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white
-                                dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search" onkeyup="search()" onkeydown="onkeypressed(event, this)" required>
+                                dark:focus:ring-blue-500 dark:focus:border-blue-500 focus:border-none" placeholder="Search" onkeyup="search()" onkeydown="onkeypressed(event, this)" required>
                             </div>
                             <button type="submit" class="p-2.5 ml-2 text-sm font-medium text-white bg-blue-700 rounded-lg
                             border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300
@@ -51,74 +52,66 @@
 
         <!-- {{ info }} -->
         {% for i in info %}
-        <div class="mt-2 w-full emp">
-            <table class="w-full rounded-xl">
+        <div class="w-full mt-2 px-4 sm:px-20 emp">
 
-                <thead class="bg-slate-500">
-                    <tr class="text-xs text-white text-center sm:text-sm">
-                        <th class="p-1 select-none w-[5rem] rounded-tl-xl sm:w-44">Photo</th>
-                        <th class="p-1 select-none rounded-tr-xl">Info</th>
-                    </tr>
-                </thead>
+            <div class="flex py-1 text-center text-white text-sm bg-slate-700 rounded-t-lg">
+                <div class="w-1/4">Photo</div>
+                <div class="w-3/4">Info</div>
+            </div>
 
-                <tbody class="border-dotted border-x-2 border-b-2 border-slate-600">
-                    <tr>
-                        <!--image -->
-                        <td>
-                            <div class="flex justify-center">
-                                <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-[4.6rem] h-[4.6rem] mb-2 mx-2 object-cover rounded-2xl select-none sm:w-40 sm:h-40" />
-                            </div>
-                        </td>
+            <div class="flex border-b border-x border-dotted border-slate-700 rounded-b-lg">
+                <div class="w-1/4 p-2 grid place-items-center">
+                    <img src="data:image/jpeg;base64, {{ i['img_employee'] }}" class="w-full h-full object-cover rounded-lg select-none sm:w-40 sm:h-40" />
+                </div>
 
-                        <!--Info -->
-                        <td>
-                            <table>
-                                {% set cols={
-                                'name': i.name,
-                                'pay': i.pay_hour,
-                                'passport/ic': i.ic,
-                                'nationality': i.nationality,
-                                'gender': i.gender,
-                                'd.o.b': i.dob,
-                                'contact': i.contact,
-                                'address': i.address,
-                                'sign date': i.sign_date
-                                } %}
-                                {% for key, value in cols.items() %}
-                                <tr>
-                                    <th class="text-right">
-                                        <span class="mr-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
-                                    </th>
-                                    <td class="w-full pr-2">
-                                        {% if key == 'name' %}
-                                        <span class="font-bold text-sm select-all sm:text-lg" id="testname">{{ value }}</span>
-                                        <a href="{{ url_for('info_emp', ids=i._id) }}">
-                                            <span class="italic underline text-xs text-orange-700">edit</span>
-                                        </a>
-                                        {% elif key == 'pay' %}
-                                        <span class="text-xs text-red-500 sm:text-sm">RM
-                                            <span class="font-bold underline select-all sm:text-sm">
-                                                {{ value }}
-                                            </span> / hour</span>
-                                        {% else %}
-                                        <span class="text-xs select-all sm:text-sm">{{ value }}</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </table>
-                        </td>
-                        <!-- End info -->
-                    </tr>
-                </tbody>
-
-            </table>
+                <!--Info -->
+                <div class="w-3/4 py-2">
+                    <table>
+                        {% set cols={
+                        'name': i.name,
+                        'pay': i.pay_hour,
+                        'passport/ic': i.ic,
+                        'nationality': i.nationality,
+                        'gender': i.gender,
+                        'd.o.b': i.dob,
+                        'contact': i.contact,
+                        'address': i.address,
+                        'sign date': i.sign_date
+                        } %}
+                        {% for key, value in cols.items() %}
+                        <tr>
+                            <th class="px-2 text-right">
+                                <span class="mr-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                            </th>
+                            <td class="w-full">
+                                {% if key == 'name' %}
+                                <span class="font-bold text-sm select-all sm:text-lg" id="testname">{{ value }}</span>
+                                <a href="{{ url_for('info_emp', ids=i._id) }}">
+                                    <span class="italic underline text-xs text-orange-700">edit</span>
+                                </a>
+                                {% elif key == 'pay' %}
+                                <span class="text-xs text-red-500 sm:text-sm">RM
+                                    <span class="font-bold underline select-all sm:text-sm">
+                                        {{ value }}
+                                    </span> / hour</span>
+                                {% else %}
+                                <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+            <!-- End info -->
 
         </div>
         {% endfor %}
 
     </div>
 </section>
-<script src="../static/js/filter.js"></script>
-<script src="../static/js/esc.js"></script>
+
+<script src="{{ url_for('static', path='js/filter.js')}}"></script>
+<script src="{{ url_for('static', path='js/esc.js')}}"></script>
+
 {% endblock %}
