@@ -21,7 +21,7 @@ from models.jwt_token import Token
 
 # setup
 app = FastAPI(title="TBROS Worker", version="1.0")
-app.mount("/static", StaticFiles(directory="static", html=True), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # password hash and verify class

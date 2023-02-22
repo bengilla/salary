@@ -56,30 +56,42 @@ async def add_emp(
 ) -> RedirectResponse:
     """post employee info to server"""
 
-    # Image concert and resize
-    if add_emp_form.img_emp.filename:
-        image_data = ImageConvert().img_base64(add_emp_form.img_emp.file)
+    try:
+        get_token = _token.verify_access_token(access_token)
+    except:
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    # get name from database
+    name_from_db = _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"]))
+    emp_list = [name["name"].title() for name in name_from_db.find({})]
+
+    if add_emp_form.name.title() not in emp_list:
+        # Image concert and resize
+        if add_emp_form.img_emp.filename:
+            image_data = ImageConvert().img_base64(add_emp_form.img_emp.file)
+        else:
+            empty_image = "./static/images/no-data.jpg"
+            image_data = ImageConvert().img_base64(empty_image)
+
+        new_emp = {
+            "_id": add_emp_form.name.replace(" ", "").lower(),
+            "img_employee": image_data,
+            "name": add_emp_form.name.title(),
+            "pay_hour": add_emp_form.pay_hour,
+            "ic": add_emp_form.ic,
+            "dob": add_emp_form.dob,
+            "nationality": add_emp_form.nationality,
+            "gender": add_emp_form.gender,
+            "contact": add_emp_form.contact,
+            "address": add_emp_form.address,
+            "sign_date": _date_now.date().strftime("%d-%m-%Y"),
+        }
+
+        _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"])).insert_one(
+            new_emp
+        )
+        redirect_url = request.url_for("mainpage")
+        return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+
     else:
-        empty_image = "./static/images/no-data.jpg"
-        image_data = ImageConvert().img_base64(empty_image)
-
-    new_emp = {
-        "_id": add_emp_form.name.replace(" ", "").lower(),
-        "img_employee": image_data,
-        "name": add_emp_form.name.title(),
-        "pay_hour": add_emp_form.pay_hour,
-        "ic": add_emp_form.ic,
-        "dob": add_emp_form.dob,
-        "nationality": add_emp_form.nationality,
-        "gender": add_emp_form.gender,
-        "contact": add_emp_form.contact,
-        "address": add_emp_form.address,
-        "sign_date": _date_now.date().strftime("%d-%m-%Y"),
-    }
-
-    get_token = _token.verify_access_token(access_token)
-    _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"])).insert_one(
-        new_emp
-    )
-    redirect_url = request.url_for("mainpage")
-    return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+        raise HTTPException(status_code=400, detail="Employee already exist!!!")
