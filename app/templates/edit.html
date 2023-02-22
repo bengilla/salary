@@ -12,7 +12,7 @@
         <div class="mt-12 text-3xl text-center font-bold">EDIT: {{ edit_emp.name }}</div>
         <div class="mb-8 text-sm text-center italic">ID: {{ edit_emp._id}}</div>
 
-        <form action="{{ url_for('edit_emp', ids=edit_emp._id) }}" method="POST" enctype="multipart/form-data" class="w-full space-y-4 px-2 text-sm sm:w-[500px]" novalidate>
+        <form action="/edit/{{ edit_emp._id }}" method="POST" enctype="multipart/form-data" class="w-full space-y-4 px-2 text-sm sm:w-[500px]" novalidate>
 
             <div>
                 <label for="img_emp">image: </label>

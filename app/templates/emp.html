@@ -86,7 +86,7 @@
         </span>
 
         <div class="flex justify-center space-x-4 mt-4">
-            <form action="{{ url_for('delete_emp', ids=info._id) }}" method="POST">
+            <form action="/delete/{{ info._id}}" method="POST">
                 <button name="access" value="access" class="px-6 py-2 outline outline-white text-white">Access</button>
             </form>
             <a href="{{ url_for('info_emp', ids=info._id) }}">
