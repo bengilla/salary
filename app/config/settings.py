@@ -14,6 +14,7 @@ class Settings:
 
     SECRET_KEY = os.getenv("SECRET_KEY")
     ALGORITHM = os.getenv("ALGORITHM")
+    TOKEN_TIMEOUT = os.getenv("TOKEN_TIMEOUT")
 
     DB_LOCAL = os.getenv("DB_LOCAL")
     DB_URL = os.getenv("DB_URL")
