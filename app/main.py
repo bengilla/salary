@@ -96,7 +96,7 @@ async def index(
             redirect_url = request.url_for("mainpage")
             response = RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
             response.set_cookie(
-                key="access_token", value=f"{access_token}", httponly=True, secure=True
+                key="access_token", value=f"{access_token}", httponly=True
             )
             return response
         else:
