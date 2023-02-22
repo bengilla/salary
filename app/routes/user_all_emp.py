@@ -48,6 +48,7 @@ async def all_emp(
                 "name": list_emp_name,
                 "count": list_count,
                 "title": get_token["name"],
+                "db": _db.status(),
             },
         )
     except:

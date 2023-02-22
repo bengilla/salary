@@ -68,21 +68,12 @@ def get_user_data(email: str):
 async def index(request: Request) -> _TemplateResponse:
     """index page"""
 
-    try:
-        _db.status()
-        response = templates.TemplateResponse(
-            "index.html",
-            {"request": request, "title": settings.LOGIN_TITLE, "db": True},
-        )
-        response.delete_cookie(key="access_token")
-        return response
-    except ServerSelectionTimeoutError:
-        response = templates.TemplateResponse(
-            "index.html",
-            {"request": request, "title": settings.LOGIN_TITLE, "db": False},
-        )
-        response.delete_cookie(key="access_token")
-        return response
+    response = templates.TemplateResponse(
+        "index.html",
+        {"request": request, "title": settings.LOGIN_TITLE, "db": _db.status()},
+    )
+    response.delete_cookie(key="access_token")
+    return response
 
 
 @app.post("/", tags=["User Login"], response_class=RedirectResponse)
@@ -123,10 +114,7 @@ async def register(request: Request) -> _TemplateResponse:
 
     return templates.TemplateResponse(
         "register.html",
-        {
-            "request": request,
-            "title": settings.REGISTER_TITLE,
-        },
+        {"request": request, "title": settings.REGISTER_TITLE, "db": _db.status()},
     )
 
 

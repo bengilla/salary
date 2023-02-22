@@ -41,6 +41,7 @@ async def salary_list(
                 "date": _date_now,
                 "title": get_token["name"],
                 "year_collection": year_collection,
+                "db": _db.status(),
             },
         )
     except:
@@ -94,6 +95,7 @@ async def all_list(
                 "month": output_month,
                 "total_cash": total_cash,
                 "total_emp_on_list": len(salary_output),
+                "db": _db.status(),
             },
         )
     except:

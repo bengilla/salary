@@ -54,6 +54,7 @@ async def mainpage(
                 "request": request,
                 "date": _date_now,
                 "title": get_token["name"],
+                "db": _db.status(),
             },
         )
     except:

@@ -42,10 +42,7 @@ async def add_emp(
         get_token = _token.verify_access_token(access_token)
         return templates.TemplateResponse(
             "add.html",
-            {
-                "request": request,
-                "title": get_token["name"],
-            },
+            {"request": request, "title": get_token["name"], "db": _db.status()},
         )
     except:
         raise HTTPException(status_code=404, detail="Not Found")

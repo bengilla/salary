@@ -37,6 +37,7 @@ async def info_emp(
                 "request": request,
                 "info": single_emp,
                 "title": get_token["name"],
+                "db": _db.status(),
             },
         )
     except:
@@ -60,7 +61,12 @@ async def edit_emp(
 
         return templates.TemplateResponse(
             "edit.html",
-            {"request": request, "edit_emp": single_emp, "title": get_token["name"]},
+            {
+                "request": request,
+                "edit_emp": single_emp,
+                "title": get_token["name"],
+                "db": _db.status(),
+            },
         )
     except:
         raise HTTPException(status_code=404, detail="Not Found")

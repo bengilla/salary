@@ -1,6 +1,7 @@
 import pendulum
 from config.settings import settings
 from pymongo import MongoClient
+from pymongo.errors import ServerSelectionTimeoutError
 
 
 class MongoDB:
@@ -13,7 +14,12 @@ class MongoDB:
         self.user_data = self.client["USER_DATA"]
 
     def status(self):
-        return self.client.server_info()
+        try:
+            server_info = self.client.server_info()
+            if server_info["ok"] == 1.0:
+                return True
+        except ServerSelectionTimeoutError:
+            return False
 
     # user data section
     def user_collection(self):
