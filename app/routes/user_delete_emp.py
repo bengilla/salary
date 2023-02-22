@@ -38,8 +38,5 @@ def delete_emp(
             ).delete_one({"_id": ids})
             redirect_url = request.url_for("all_emp")
             return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
-        else:
-            redirect_url = request.url_for("all_emp")
-            return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     except:
         raise HTTPException(status_code=404, detail="Not Found")

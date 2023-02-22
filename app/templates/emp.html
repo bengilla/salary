@@ -25,14 +25,14 @@
                     <div class="grid place-items-center">
                         <img src="data:image/jpeg;base64, {{ info['img_employee'] }}" class="w-full h-full object-cover rounded-lg select-none sm:w-40 sm:h-40" />
                     </div>
+
+                    <!-- edit button -->
                     <div>
                         <a href="{{ url_for('edit_emp', ids=info._id) }}">
                             <button class="w-full py-1 text-xs border border-1 border-slate-900 rounded-lg hover:bg-sky-700 hover:text-slate-100 sm:w-40 sm:text-sm">edit</button></a>
                     </div>
-                    <!-- <div>
-                        <a href="{{ url_for('delete_emp', ids=info._id) }}">
-                            <button class="w-full py-1 text-xs border border-1 border-slate-900 rounded-lg hover:bg-sky-700 hover:text-slate-100 sm:w-40 sm:text-sm" onclick="confirm_delete()">delete</button></a>
-                    </div> -->
+
+                    <!-- delete button -->
                     <div>
                         <button class="w-full py-1 text-xs border border-1 border-slate-900 rounded-lg hover:bg-sky-700 hover:text-slate-100 sm:w-40 sm:text-sm" onclick="confirm_delete()">delete</button></a>
                     </div>
@@ -85,12 +85,18 @@
                 You sure want to delete <span class="font-bold text-orange-500">({{ info.name.upper() }})</span>
             </span>
             <div class="flex justify-center space-x-4 mt-4">
-                <button name="access" value="access" class="px-6 py-2 outline outline-white text-white">Access</button>
-                <button class="px-6 py-2 outline outline-white text-white">Cancel</button>
+                <button id="access" name="access" value="access" class="px-6 py-2 outline outline-white text-white">Access</button>
+                <button class="px-6 py-2 outline outline-white text-white">
+                    <a href="{{ url_for('info_emp', ids=info._id) }}">Cancel</a>
+                </button>
             </div>
     </div>
 </form>
 
-<script src="{{ url_for('static', path='js/delete.js')}}"></script>
+<script>
+    function confirm_delete() {
+        const popup = document.getElementById('popup').style.display = 'block';
+    }
+</script>
 
 {% endblock %}
