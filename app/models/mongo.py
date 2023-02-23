@@ -7,6 +7,9 @@ from pymongo.errors import ServerSelectionTimeoutError
 class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
+        self.db_connect()
+
+    def db_connect(self):
         try:
             self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
         except ServerSelectionTimeoutError:
