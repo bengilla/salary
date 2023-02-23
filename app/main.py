@@ -3,7 +3,7 @@ from config.settings import settings
 from pymongo.errors import ServerSelectionTimeoutError
 
 # import library
-from fastapi import FastAPI, Request, Depends, HTTPException, status
+from fastapi import FastAPI, Request, Depends, HTTPException, Cookie, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -45,13 +45,6 @@ async def my_exception_handler(request: Request, exc):
     )
 
 
-def get_user_data(email: str):
-    user_list = _db.user_collection().find({})
-    for user in user_list:
-        if email in user["email"]:
-            return RegisterForm(**user)
-
-
 # db modify ----------------------------------------------------------------------
 # total = 0
 # data = _DB.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
@@ -65,15 +58,22 @@ def get_user_data(email: str):
 
 # index----------------------------------------------------------------------
 @app.get("/", tags=["User Login"], response_class=HTMLResponse)
-async def index(request: Request) -> _TemplateResponse:
+async def index(
+    request: Request, access_token: str | None = Cookie(default=None)
+) -> _TemplateResponse:
     """index page"""
 
-    response = templates.TemplateResponse(
-        "index.html",
-        {"request": request, "title": settings.LOGIN_TITLE, "db": _db.status()},
-    )
-    response.delete_cookie(key="access_token")
-    return response
+    try:
+        get_token = _token.verify_access_token(access_token)
+        if get_token:
+            redirect_url = request.url_for("mainpage")
+            return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+    except:
+        response = templates.TemplateResponse(
+            "index.html",
+            {"request": request, "title": settings.LOGIN_TITLE, "db": _db.status()},
+        )
+        return response
 
 
 @app.post("/", tags=["User Login"], response_class=RedirectResponse)
@@ -82,6 +82,12 @@ async def index(
     login: LoginForm = Depends(LoginForm.login),
 ):
     """index post section"""
+
+    def get_user_data(email: str):
+        user_list = _db.user_collection().find({})
+        for user in user_list:
+            if email in user["email"]:
+                return RegisterForm(**user)
 
     user_in_db = get_user_data(login.email)
 
@@ -100,7 +106,7 @@ async def index(
             )
             return response
         else:
-            raise HTTPException(status_code=401, detail="Invalid username or password")
+            raise HTTPException(status_code=400, detail="Invalid username or password")
     else:
         raise HTTPException(
             status_code=404, detail="User doesn't exist, please register"
@@ -138,7 +144,7 @@ async def register(
         return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     else:
         raise HTTPException(
-            status_code=401, detail="User is exists, please use other email"
+            status_code=400, detail="User is exists, please use other email"
         )
 
 
