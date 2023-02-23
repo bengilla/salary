@@ -9,7 +9,7 @@ class MongoDB:
         # Local Testing MongoDB-------------------------------
         try:
             self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
-        except:
+        except ServerSelectionTimeoutError:
             self.client = MongoClient(settings.DB_URL, serverSelectionTimeoutMS=3000)
         finally:
             self.user_info = self.client["USER_INFO"]
