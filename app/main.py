@@ -109,7 +109,7 @@ async def index(
             raise HTTPException(status_code=400, detail="Invalid username or password")
     else:
         raise HTTPException(
-            status_code=404, detail="User doesn't exist, please register"
+            status_code=404, detail="User does not exist, please register a new user"
         )
 
 
@@ -144,7 +144,8 @@ async def register(
         return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     else:
         raise HTTPException(
-            status_code=400, detail="User is exists, please use other email"
+            status_code=400,
+            detail="User already exists, please user another email address",
         )
 
 

@@ -58,7 +58,7 @@ async def mainpage(
             },
         )
     except:
-        raise HTTPException(status_code=404, detail="Please Login")
+        raise HTTPException(status_code=404, detail="Not Found")
 
 
 @user_mainpage.post(
