@@ -28,7 +28,11 @@
                 <input type="text" name="company_name" class="w-full block form-input rounded-lg" placeholder="Company Name" required>
             </div>
 
-            <input type="submit" value="submit" class="px-8 py-2 rounded-lg border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100">
+            <div>
+                <button class="w-full border-2 border-slate-900 hover:bg-slate-800 hover:text-slate-100" onclick="show()">click on this button to show submit button!</button>
+            </div>
+
+            <input type="submit" id="show_btn" value="submit" class="px-8 py-2 rounded-lg border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100" hidden>
 
         </form>
 
@@ -37,6 +41,11 @@
     <div>
         {{ show_data }}
     </div>
+    <script>
+        function show() {
+            const show_btn = document.getElementById('show_btn').style.display = 'block'
+        }
+    </script>
 
 </section>
 {% endblock %}
