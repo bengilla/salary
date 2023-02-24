@@ -7,9 +7,8 @@ from pymongo.errors import ServerSelectionTimeoutError
 class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
-        self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
-        if ServerSelectionTimeoutError(message="Server not allowed"):
-            self.client = MongoClient(settings.DB_URL, serverSelectionTimeoutMS=3000)
+        # self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
+        self.client = MongoClient(settings.DB_URL, serverSelectionTimeoutMS=3000)
 
         self.user_info = self.client["USER_INFO"]
         self.user_data = self.client["USER_DATA"]

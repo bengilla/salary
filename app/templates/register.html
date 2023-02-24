@@ -29,10 +29,12 @@
             </div>
 
             <div>
-                <button class="w-full border-2 border-slate-900 hover:bg-slate-800 hover:text-slate-100" onclick="show()">click on this button to show submit button!</button>
+                <input type="button" name="" id="confirm_btn" class="w-full border-2 border-slate-900 hover:bg-slate-800 hover:text-slate-100" value="click on this button to show submit button!" onclick="show()">
             </div>
 
-            <input type="submit" id="show_btn" value="submit" class="px-8 py-2 rounded-lg border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100" hidden>
+            <div>
+                <input type="submit" id="show_btn" value="submit" class="w-full px-8 py-2 rounded-lg border border-1 border-slate-900 hover:bg-sky-700 hover:text-slate-100" hidden>
+            </div>
 
         </form>
 
@@ -43,7 +45,8 @@
     </div>
     <script>
         function show() {
-            const show_btn = document.getElementById('show_btn').style.display = 'block'
+            document.getElementById('show_btn').style.display = 'block'
+            document.getElementById('confirm_btn').style.display = 'none'
         }
     </script>
 
