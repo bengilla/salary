@@ -1,6 +1,5 @@
 """User Login and Register Page"""
 from config.settings import settings
-from pymongo.errors import ServerSelectionTimeoutError
 
 # import library
 from fastapi import FastAPI, Request, Depends, HTTPException, Cookie, status
@@ -28,7 +27,7 @@ templates = Jinja2Templates(directory="templates")
 _pass = Password()
 
 # mongoDB
-_db = MongoDB()
+_db = MongoDB("TEST")
 
 # token
 _token = Token()
@@ -62,6 +61,7 @@ async def index(
     request: Request, access_token: str | None = Cookie(default=None)
 ) -> _TemplateResponse:
     """index page"""
+    print(_db.collection_list())
 
     try:
         get_token = _token.verify_access_token(access_token)
@@ -139,13 +139,19 @@ async def register(
     }
 
     if register_info.email not in user_list:
-        _db.user_collection().insert_one(new_user)
-        redirect_url = request.url_for("index")
-        return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+        company_name = register_info.company_name.replace(" ", "").lower()
+        if company_name not in _db.collection_list():
+            _db.user_collection().insert_one(new_user)
+            redirect_url = request.url_for("index")
+            return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+        else:
+            raise HTTPException(
+                status_code=400, detail="Company name is already exists"
+            )
     else:
         raise HTTPException(
             status_code=400,
-            detail="User already exists, please user another email address",
+            detail="Email is already exists!",
         )
 
 

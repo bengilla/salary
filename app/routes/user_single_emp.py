@@ -13,7 +13,7 @@ single_emp_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 # mongodb
-_db = MongoDB()
+# _db = MongoDB()
 
 # token
 _token = Token()
@@ -28,7 +28,10 @@ async def info_emp(
 
     try:
         get_token = _token.verify_access_token(access_token)
-        emp_info = _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"]))
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
+
+        emp_info = _db.emp_info_collection()
         single_emp = emp_info.find_one({"_id": ids})
 
         return templates.TemplateResponse(
@@ -56,7 +59,10 @@ async def edit_emp(
     # Get Employee info
     try:
         get_token = _token.verify_access_token(access_token)
-        emp_info = _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"]))
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
+
+        emp_info = _db.emp_info_collection()
         single_emp = emp_info.find_one({"_id": ids})
 
         return templates.TemplateResponse(
@@ -107,9 +113,10 @@ async def edit_emp(
 
     # update emp info
     get_token = _token.verify_access_token(access_token)
-    _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"])).update_one(
-        {"_id": ids}, {"$set": edit_emp_form}
-    )
+    company_name = _token.cookie_2_dbname(get_token["name"])
+    _db = MongoDB(company_name)
+
+    _db.emp_info_collection().update_one({"_id": ids}, {"$set": edit_emp_form})
 
     redirect_url = request.url_for("all_emp")
     return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)

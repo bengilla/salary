@@ -5,7 +5,7 @@ from pymongo.errors import ServerSelectionTimeoutError
 
 
 class MongoDB:
-    def __init__(self) -> None:
+    def __init__(self, name) -> None:
         # Local Testing MongoDB-------------------------------
         self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
         # self.client = MongoClient(settings.DB_URL, serverSelectionTimeoutMS=3000)
@@ -13,7 +13,7 @@ class MongoDB:
         # member info
         self.user_info = self.client["USER_INFO"]
         # company info
-        self.user_data = self.client["USER_DATA"]
+        self.user_data = self.client[name]
 
     # db status
     def status(self):
@@ -25,6 +25,11 @@ class MongoDB:
         except ServerSelectionTimeoutError:
             return False
 
+    def collection_list(self):
+        collection_name = self.client.list_database_names()
+        result = [name.lower() for name in collection_name]
+        return result
+
     # user data section
     def user_collection(self):
         """User Data"""
@@ -32,25 +37,21 @@ class MongoDB:
 
     # member register using company name as db collection
     # after user login
-    def emp_info_collection(self, db_title: str):
+    def emp_info_collection(self):
         """链接至 emp-info"""
-        return self.user_data[db_title + "-info"]
+        return self.user_data["info"]
 
-    def emp_work_hour_collection(self, db_title: str, db_year: str):
+    def emp_work_hour_collection(self, db_year: str):
         """链接至 emp-<年份>"""
-        return self.user_data[f"{db_title}-{db_year}"]
+        return self.user_data[f"{db_year}"]
 
-    def collection_name(self, db_title: str):
+    def collection_name(self):
         collection_detail: dict[str] = {}
         db_collection_name = self.user_data.list_collection_names()
 
         for name in db_collection_name:
-            split_name = name.split("-")
-            title = split_name[0]
-            year = split_name[1]
-
-            if db_title == title and year.isnumeric():
-                collection = self.emp_work_hour_collection(title, year)
+            if name.isnumeric():
+                collection = self.emp_work_hour_collection(name)
 
                 # get date
                 get_date = [col["date"] for col in collection.find({})]
@@ -65,6 +66,6 @@ class MongoDB:
                 re_arrange_date = [date.format("DD-MMM-YYYY") for date in result_date]
 
                 # store to collection_detail
-                collection_detail[year] = re_arrange_date
+                collection_detail[name] = re_arrange_date
 
         return collection_detail

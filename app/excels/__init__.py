@@ -16,14 +16,11 @@ class EmpSalary:
 
         # get name, day, month from ReadExcel data
         self._date = self.read_excel.get_date()
-        print(self._date)
 
         # get data from mongodb
-        _mongodb = MongoDB()
-        self._empinfo = _mongodb.emp_info_collection(db_collection)
-        self._work_hour = _mongodb.emp_work_hour_collection(
-            db_collection, self._date.year
-        )
+        _db = MongoDB(db_collection)
+        self._empinfo = _db.emp_info_collection()
+        self._work_hour = _db.emp_work_hour_collection(self._date.year)
 
         # get day list from excel top column
         self._day_list: list = self.read_excel.get_day_list()
@@ -54,7 +51,6 @@ class EmpSalary:
 
         # check employee in excels is it on web
         result = [emp for emp in emp_on_excel if emp not in emp_on_web]
-        print(result)
         return result
 
     def emp_final_calculation(self, id: str):
@@ -127,10 +123,15 @@ class EmpSalary:
                 continue
 
         # 上传至 MongoDB
-        send_data = {
-            "date": self._date.format("DD-MMM-YYYY"),
-            "total_amounts": self.total_amounts,
-            "emp_work_hours": self.data,
-        }
-        self._work_hour.insert_one(send_data)
-        # print(send_data)
+        file_in_db = [file["date"] for file in self._work_hour.find({})]
+        date = self._date.format("DD-MMM-YYYY")
+
+        if date not in file_in_db:
+            send_data = {
+                "date": date,
+                "total_amounts": self.total_amounts,
+                "emp_work_hours": self.data,
+            }
+            self._work_hour.insert_one(send_data)
+        else:
+            raise Exception("Sorry, file is already exists")

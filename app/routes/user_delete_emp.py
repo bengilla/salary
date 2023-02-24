@@ -9,9 +9,6 @@ from models.jwt_token import Token
 delete_emp_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# mongodb
-_db = MongoDB()
-
 # token
 _token = Token()
 
@@ -32,10 +29,11 @@ def delete_emp(
     # delete emp info
     try:
         get_token = _token.verify_access_token(access_token)
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
+
         if access == "access":
-            _db.emp_info_collection(
-                _token.cookie_2_dbname(get_token["name"])
-            ).delete_one({"_id": ids})
+            _db.emp_info_collection().delete_one({"_id": ids})
             redirect_url = request.url_for("all_emp")
             return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
     except:

@@ -17,7 +17,7 @@ all_emp_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 # mongodb
-_db = MongoDB()
+# _db = MongoDB()
 
 # token
 _token = Token()
@@ -32,10 +32,10 @@ async def all_emp(
 
     try:
         get_token = _token.verify_access_token(access_token)
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
 
-        list_emp_info = _db.emp_info_collection(
-            _token.cookie_2_dbname(get_token["name"])
-        ).find({})
+        list_emp_info = _db.emp_info_collection().find({})
 
         list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
         list_emp_name = [name["name"].lower() for name in list_emp_info]

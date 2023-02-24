@@ -14,9 +14,6 @@ from models.jwt_token import Token
 salary = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# mongodb
-_db = MongoDB()
-
 # token
 _token = Token()
 
@@ -33,7 +30,10 @@ async def salary_list(
 
     try:
         get_token = _token.verify_access_token(access_token)
-        year_collection = _db.collection_name(_token.cookie_2_dbname(get_token["name"]))
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
+
+        year_collection = _db.collection_name()
         return templates.TemplateResponse(
             "salary-list.html",
             {
@@ -61,17 +61,17 @@ async def all_list(
     # drop down list
     try:
         get_token = _token.verify_access_token(access_token)
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
 
         def drop_down_list():
-            date_list = _db.collection_name(_token.cookie_2_dbname(get_token["name"]))
+            date_list = _db.collection_name()
             for key, value in date_list.items():
                 if key == year:
                     return value
 
         # get single salary list
-        work_hour_collection = _db.emp_work_hour_collection(
-            _token.cookie_2_dbname(get_token["name"]), year
-        )
+        work_hour_collection = _db.emp_work_hour_collection(year)
 
         salary_list = work_hour_collection.find_one({"date": ids})
         salary_output = salary_list["emp_work_hours"]

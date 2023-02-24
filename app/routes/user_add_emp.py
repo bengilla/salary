@@ -21,7 +21,7 @@ add_emp_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 # mongodb
-_db = MongoDB()
+# _db = MongoDB()
 
 # normal get date now
 _date_now = datetime.now()
@@ -40,6 +40,9 @@ async def add_emp(
 
     try:
         get_token = _token.verify_access_token(access_token)
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
+
         return templates.TemplateResponse(
             "add.html",
             {"request": request, "title": get_token["name"], "db": _db.status()},
@@ -58,11 +61,13 @@ async def add_emp(
 
     try:
         get_token = _token.verify_access_token(access_token)
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
     except:
         raise HTTPException(status_code=404, detail="Not Found")
 
     # get name from database
-    name_from_db = _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"]))
+    name_from_db = _db.emp_info_collection()
     emp_list = [name["name"].title() for name in name_from_db.find({})]
 
     if add_emp_form.name.title() not in emp_list:
@@ -87,9 +92,7 @@ async def add_emp(
             "sign_date": _date_now.date().strftime("%d-%m-%Y"),
         }
 
-        _db.emp_info_collection(_token.cookie_2_dbname(get_token["name"])).insert_one(
-            new_emp
-        )
+        _db.emp_info_collection().insert_one(new_emp)
         redirect_url = request.url_for("mainpage")
         return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 

@@ -29,7 +29,7 @@ user_mainpage = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
 # work list mongodb connect
-_db = MongoDB()
+# _db = MongoDB()
 
 # token
 _token = Token()
@@ -48,6 +48,9 @@ async def mainpage(
 
     try:
         get_token = _token.verify_access_token(access_token)
+        company_name = _token.cookie_2_dbname(get_token["name"])
+        _db = MongoDB(company_name)
+
         return templates.TemplateResponse(
             "user.html",
             {
@@ -74,9 +77,11 @@ async def send_file(
     # send file to excels models to work
     try:
         get_token = _token.verify_access_token(access_token)
+        company_name = _token.cookie_2_dbname(get_token["name"])
+
         emp_salary = EmpSalary(
             excel_file=upload_file.excel.file,
-            db_collection=_token.cookie_2_dbname(get_token["name"]),
+            db_collection=company_name,
         )
 
         # check employee not in web
