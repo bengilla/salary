@@ -7,13 +7,17 @@ from pymongo.errors import ServerSelectionTimeoutError
 class MongoDB:
     def __init__(self) -> None:
         # Local Testing MongoDB-------------------------------
-        # self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
-        self.client = MongoClient(settings.DB_URL, serverSelectionTimeoutMS=3000)
+        self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
+        # self.client = MongoClient(settings.DB_URL, serverSelectionTimeoutMS=3000)
 
+        # member info
         self.user_info = self.client["USER_INFO"]
+        # company info
         self.user_data = self.client["USER_DATA"]
 
+    # db status
     def status(self):
+        """DB status"""
         try:
             server_info = self.client.server_info()
             if server_info["ok"] == 1.0:
@@ -26,7 +30,8 @@ class MongoDB:
         """User Data"""
         return self.user_info["USER-data"]
 
-    # After user login
+    # member register using company name as db collection
+    # after user login
     def emp_info_collection(self, db_title: str):
         """链接至 emp-info"""
         return self.user_data[db_title + "-info"]
