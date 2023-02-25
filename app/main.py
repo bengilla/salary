@@ -61,7 +61,6 @@ async def index(
     request: Request, access_token: str | None = Cookie(default=None)
 ) -> _TemplateResponse:
     """index page"""
-    print(_db.collection_list())
 
     try:
         get_token = _token.verify_access_token(access_token)

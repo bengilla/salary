@@ -2,7 +2,8 @@
 {% block title %}Edit employee{% endblock %}
 
 {% block header %}
-<a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">Mainpage</a>
+<a href="{{ url_for('mainpage') }}" class="transition hover:underline hover:text-slate-200">mainpage</a>
+<a href="{{ url_for('info_emp', ids=edit_emp._id) }}" class="transition hover:underline hover:text-slate-200">back</a>
 {% endblock %}
 
 {% block content %}

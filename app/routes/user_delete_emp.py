@@ -35,6 +35,6 @@ def delete_emp(
         if access == "access":
             _db.emp_info_collection().delete_one({"_id": ids})
             redirect_url = request.url_for("all_emp")
-            return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
+            return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
     except:
         raise HTTPException(status_code=404, detail="Not Found")
