@@ -1,3 +1,4 @@
+"""Add Employee Section"""
 from datetime import datetime
 from fastapi import (
     APIRouter,
@@ -19,9 +20,6 @@ from models.jwt_token import Token
 
 add_emp_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
-
-# mongodb
-# _db = MongoDB()
 
 # normal get date now
 _date_now = datetime.now()
@@ -52,7 +50,7 @@ async def add_emp(
 
 
 @add_emp_router.post("/add", tags=["Emp add employee"], include_in_schema=False)
-async def add_emp(
+async def add_emp_post(
     request: Request,
     access_token: str | None = Cookie(default=None),
     add_emp_form: CreateForm = Depends(CreateForm.create),
@@ -96,5 +94,4 @@ async def add_emp(
         redirect_url = request.url_for("mainpage")
         return RedirectResponse(redirect_url, status_code=status.HTTP_303_SEE_OTHER)
 
-    else:
-        raise HTTPException(status_code=400, detail="Employee already exist!!!")
+    raise HTTPException(status_code=400, detail="Employee already exist!!!")

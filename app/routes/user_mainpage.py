@@ -28,9 +28,6 @@ from routes.user_salary import salary
 user_mainpage = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# work list mongodb connect
-# _db = MongoDB()
-
 # token
 _token = Token()
 
@@ -86,7 +83,7 @@ async def send_file(
 
         # check employee not in web
         emp_not_in_web = emp_salary.emp_not_in_web()
-        msg_output = f"*Message: File upload complete"
+        msg_output = "*Message: File upload complete"
     except Exception as err:
         emp_not_in_web = ""
         msg_output = f"*Error: {err}"

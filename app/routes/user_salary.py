@@ -73,16 +73,16 @@ async def all_list(
         # get single salary list
         work_hour_collection = _db.emp_work_hour_collection(year)
 
-        salary_list = work_hour_collection.find_one({"date": ids})
-        salary_output = salary_list["emp_work_hours"]
+        one_salary_list = work_hour_collection.find_one({"date": ids})
+        salary_output = one_salary_list["emp_work_hours"]
         sort_emp_dict = dict(sorted(salary_output.items()))
 
         # get total amounts
-        total_amounts = salary_list["total_amounts"]
+        total_amounts = one_salary_list["total_amounts"]
         total_cash = f"RM {total_amounts:,.2f}"
 
         # get month title
-        output_month = salary_list["date"].split("-")[1]
+        output_month = one_salary_list["date"].split("-")[1]
 
         return templates.TemplateResponse(
             "list.html",

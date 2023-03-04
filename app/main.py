@@ -1,5 +1,4 @@
 """User Login and Register Page"""
-from config.settings import settings
 
 # import library
 from fastapi import FastAPI, Request, Depends, HTTPException, Cookie, status
@@ -10,13 +9,14 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.templating import _TemplateResponse
 
 # models from own library
+from config.settings import settings
 from models.mongo import MongoDB
 from models.form import LoginForm, RegisterForm
 from models.password import Password
+from models.jwt_token import Token
 
 # router
 from routes.user_mainpage import user_mainpage
-from models.jwt_token import Token
 
 # setup
 app = FastAPI(title="TBROS Worker", version="1.0")
@@ -62,21 +62,19 @@ async def index(
 ) -> _TemplateResponse:
     """index page"""
 
-    try:
+    if access_token:
         get_token = _token.verify_access_token(access_token)
         if get_token:
             redirect_url = request.url_for("mainpage")
             return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
-    except:
-        response = templates.TemplateResponse(
-            "index.html",
-            {"request": request, "title": settings.LOGIN_TITLE, "db": _db.status()},
-        )
-        return response
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request, "title": settings.LOGIN_TITLE, "db": _db.status()},
+    )
 
 
 @app.post("/", tags=["User Login"], response_class=RedirectResponse)
-async def index(
+async def index_post(
     request: Request,
     login: LoginForm = Depends(LoginForm.login),
 ):
@@ -104,12 +102,10 @@ async def index(
                 key="access_token", value=f"{access_token}", httponly=True
             )
             return response
-        else:
-            raise HTTPException(status_code=400, detail="Invalid username or password")
-    else:
-        raise HTTPException(
-            status_code=404, detail="User does not exist, please register a new user"
-        )
+        raise HTTPException(status_code=400, detail="Invalid username or password")
+    raise HTTPException(
+        status_code=404, detail="User does not exist, please register a new user"
+    )
 
 
 # register----------------------------------------------------------------------
@@ -124,7 +120,7 @@ async def register(request: Request) -> _TemplateResponse:
 
 
 @app.post("/register", tags=["User Register"])
-async def register(
+async def register_post(
     request: Request, register_info: RegisterForm = Depends(RegisterForm.register)
 ) -> RedirectResponse:
     """register post section"""
@@ -143,15 +139,11 @@ async def register(
             _db.user_collection().insert_one(new_user)
             redirect_url = request.url_for("index")
             return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
-        else:
-            raise HTTPException(
-                status_code=400, detail="Company name is already exists"
-            )
-    else:
-        raise HTTPException(
-            status_code=400,
-            detail="Email is already exists!",
-        )
+        raise HTTPException(status_code=400, detail="Company name is already exists")
+    raise HTTPException(
+        status_code=400,
+        detail="Email is already exists!",
+    )
 
 
 # logout----------------------------------------------------------------------

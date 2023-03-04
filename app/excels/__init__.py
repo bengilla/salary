@@ -1,3 +1,4 @@
+"""Excel File Section"""
 import pendulum
 from excels.excel_module import ReadExcel
 from excels.timecalculation import TimeCalculation
@@ -37,11 +38,13 @@ class EmpSalary:
         self.main()
 
     def emp_on_web(self) -> list:
+        """读取db里面的员工资料"""
         emp_name_on_web = self._empinfo.find({})
         emp_on_web = [emp["_id"] for emp in emp_name_on_web]
         return emp_on_web
 
     def emp_not_in_web(self) -> list:
+        """对比excel和db的员工"""
         # get all employee on web
         emp_name_on_web = self._empinfo.find({})
         emp_on_web = [emp["_id"] for emp in emp_name_on_web]
@@ -53,9 +56,10 @@ class EmpSalary:
         result = [emp for emp in emp_on_excel if emp not in emp_on_web]
         return result
 
-    def emp_final_calculation(self, id: str):
+    def emp_final_calculation(self, ids: str):
+        """读取员工资料后, 送至timecalculation里计算工资"""
         # get single employee data
-        single_emp_data = self._empinfo.find_one({"_id": id})
+        single_emp_data = self._empinfo.find_one({"_id": ids})
 
         pay_hour = single_emp_data["pay_hour"]
 
@@ -65,7 +69,7 @@ class EmpSalary:
 
         for index, day in enumerate(self._day_list):
             time_cal = TimeCalculation(
-                emp_time=self._get_all_list[id], emp_salary=pay_hour
+                emp_time=self._get_all_list[ids], emp_salary=pay_hour
             )
 
             pay_day_cost = time_cal.result(index)
@@ -108,7 +112,7 @@ class EmpSalary:
         }
 
         self.total_amounts += output_emp_salary
-        self.data[id.title()] = store_data
+        self.data[ids.title()] = store_data
 
     def main(self):
         """导出至 MongoDB"""

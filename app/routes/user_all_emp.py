@@ -1,3 +1,4 @@
+"""All Employee Section"""
 from fastapi import (
     APIRouter,
     Cookie,
@@ -16,8 +17,6 @@ from models.jwt_token import Token
 all_emp_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
 
-# mongodb
-# _db = MongoDB()
 
 # token
 _token = Token()
@@ -37,7 +36,7 @@ async def all_emp(
 
         list_emp_info = _db.emp_info_collection().find({})
 
-        list_emp_info = [emp for emp in list_emp_info.sort("_id", 1)]
+        list_emp_info = list(list_emp_info.sort("_id", 1))
         list_emp_name = [name["name"].lower() for name in list_emp_info]
         list_count = len(list_emp_info)
         return templates.TemplateResponse(
@@ -56,5 +55,6 @@ async def all_emp(
 
 
 @all_emp_router.post("/all", tags=["Emp all employee"], include_in_schema=False)
-async def all_emp(emp_name: str = Form(None)):
+async def all_emp_post(emp_name: str = Form(None)):
+    """all emp post"""
     return {"employee name": emp_name}

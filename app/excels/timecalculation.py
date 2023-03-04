@@ -1,3 +1,4 @@
+"""Salary Calculation Section"""
 import pendulum
 
 
@@ -14,7 +15,7 @@ class TimeCalculation:
         if self.emp_time[num] == 0 or len(self.emp_time[num]) < 2:
             return 0
 
-        elif isinstance(self.emp_time[num], list):
+        if isinstance(self.emp_time[num], list):
             emp_in = pendulum.parse(self.emp_time[num][0])
             emp_out = pendulum.parse(self.emp_time[num][-1])
             day_in = pendulum.parse("08:35")
@@ -22,8 +23,6 @@ class TimeCalculation:
 
             # 午餐
             lunch_time = 1  # Lunch Time
-            # 祈祷
-            sembahyang = 2
 
             # 计算白天的工作时间 -----------------------------------------
             # 正常

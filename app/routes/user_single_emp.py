@@ -1,3 +1,4 @@
+"""Single Employee Section"""
 from fastapi import APIRouter, Cookie, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -11,9 +12,6 @@ from models.jwt_token import Token
 
 single_emp_router = APIRouter()
 templates = Jinja2Templates(directory="templates")
-
-# mongodb
-# _db = MongoDB()
 
 # token
 _token = Token()
@@ -84,7 +82,7 @@ async def edit_emp(
     response_class=RedirectResponse,
     include_in_schema=False,
 )
-async def edit_emp(
+async def edit_emp_post(
     *,
     request: Request,
     access_token: str | None = Cookie(default=None),

@@ -1,3 +1,4 @@
+"""Settings Section"""
 import os
 from dotenv import load_dotenv
 
@@ -5,6 +6,8 @@ load_dotenv()
 
 
 class Settings:
+    """Setting Class"""
+
     TITLE = "Employee System"
     VERSION = "0.1"
     DESCRIPTION = "Hello World"

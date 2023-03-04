@@ -1,10 +1,14 @@
+"""MongoDB Section"""
 import pendulum
-from config.settings import settings
 from pymongo import MongoClient
 from pymongo.errors import ServerSelectionTimeoutError
 
+from config.settings import settings
+
 
 class MongoDB:
+    """使用MongoDB的服务"""
+
     def __init__(self, name) -> None:
         # Local Testing MongoDB-------------------------------
         # self.client = MongoClient(settings.DB_LOCAL, serverSelectionTimeoutMS=3000)
@@ -16,8 +20,8 @@ class MongoDB:
         self.user_data = self.client[name]
 
     # db status
-    def status(self):
-        """DB status"""
+    def status(self) -> bool:
+        """检查mongodb是否连线"""
         try:
             server_info = self.client.server_info()
             if server_info["ok"] == 1.0:
@@ -26,13 +30,14 @@ class MongoDB:
             return False
 
     def collection_list(self):
+        """生成collection里面的名单"""
         collection_name = self.client.list_database_names()
         result = [name.lower() for name in collection_name]
         return result
 
     # user data section
     def user_collection(self):
-        """User Data"""
+        """这是用户注册跟员工部分无关"""
         return self.user_info["USER-data"]
 
     # member register using company name as db collection
@@ -46,6 +51,7 @@ class MongoDB:
         return self.user_data[f"{db_year}"]
 
     def collection_name(self):
+        """???"""
         collection_detail: dict[str] = {}
         db_collection_name = self.user_data.list_collection_names()
 

@@ -1,3 +1,4 @@
+"""Excel Section"""
 import pandas as pd
 import pendulum
 
@@ -14,20 +15,23 @@ class ReadExcel:
         self._df = pd.read_excel(self._excel_file, sheet_name=self._sheet_num)
 
     def get_date(self):
+        """读取excel的年月日"""
         return pendulum.from_format(self._df.loc[1][2].split(" ")[0], "YYYY-MM-DD")
 
     def get_day_list(self):
+        """读取excel里的日子, 1-15或16-30或31"""
         day_list = [int(x) for x in self._df.loc[2] if str(x) != "nan"]
         return day_list
 
     def get_emp_total_in_excel(self):
+        """计算excel里员工数量"""
         items = self._df.loc[3::2]["Unnamed: 10"]
-        name = [name for name in items]
+        name = list(items)
         return {"length": len(items), "name": name}
 
     def get_name(self):
         """把所有名字变为列表"""
-        column_name = [i for i in self._df.columns]
+        column_name = list(self._df.columns)
         get_name_columns = self._df.loc[3::2][column_name[10]]  # col and row number
         name_list = [i.lower() for i in get_name_columns]
         return name_list

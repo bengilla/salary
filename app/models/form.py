@@ -1,18 +1,24 @@
+"""Form Section"""
 from fastapi import Form, File, UploadFile
 from pydantic import BaseModel
 
 
 # Login and Register Form Sections ------------------------------
 class LoginForm(BaseModel):
+    """Login Forms"""
+
     email: str
     password: str
 
     @classmethod
     def login(cls, email: str = Form(...), password: str = Form(...)):
+        """login"""
         return cls(email=email, password=password)
 
 
 class RegisterForm(LoginForm):
+    """Register Form"""
+
     company_name: str
 
     @classmethod
@@ -22,11 +28,14 @@ class RegisterForm(LoginForm):
         password: str = Form(...),
         company_name: str = Form(...),
     ):
+        """register"""
         return cls(email=email, password=password, company_name=company_name)
 
 
 # Users create, edit and delete forms ------------------------------
 class EmpForm(BaseModel):
+    """General Emp Form"""
+
     img_emp: UploadFile
     pay_hour: float = None
     ic: str = None
@@ -35,6 +44,8 @@ class EmpForm(BaseModel):
 
 
 class CreateForm(EmpForm):
+    """Create Form"""
+
     name: str
     dob: str = None
     gender: str = None
@@ -47,17 +58,18 @@ class CreateForm(EmpForm):
         pay_hour: float = Form(...),
         # Optional
         img_emp: UploadFile = File(None),
-        ic: str = Form(None),
+        id_card: str = Form(None),
         dob: str = Form(None),
         gender: str = Form(None),
         nationality: str = Form(None),
         contact: str = Form(None),
         address: str = Form(None),
     ):
+        """create"""
         return cls(
             img_emp=img_emp,
             name=name.title(),
-            ic=ic,
+            ic=id_card,
             pay_hour=pay_hour,
             dob=dob,
             gender=gender,
@@ -68,18 +80,21 @@ class CreateForm(EmpForm):
 
 
 class EditForm(EmpForm):
+    """Edit Form"""
+
     @classmethod
     def edit(
         cls,
         img_emp: UploadFile = File(None),
-        ic: str = Form(None),
+        id_card: str = Form(None),
         pay_hour: float = Form(None),
         contact: str = Form(None),
         address: str = Form(None),
     ):
+        """edit"""
         return cls(
             img_emp=img_emp,
-            ic=ic,
+            ic=id_card,
             pay_hour=pay_hour,
             contact=contact,
             address=address,
@@ -88,6 +103,8 @@ class EditForm(EmpForm):
 
 # form for upload excel file ------------------------------
 class ExcelForm(BaseModel):
+    """Excel Form"""
+
     excel: UploadFile
 
     @classmethod
@@ -95,6 +112,7 @@ class ExcelForm(BaseModel):
         cls,
         excel: UploadFile = File(None),
     ):
+        """excel upload"""
         return cls(
             excel=excel,
         )
