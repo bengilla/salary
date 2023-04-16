@@ -63,12 +63,12 @@
                 <span>Name: </span><b class="font-bold">{{ iname }}</b><br>
                 <span>Hour Salary: </span><span class="font-bold"><b>RM {{ idata["pay_hour"] }}</b></span><br>
                 <span>Total work hours: </span><span class="font-bold text-sky-700 underline">{{ idata["total_work_hours"] }}</span><br>
-                <span>Total Salary: </span><span class="font-bold text-orange-700 underline">RM {{ idata["total_salary"] }}</span>
+                <span>Total Salary: </span><span id="total_salary" class="font-bold text-orange-700 underline">RM {{ idata["total_salary"] }}</span>
             </div>
 
             <hr class="border-red-800">
 
-            <table class="w-full">
+            <table class="w-full text-center">
                 <tr>
                     {% for v in idata["output"] %}
                     <td class="text-xs text-red-700 sm:text-sm">

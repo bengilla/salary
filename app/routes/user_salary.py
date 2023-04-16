@@ -77,6 +77,13 @@ async def all_list(
         salary_output = one_salary_list["emp_work_hours"]
         sort_emp_dict = dict(sorted(salary_output.items()))
 
+        # Check monthly total amount
+        # total_all = 0
+        # for _,j in sort_emp_dict.items():
+        #     total_all += j["total_salary"]
+        # print(total_all)
+        # --------------------------
+
         # get total amounts
         total_amounts = one_salary_list["total_amounts"]
         total_cash = f"RM {total_amounts:,.2f}"

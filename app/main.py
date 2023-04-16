@@ -36,7 +36,7 @@ _token = Token()
 # error handle
 @app.exception_handler(StarletteHTTPException)
 async def my_exception_handler(request: Request, exc):
-    """error handle"""
+    """错误功能"""
 
     return templates.TemplateResponse(
         "error/error.html",
@@ -44,23 +44,12 @@ async def my_exception_handler(request: Request, exc):
     )
 
 
-# db modify ----------------------------------------------------------------------
-# total = 0
-# data = _DB.emp_work_hour_collection(db_title="TBROSVENTURESSDNBHD", db_year="2023")
-# find_data = data.find_one({"date": "16-Jan-2023"})
-# look_emp = find_data["emp_work_hours"]
-# for name in look_emp:
-#     total += look_emp[name]["total_salary"]
-# print(total)
-# db modify ----------------------------------------------------------------------
-
-
 # index----------------------------------------------------------------------
 @app.get("/", tags=["User Login"], response_class=HTMLResponse)
 async def index(
     request: Request, access_token: str | None = Cookie(default=None)
 ) -> _TemplateResponse:
-    """index page"""
+    """主页"""
 
     if access_token:
         get_token = _token.verify_access_token(access_token)
@@ -78,13 +67,14 @@ async def index_post(
     request: Request,
     login: LoginForm = Depends(LoginForm.login),
 ):
-    """index post section"""
+    """主页POST"""
 
     def get_user_data(email: str):
         user_list = _db.user_collection().find({})
-        for user in user_list:
+        for user in user_list:  # dict
             if email in user["email"]:
                 return RegisterForm(**user)
+            return None
 
     user_in_db = get_user_data(login.email)
 
@@ -111,7 +101,7 @@ async def index_post(
 # register----------------------------------------------------------------------
 @app.get("/register", tags=["User Register"], response_class=HTMLResponse)
 async def register(request: Request) -> _TemplateResponse:
-    """register page"""
+    """注册页"""
 
     return templates.TemplateResponse(
         "register.html",
@@ -123,7 +113,7 @@ async def register(request: Request) -> _TemplateResponse:
 async def register_post(
     request: Request, register_info: RegisterForm = Depends(RegisterForm.register)
 ) -> RedirectResponse:
-    """register post section"""
+    """注册页POST"""
 
     user_list = [user["email"] for user in _db.user_collection().find({})]
 
@@ -149,11 +139,11 @@ async def register_post(
 # logout----------------------------------------------------------------------
 @app.get("/logout", tags=["User Logout"])
 async def logout(request: Request):
-    """logout section"""
+    """退出页"""
 
     redirect_url = request.url_for("index")
     response = RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
-    response.delete_cookie(key="access_token")
+    response.delete_cookie(key="access_token", path="/", domain=None)
     return response
 
 
