@@ -15,7 +15,7 @@ Pillow
 # date
 pendulum
 
-# excel 
+# excel
 pandas
 xlrd
 

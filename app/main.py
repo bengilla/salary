@@ -115,25 +115,43 @@ async def register_post(
 ) -> RedirectResponse:
     """注册页POST"""
 
+    def get_code() -> list:
+        code_list = []
+        for i in _db.verify_code().find({}):
+            code_list.append(i["code"])
+        return code_list
+
+    # get all verify code from server
+    verify_code = get_code()
+
     user_list = [user["email"] for user in _db.user_collection().find({})]
 
-    new_user = {
-        "email": register_info.email,
-        "password": _pass.get_password_hash(register_info.password),
-        "company_name": register_info.company_name,
-    }
+    if register_info.code in verify_code:
+        new_user = {
+            "email": register_info.email,
+            "password": _pass.get_password_hash(register_info.password),
+            "company_name": register_info.company_name,
+        }
 
-    if register_info.email not in user_list:
-        company_name = register_info.company_name.replace(" ", "").lower()
-        if company_name not in _db.collection_list():
-            _db.user_collection().insert_one(new_user)
-            redirect_url = request.url_for("index")
-            return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
-        raise HTTPException(status_code=400, detail="Company name is already exists")
-    raise HTTPException(
-        status_code=400,
-        detail="Email is already exists!",
-    )
+        if register_info.email not in user_list:
+            company_name = register_info.company_name.replace(" ", "").lower()
+            if company_name not in _db.collection_list():
+                _db.user_collection().insert_one(new_user)
+
+                # delete temporary code for database
+                get_code = _db.verify_code().find_one({"code": register_info.code})
+                _db.verify_code().delete_one({"_id": get_code["_id"]})
+
+                redirect_url = request.url_for("index")
+                return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
+            raise HTTPException(
+                status_code=400, detail="Company name is already exists"
+            )
+        raise HTTPException(
+            status_code=400,
+            detail="Email is already exists!",
+        )
+    raise HTTPException(status_code=400, detail="Verify code is invalid")
 
 
 # logout----------------------------------------------------------------------

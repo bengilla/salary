@@ -20,6 +20,7 @@ class RegisterForm(LoginForm):
     """Register Form"""
 
     company_name: str
+    code: str
 
     @classmethod
     def register(
@@ -27,9 +28,10 @@ class RegisterForm(LoginForm):
         email: str = Form(...),
         password: str = Form(...),
         company_name: str = Form(...),
+        code: str = Form(...),
     ):
         """register"""
-        return cls(email=email, password=password, company_name=company_name)
+        return cls(email=email, password=password, company_name=company_name, code=code)
 
 
 # Users create, edit and delete forms ------------------------------
