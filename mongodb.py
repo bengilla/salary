@@ -20,9 +20,7 @@ class MongoDB:
         # Real Server MongoDB
         load_dotenv()
         conn = MongoClient(
-            host=[
-                f"mongodb+srv://bengilla:{os.getenv('PASSWORD')}@cluster0.uhsmo.mongodb.net/?retryWrites=true&w=majority"
-            ],
+            host={os.getenv("Db-url")},
             serverSelectionTimeoutMS=5000,
         )
 
