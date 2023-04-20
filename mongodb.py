@@ -20,7 +20,7 @@ class MongoDB:
         # Real Server MongoDB
         load_dotenv()
         conn = MongoClient(
-            host={os.getenv("Db-url")},
+            host={os.getenv("DB_URL")},
             serverSelectionTimeoutMS=5000,
         )
 
