@@ -6,6 +6,17 @@
   "scripts": {
     "build": "npx tailwindcss -i ./app/static/css/input.css -o ./app/static/css/output.css --watch"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bengilla/tbros.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bengilla/tbros/issues"
+  },
+  "homepage": "https://github.com/bengilla/tbros#readme",
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
     "tailwindcss": "^3.2.7"
