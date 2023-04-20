@@ -11,3 +11,6 @@ venv/
 
 # tailwind
 input.css
+package-lock.json
+package.json
+tailwind.config.js
