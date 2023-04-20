@@ -8,9 +8,8 @@ venv/
 .git/
 .env
 .idea/
+.dockerignore
 
 # tailwind
 input.css
-package-lock.json
-package.json
-tailwind.config.js
+Procfile
