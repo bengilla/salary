@@ -1,3 +1,4 @@
+from typing import Optional
 from datetime import datetime
 from fastapi import (
     APIRouter,
@@ -24,7 +25,7 @@ _date_now = datetime.now()
 # employee salary info ------------------------------
 @salary.get("/salary-list", tags=["Emp employee salary list"])
 async def salary_list(
-    *, request: Request, access_token: str | None = Cookie(default=None)
+    *, request: Request, access_token: Optional[str] = Cookie(default=None)
 ):
     """salary list select year section"""
 
@@ -52,7 +53,7 @@ async def salary_list(
 async def all_list(
     *,
     request: Request,
-    access_token: str | None = Cookie(default=None),
+    access_token: Optional[str] = Cookie(default=None),
     ids: str,
     year: str,
 ):

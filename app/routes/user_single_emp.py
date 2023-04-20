@@ -1,4 +1,5 @@
 """Single Employee Section"""
+from typing import Optional
 from fastapi import APIRouter, Cookie, Request, Depends, HTTPException, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -20,7 +21,7 @@ _token = Token()
 # single employee info ------------------------------
 @single_emp_router.get("/info/{ids}", tags=["Emp single employee"])
 async def info_emp(
-    *, request: Request, access_token: str | None = Cookie(default=None), ids: str
+    *, request: Request, access_token: Optional[str] = Cookie(default=None), ids: str
 ):
     """show single employee info"""
 
@@ -50,7 +51,7 @@ async def info_emp(
     "/edit/{ids}", tags=["Emp edit employee"], response_class=HTMLResponse
 )
 async def edit_emp(
-    *, request: Request, access_token: str | None = Cookie(default=None), ids: str
+    *, request: Request, access_token: Optional[str] = Cookie(default=None), ids: str
 ) -> _TemplateResponse:
     """edit employee info"""
 
@@ -85,7 +86,7 @@ async def edit_emp(
 async def edit_emp_post(
     *,
     request: Request,
-    access_token: str | None = Cookie(default=None),
+    access_token: Optional[str] = Cookie(default=None),
     edit_emp_form: EditForm = Depends(EditForm.edit),
     ids: str,
 ) -> RedirectResponse:

@@ -1,6 +1,7 @@
 """User Login and Register Page"""
 
 # import library
+from typing import Optional
 from fastapi import FastAPI, Request, Depends, HTTPException, Cookie, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -47,7 +48,7 @@ async def my_exception_handler(request: Request, exc):
 # index----------------------------------------------------------------------
 @app.get("/", tags=["User Login"], response_class=HTMLResponse)
 async def index(
-    request: Request, access_token: str | None = Cookie(default=None)
+    request: Request, access_token: Optional[str] = Cookie(default=None)
 ) -> _TemplateResponse:
     """主页"""
 

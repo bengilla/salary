@@ -1,5 +1,6 @@
 """Add Employee Section"""
 from datetime import datetime
+from typing import Optional
 from fastapi import (
     APIRouter,
     Cookie,
@@ -32,7 +33,7 @@ _token = Token()
 @add_emp_router.get("/add", tags=["Emp add employee"], response_class=HTMLResponse)
 async def add_emp(
     request: Request,
-    access_token: str | None = Cookie(default=None),
+    access_token: Optional[str] = Cookie(default=None),
 ) -> _TemplateResponse:
     """add employee info page"""
 
@@ -52,7 +53,7 @@ async def add_emp(
 @add_emp_router.post("/add", tags=["Emp add employee"], include_in_schema=False)
 async def add_emp_post(
     request: Request,
-    access_token: str | None = Cookie(default=None),
+    access_token: Optional[str] = Cookie(default=None),
     add_emp_form: CreateForm = Depends(CreateForm.create),
 ) -> RedirectResponse:
     """post employee info to server"""

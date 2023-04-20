@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Cookie, Request, HTTPException, Form, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -20,7 +21,7 @@ _token = Token()
 def delete_emp(
     *,
     request: Request,
-    access_token: str | None = Cookie(default=None),
+    access_token: Optional[str] = Cookie(default=None),
     ids: str,
     access: str = Form(None)
 ) -> RedirectResponse:

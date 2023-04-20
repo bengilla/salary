@@ -1,5 +1,6 @@
 """User Page"""
 # import library
+from typing import Optional
 from datetime import datetime
 from fastapi import (
     APIRouter,
@@ -39,7 +40,7 @@ _date_now = datetime.now()
 @user_mainpage.get("/user", tags=["Emp mainpage"])
 async def mainpage(
     request: Request,
-    access_token: str | None = Cookie(default=None),
+    access_token: Optional[str] = Cookie(default=None),
 ):
     """user mainpage"""
 
@@ -66,7 +67,7 @@ async def mainpage(
 )
 async def send_file(
     request: Request,
-    access_token: str | None = Cookie(default=None),
+    access_token: Optional[str] = Cookie(default=None),
     upload_file: ExcelForm = Depends(ExcelForm.excel_upload),
 ) -> _TemplateResponse:
     """user post section"""

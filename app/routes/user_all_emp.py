@@ -1,4 +1,5 @@
 """All Employee Section"""
+from typing import Optional
 from fastapi import (
     APIRouter,
     Cookie,
@@ -25,7 +26,7 @@ _token = Token()
 # list all employee info ------------------------------
 @all_emp_router.get("/all", tags=["Emp all employee"], response_class=HTMLResponse)
 async def all_emp(
-    request: Request, access_token: str | None = Cookie(default=None)
+    request: Request, access_token: Optional[str] = Cookie(default=None)
 ) -> _TemplateResponse:
     """list all employee info"""
 
