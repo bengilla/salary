@@ -20,6 +20,21 @@ class RegisterForm(LoginForm):
     """Register Form"""
 
     company_name: str
+
+    @classmethod
+    def register(
+        cls,
+        email: str = Form(...),
+        password: str = Form(...),
+        company_name: str = Form(...),
+    ):
+        """register"""
+        return cls(email=email, password=password, company_name=company_name)
+
+
+class RegisterFormWithCode(RegisterForm):
+    """Register Form"""
+
     code: str
 
     @classmethod

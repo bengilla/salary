@@ -11,7 +11,7 @@ from starlette.templating import _TemplateResponse
 # models from own library
 from config.settings import settings
 from models.mongo import MongoDB
-from models.form import LoginForm, RegisterForm
+from models.form import LoginForm, RegisterForm, RegisterFormWithCode
 from models.password import Password
 from models.jwt_token import Token
 
@@ -111,7 +111,8 @@ async def register(request: Request) -> _TemplateResponse:
 
 @app.post("/register", tags=["User Register"])
 async def register_post(
-    request: Request, register_info: RegisterForm = Depends(RegisterForm.register)
+    request: Request,
+    register_info: RegisterForm = Depends(RegisterFormWithCode.register),
 ) -> RedirectResponse:
     """注册页POST"""
 
