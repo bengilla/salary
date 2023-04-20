@@ -9,7 +9,3 @@ venv/
 .env
 .idea/
 .dockerignore
-
-# tailwind
-input.css
-Procfile
