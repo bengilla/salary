@@ -4,9 +4,10 @@ __pycache__
 ### env ###
 env
 *.env
-.venv
+.idea
+.DS_Store
 
 .vscode
 work_dir
-
-.DS_Store
+node_modules
+venv
