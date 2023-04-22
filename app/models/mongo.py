@@ -8,7 +8,9 @@ from config.settings import settings
 
 class CodeDB:
     def __init__(self) -> None:
-        self.code = MongoClient(settings.CODE_URL)
+        self.client = MongoClient(settings.CODE_URL)
+
+        self.code = self.client["CODE"]
 
     def verify_code(self) -> list:
         return self.code["temp_code"]
