@@ -9,7 +9,7 @@ services:
     environment:
       DB_LOCAL: mongodb://db/empDB
     env_file:
-      - ./app/.env
+      - .env
     volumes:
       - ./app:/app
 

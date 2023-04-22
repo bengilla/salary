@@ -8,9 +8,9 @@ from config.settings import settings
 
 class CodeDB:
     def __init__(self) -> None:
-        self.client = MongoClient(settings.CODE_URL)
+        self.code_client = MongoClient(settings.CODE_URL)
 
-        self.code = self.client["CODE"]
+        self.code = self.code_client["CODE"]
 
     def verify_code(self) -> list:
         return self.code["temp_code"]
@@ -28,8 +28,6 @@ class MongoDB:
         self.user_info = self.client["SALARY_USER_INFO"]
         # company info
         self.user_data = self.client[name]
-        # get code for 5 minutes
-        self.code = self.client["CODE"]
 
     # db status
     def status(self) -> bool:

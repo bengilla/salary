@@ -52,7 +52,6 @@ async def index(
     request: Request, access_token: Optional[str] = Cookie(default=None)
 ) -> _TemplateResponse:
     """主页"""
-
     if access_token:
         get_token = _token.verify_access_token(access_token)
         if get_token:
@@ -76,7 +75,6 @@ async def index_post(
         for user in user_list:  # dict
             if email in user["email"]:
                 return RegisterForm(**user)
-            return None
 
     user_in_db = get_user_data(login.email)
 
