@@ -6,6 +6,14 @@ from pymongo.errors import ServerSelectionTimeoutError
 from config.settings import settings
 
 
+class CodeDB:
+    def __init__(self) -> None:
+        self.code = MongoClient(settings.CODE_URL)
+
+    def verify_code(self) -> list:
+        return self.code["temp_code"]
+
+
 class MongoDB:
     """使用MongoDB的服务"""
 
@@ -30,9 +38,6 @@ class MongoDB:
                 return True
         except ServerSelectionTimeoutError:
             return False
-
-    def verify_code(self) -> list:
-        return self.code["temp_code"]
 
     def collection_list(self):
         """生成collection里面的名单"""

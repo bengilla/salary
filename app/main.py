@@ -11,7 +11,7 @@ from starlette.templating import _TemplateResponse
 
 # models from own library
 from config.settings import settings
-from models.mongo import MongoDB
+from models.mongo import MongoDB, CodeDB
 from models.form import LoginForm, RegisterForm, RegisterFormWithCode
 from models.password import Password
 from models.jwt_token import Token
@@ -29,6 +29,7 @@ _pass = Password()
 
 # mongoDB
 _db = MongoDB("TEST")
+_code_db = CodeDB()
 
 # token
 _token = Token()
@@ -119,7 +120,7 @@ async def register_post(
 
     def get_code() -> list:
         code_list = []
-        for i in _db.verify_code().find({}):
+        for i in _code_db.verify_code().find({}):
             code_list.append(i["code"])
         return code_list
 
