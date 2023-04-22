@@ -142,8 +142,8 @@ async def register_post(
                 _db.user_collection().insert_one(new_user)
 
                 # delete temporary code for database
-                get_code = _db.verify_code().find_one({"code": register_info.code})
-                _db.verify_code().delete_one({"_id": get_code["_id"]})
+                get_code = _code_db.verify_code().find_one({"code": register_info.code})
+                _code_db.verify_code().delete_one({"_id": get_code["_id"]})
 
                 redirect_url = request.url_for("index")
                 return RedirectResponse(redirect_url, status_code=status.HTTP_302_FOUND)
