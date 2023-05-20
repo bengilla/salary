@@ -88,6 +88,7 @@ async def send_file(
     except Exception as err:
         emp_not_in_web = ""
         msg_output = f"*Error: {err}"
+        print(err)
 
     return templates.TemplateResponse(
         "user.html",
