@@ -3,7 +3,9 @@ Project for TBROS employees salary calculator and employee person info
 """
 
 import os
-from datetime import datetime
+import datetime
+
+# from datetime import datetime
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
@@ -27,7 +29,11 @@ _work_list_db = MongoDB().work_hour_collection()
 _empinfo = EmpInfo()
 
 # Normal get date now
-_date_now = datetime.now()
+start_datetime = datetime.datetime.now()
+end_datetime = start_datetime + datetime.timedelta(minutes=25)
+if start_datetime == end_datetime:
+    end = end_datetime + datetime.timedelta(minutes=25)
+_date_now = start_datetime
 
 # auth
 load_dotenv()
