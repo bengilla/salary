@@ -18,7 +18,9 @@ class ReadExcel:
 
         # pandas 生成和生成日期
         self._df = pd.read_excel(self._filename, sheet_name=self._sheet_num)
-        self._date = dt.strptime(self._df.loc[1][2].split(" ")[0], "%Y-%m-%d")
+        cell_value = self._df.iloc[1, 2]
+        start_date_str = cell_value.split("~")[0].strip()
+        self._date = dt.strptime(start_date_str, "%Y-%m-%d")
 
     def get_day(self):
         """读取 excel 文件的日期"""
