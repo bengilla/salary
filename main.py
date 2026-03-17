@@ -2,18 +2,13 @@
 Project for TBROS employees salary calculator and employee person info
 """
 
-import os
 import datetime
 import traceback
 
-# from datetime import datetime
-
 from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
-from flask_httpauth import HTTPBasicAuth
 
 # Library from own
-# from camera import Camera
 from emp.emp_mongodb import EmpInfo
 from excels import EmpSalary
 from forms.form import CreateForm, EditForm
@@ -36,19 +31,6 @@ end_datetime = start_datetime + datetime.timedelta(minutes=25)
 if start_datetime == end_datetime:
     end = end_datetime + datetime.timedelta(minutes=25)
 _date_now = start_datetime
-
-# auth
-load_dotenv()
-auth = HTTPBasicAuth()
-
-user_password = {"boon": os.getenv("USER_PASSWORD")}
-
-
-@auth.verify_password
-def verify_password(username, password):
-    """Username and Password"""
-    if username in user_password and password == user_password.get(username):
-        return username
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -86,7 +68,6 @@ def index():
 
 
 @app.route("/add", methods=["GET", "POST"])
-@auth.login_required
 def add_emp():
     """
     建立员工资料，如果员工已存在就会显示 msg
@@ -106,14 +87,12 @@ def add_emp():
 
 
 @app.route("/all")
-@auth.login_required
 def all_emp():
     """浏览所有工资列表"""
     return redirect(url_for("all_work_lists"))
 
 
 @app.route("/all_employees")
-@auth.login_required
 def all_employees():
     """浏览全部员工"""
     info_from_db = _empinfo.emp_info()
@@ -127,7 +106,6 @@ def all_employees():
 
 
 @app.route("/all_work_lists")
-@auth.login_required
 def all_work_lists():
     """浏览所有年份的工作时间列表"""
     all_documents = []
@@ -150,7 +128,6 @@ def info_emp(ids: str):
 
 
 @app.route("/edit/<ids>", methods=["GET", "POST"])
-@auth.login_required
 def edit_emp(ids: str):
     """修改员工资料, 只是修改 ic, contact, address, pay"""
     form = EditForm()
@@ -170,7 +147,6 @@ def edit_emp(ids: str):
 
 
 @app.route("/delete/<ids>")
-@auth.login_required
 def delete_emp(ids: str):
     """删除员工资料"""
     _empinfo.emp_delete(ids)
@@ -178,7 +154,6 @@ def delete_emp(ids: str):
 
 
 @app.route("/all_list/<ids>", methods=["GET"])
-@auth.login_required
 def all_list(ids: str):
     """当月发工资列表"""
     emp_one = _mongodb.find_in_all_years(ids)
