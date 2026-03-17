@@ -3,10 +3,12 @@ Project for TBROS employees salary calculator and employee person info
 """
 
 import datetime
+import os
 import traceback
 
 from dotenv import load_dotenv
 from flask import Flask, redirect, render_template, request, url_for
+from flask_login import LoginManager, UserMixin, login_required, login_user, logout_user, current_user
 
 # Library from own
 from emp.emp_mongodb import EmpInfo
@@ -17,6 +19,26 @@ from mongodb import MongoDB
 # 设置
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "tbrosventures"
+
+# Simple users - username: password
+load_dotenv()
+USERS = {
+    os.getenv("LOGIN_USERNAME", "tbros"): os.getenv("LOGIN_PASSWORD", "password")
+}
+
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "login"
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id in USERS:
+        return User(user_id)
+    return None
 
 # Work List MongoDB connect
 _work_list_db = MongoDB().work_hour_collection()
@@ -34,6 +56,7 @@ _date_now = start_datetime
 
 
 @app.route("/", methods=["GET", "POST"])
+@login_required
 def index():
     """
     链接至 index.html, 同时也输出日期
@@ -68,6 +91,7 @@ def index():
 
 
 @app.route("/add", methods=["GET", "POST"])
+@login_required
 def add_emp():
     """
     建立员工资料，如果员工已存在就会显示 msg
@@ -87,12 +111,14 @@ def add_emp():
 
 
 @app.route("/all")
+@login_required
 def all_emp():
     """浏览所有工资列表"""
     return redirect(url_for("all_work_lists"))
 
 
 @app.route("/all_employees")
+@login_required
 def all_employees():
     """浏览全部员工"""
     info_from_db = _empinfo.emp_info()
@@ -106,6 +132,7 @@ def all_employees():
 
 
 @app.route("/all_work_lists")
+@login_required
 def all_work_lists():
     """浏览所有年份的工作时间列表"""
     all_documents = []
@@ -118,6 +145,7 @@ def all_work_lists():
 
 
 @app.route("/info/<ids>")
+@login_required
 def info_emp(ids: str):
     """浏览单位员工"""
     info = _empinfo.emp_one(ids)
@@ -128,6 +156,7 @@ def info_emp(ids: str):
 
 
 @app.route("/edit/<ids>", methods=["GET", "POST"])
+@login_required
 def edit_emp(ids: str):
     """修改员工资料, 只是修改 ic, contact, address, pay"""
     form = EditForm()
@@ -147,6 +176,7 @@ def edit_emp(ids: str):
 
 
 @app.route("/delete/<ids>")
+@login_required
 def delete_emp(ids: str):
     """删除员工资料"""
     _empinfo.emp_delete(ids)
@@ -154,6 +184,7 @@ def delete_emp(ids: str):
 
 
 @app.route("/all_list/<ids>", methods=["GET"])
+@login_required
 def all_list(ids: str):
     """当月发工资列表"""
     emp_one = _mongodb.find_in_all_years(ids)
@@ -193,6 +224,27 @@ def all_list(ids: str):
         total_cash=total_cash,
         total_emp_on_list=total_emp_on_list,
     )
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = ""
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        if username in USERS and USERS[username] == password:
+            user = User(username)
+            login_user(user)
+            return redirect(url_for("index"))
+        error = "Invalid username or password"
+    return render_template("login.html", error=error)
+
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login"))
 
 
 if __name__ == "__main__":
