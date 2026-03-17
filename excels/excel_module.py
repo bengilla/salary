@@ -109,25 +109,25 @@ class TimeCalculation:
                 self.emp_work_hour += 8
             # 早到 早退
             elif emp_in <= day_in and emp_out <= day_out:
-                total_times = pendulum.period(day_in, emp_out)
-                if total_times.hours > 4:
-                    self.emp_work_hour += total_times.hours - lunch_time
-                    if total_times.minutes >= 50:
+                total_times = day_in.diff(emp_out)
+                if total_times.in_hours() > 4:
+                    self.emp_work_hour += total_times.in_hours() - lunch_time
+                    if total_times.in_minutes() % 60 >= 50:
                         self.emp_work_hour += 1
                 else:
-                    self.emp_work_hour += total_times.hours
-                    if total_times.minutes >= 50:
+                    self.emp_work_hour += total_times.in_hours()
+                    if total_times.in_minutes() % 60 >= 50:
                         self.emp_work_hour += 1
             # 晚到 晚退
             elif emp_in >= day_in and emp_out >= day_out:
-                total_times = pendulum.period(emp_in, day_out)
-                if total_times.hours > 4:
-                    self.emp_work_hour += total_times.hours - lunch_time
-                    if total_times.minutes >= 50:
+                total_times = emp_in.diff(day_out)
+                if total_times.in_hours() > 4:
+                    self.emp_work_hour += total_times.in_hours() - lunch_time
+                    if total_times.in_minutes() % 60 >= 50:
                         self.emp_work_hour += 1
                 else:
-                    self.emp_work_hour += total_times.hours
-                    if total_times.minutes >= 50:
+                    self.emp_work_hour += total_times.in_hours()
+                    if total_times.in_minutes() % 60 >= 50:
                         self.emp_work_hour += 1
 
             # 计算加班 -------------------------------------------------

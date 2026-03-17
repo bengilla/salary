@@ -8,11 +8,14 @@
         <div class="py-4 mx-2 flex gap-4 items-center">
             <div><span class="text-sm">Total Employees: </span></div>
             <div><span class="py-1 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span></div>
+            <div class="ml-auto">
+                <input type="text" id="searchInput" onkeyup="searchEmployees()" placeholder="Search by name..." class="px-3 py-1 border border-slate-400 rounded-lg text-sm focus:outline-none focus:border-sky-600">
+            </div>
         </div>
 
         <!-- {{ info }} -->
         {% for i in info %}
-        <div class="mt-2 w-full border border-1 border-slate-900">
+        <div class="employee-card mt-2 w-full border border-1 border-slate-900">
             <table class="w-full">
 
                 <thead class="bg-slate-600">
@@ -84,4 +87,24 @@
 
     </div>
 </section>
+
+<script>
+function searchEmployees() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const cards = document.getElementsByClassName('employee-card');
+    
+    for (let i = 0; i < cards.length; i++) {
+        const nameSpan = cards[i].querySelector('a[href*="info_emp"] span');
+        if (nameSpan) {
+            const name = nameSpan.textContent.toLowerCase();
+            if (name.includes(filter)) {
+                cards[i].style.display = '';
+            } else {
+                cards[i].style.display = 'none';
+            }
+        }
+    }
+}
+</script>
 {% endblock %}

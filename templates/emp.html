@@ -4,7 +4,83 @@
 {% block content %}
 <section id="all" class="py-[2%] px-[5%] lg:px-[15%]">
 
-    <!-- {{ info }} -->
+    {% if count is defined %}
+    <div class="py-4 mx-2 flex gap-4 items-center">
+        <div><span class="text-sm">Total Employees: </span></div>
+        <div><span class="py-1 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span></div>
+        <div class="ml-auto">
+            <input type="text" id="searchInput" onkeyup="searchEmployees()" placeholder="Search by name..." class="px-3 py-1 border border-slate-400 rounded-lg text-sm focus:outline-none focus:border-sky-600">
+        </div>
+    </div>
+    {% endif %}
+
+    {% for employee in info if count is defined %}
+    <!-- {{ employee }} -->
+    <div class="employee-card mt-2 w-full border border-1 border-slate-900">
+        <table class="table-auto w-full">
+            <tbody>
+                <tr>
+                    <!--image -->
+                    <td class="w-20 px-4">
+                        <div class="grid place-content-center">
+                            <img src="data:;base64, {{ employee['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
+                        </div>
+                        <div class="grid grid-rows-1 place-content-center">
+                            <a href="{{ url_for('edit_emp', ids=employee._id) }}">
+                                <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
+                        </div>
+                    </td>
+
+                    <!--Info -->
+                    <td>
+                        <table class="auto">
+                            {% set cols={
+                            'id': employee._id,
+                            'name': employee.name,
+                            'pay': employee.pay_hour,
+                            'passport/ic': employee.ic,
+                            'nationality': employee.nationality,
+                            'gender': employee.gender,
+                            'd.o.b': employee.dob,
+                            'contact': employee.contact,
+                            'address': employee.address,
+                            'sign date': employee.sign_date
+                            } %}
+                            {% for key, value in cols.items() %}
+                            <tr>
+                                <th class="text-right">
+                                    <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
+                                </th>
+                                <td class="w-full">
+                                    {% if key == 'name' %}
+                                    <a href="{{ url_for('info_emp', ids=employee._id) }}">
+                                        <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
+                                    </a>
+                                    {% elif key == 'pay' %}
+                                    <span class="text-xs text-red-500 sm:text-sm">RM
+                                        <span class="font-bold underline select-all sm:text-sm">
+                                            {{ value }}
+                                        </span> / hour</span>
+                                    {% else %}
+                                    <span class="text-xs select-all sm:text-sm">{{ value }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                    <!-- End info -->
+
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+    {% endfor %}
+
+    {% if count is not defined %}
+    <!-- Single employee view (original) -->
     <div class="mt-2 w-full border border-1 border-slate-900">
         <table class="table-auto w-full">
             <tbody>
@@ -66,5 +142,26 @@
     </div>
     <!-- Work Hour -->
     <h3 class="p-4">Empty</h3>
+    {% endif %}
 </section>
+
+<script>
+function searchEmployees() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const cards = document.getElementsByClassName('employee-card');
+    
+    for (let i = 0; i < cards.length; i++) {
+        const nameSpan = cards[i].querySelector('a[href^="/info/"] span');
+        if (nameSpan) {
+            const name = nameSpan.textContent.toLowerCase();
+            if (name.includes(filter)) {
+                cards[i].style.display = '';
+            } else {
+                cards[i].style.display = 'none';
+            }
+        }
+    }
+}
+</script>
 {% endblock %}

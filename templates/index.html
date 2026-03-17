@@ -17,7 +17,7 @@
     <div class="w-full grid grid-cols-1 lg:grid-cols-1">
         <div></div>
         <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('all_emp') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
+            <a href="{{ url_for('all_employees') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
                 Read All Employee
             </a>
         </div>
@@ -49,7 +49,12 @@
                     {% for i in err_emp %}
                     <span>{{ loop.index }}. {{ i }}</span><br>
                     {% endfor %}
-                    {{ err_exception_msg }}
+                    {% if err_exception_msg %}
+                    <p class="text-red-600 font-bold">{{ err_exception_msg }}</p>
+                    {% endif %}
+                    {% if err_traceback %}
+                    <pre class="mt-2 p-2 bg-red-100 text-red-800 text-xs overflow-x-auto whitespace-pre-wrap">{{ err_traceback }}</pre>
+                    {% endif %}
                 </div>
             </form>
         </div>

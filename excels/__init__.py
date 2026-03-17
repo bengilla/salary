@@ -110,11 +110,16 @@ class EmpSalary:
             except KeyError:
                 continue
 
+        # 计算总工资
+        total_amounts = sum(data["total_salary"] for data in self.data.values())
+
         # 上传至 MongoDB
         mongodb = MongoDB()
         work_hour_collection = mongodb.work_hour_collection()
         send_data = {
             "_id": self._date.format("MMM DD, YYYY"),
+            "date": self._date.format("DD-MMM-YYYY"),
+            "total_amounts": total_amounts,
             "emp_work_hours": self.data,
         }
         work_hour_collection.insert_one(send_data)

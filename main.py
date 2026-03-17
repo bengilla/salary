@@ -4,6 +4,7 @@ Project for TBROS employees salary calculator and employee person info
 
 import os
 import datetime
+import traceback
 
 # from datetime import datetime
 
@@ -24,6 +25,7 @@ app.config["SECRET_KEY"] = "tbrosventures"
 
 # Work List MongoDB connect
 _work_list_db = MongoDB().work_hour_collection()
+_mongodb = MongoDB()
 
 # Get Emp info from MongoDB
 _empinfo = EmpInfo()
@@ -37,16 +39,16 @@ _date_now = start_datetime
 
 # auth
 load_dotenv()
-auth = HTTPBasicAuth()
+# auth = HTTPBasicAuth()
 
-user_password = {"boon": os.getenv("USER_PASSWORD")}
+# user_password = {"boon": os.getenv("USER_PASSWORD")}
 
 
-@auth.verify_password
-def verify_password(username, password):
-    """Username and Password"""
-    if username in user_password and password == user_password.get(username):
-        return username
+# @auth.verify_password
+# def verify_password(username, password):
+#     """Username and Password"""
+#     if username in user_password and password == user_password.get(username):
+#         return username
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -60,19 +62,17 @@ def index():
     err_title = ""
     not_register_emp = ""
     err_exception_msg = ""
+    err_traceback = ""
 
     if request.method == "POST":
         file_input = request.files["file"]
         try:
             emp_salary = EmpSalary(file_input)
-            if len(emp_salary.not_register) == 0:  # pylint: disable=E1101
-                return render_template("complete.html")
-            else:
-                err_title = "This all members not in website:"
-                not_register_emp = emp_salary.not_register  # pylint: disable=E1101
+            return redirect(url_for("all_work_lists"))
         except Exception as err:  # pylint: disable=W0703
             err_title = "You have error message:"
-            err_exception_msg = err
+            err_exception_msg = str(err)
+            err_traceback = traceback.format_exc()
 
     return render_template(
         "index.html",
@@ -81,11 +81,12 @@ def index():
         err_title=err_title,
         err_emp=not_register_emp,
         err_exception_msg=err_exception_msg,
+        err_traceback=err_traceback,
     )
 
 
 @app.route("/add", methods=["GET", "POST"])
-@auth.login_required
+# @auth.login_required
 def add_emp():
     """
     建立员工资料，如果员工已存在就会显示 msg
@@ -105,29 +106,51 @@ def add_emp():
 
 
 @app.route("/all")
-@auth.login_required
+# @auth.login_required
 def all_emp():
-    """浏览全部员工"""
-    count = 0
-    for _ in _empinfo.emp_info():
-        count += 1
+    """浏览所有工资列表"""
+    return redirect(url_for("all_work_lists"))
 
+
+@app.route("/all_employees")
+# @auth.login_required
+def all_employees():
+    """浏览全部员工"""
     info_from_db = _empinfo.emp_info()
     info = info_from_db.sort("_id", 1)
+    info_list = list(info)
+    count = len(info_list)
 
-    return render_template("all.html", info=info, count=count)
+    return render_template(
+        "emp.html", info=info_list, emp_name="All Employees", count=count
+    )
+
+
+@app.route("/all_work_lists")
+# @auth.login_required
+def all_work_lists():
+    """浏览所有年份的工作时间列表"""
+    all_documents = []
+    for coll in _mongodb.all_work_hour_collections():
+        docs = coll.find({})
+        for doc in docs:
+            all_documents.append(doc)
+
+    return render_template("all_work_lists.html", documents=all_documents)
 
 
 @app.route("/info/<ids>")
 def info_emp(ids: str):
     """浏览单位员工"""
     info = _empinfo.emp_one(ids)
+    if info is None:
+        return redirect(url_for("all_emp"))
     emp_name = info["name"]
     return render_template("emp.html", info=info, emp_name=emp_name)
 
 
 @app.route("/edit/<ids>", methods=["GET", "POST"])
-@auth.login_required
+# @auth.login_required
 def edit_emp(ids: str):
     """修改员工资料, 只是修改 ic, contact, address, pay"""
     form = EditForm()
@@ -147,7 +170,7 @@ def edit_emp(ids: str):
 
 
 @app.route("/delete/<ids>")
-@auth.login_required
+# @auth.login_required
 def delete_emp(ids: str):
     """删除员工资料"""
     _empinfo.emp_delete(ids)
@@ -155,10 +178,12 @@ def delete_emp(ids: str):
 
 
 @app.route("/all_list/<ids>", methods=["GET"])
-@auth.login_required
+# @auth.login_required
 def all_list(ids: str):
     """当月发工资列表"""
-    emp_one = _work_list_db.find_one({"_id": ids})  # 寻找月份工人列表
+    emp_one = _mongodb.find_in_all_years(ids)
+    if emp_one is None:
+        return redirect(url_for("all_emp"))
     emp_output = emp_one["emp_work_hours"]
     sort_emp_dict = dict(sorted(emp_output.items()))
 
@@ -175,16 +200,20 @@ def all_list(ids: str):
     total_cash = f"RM {sum(salary):,.2f}"
 
     # 取文件月份
-    output_month = ids.split(" ")[0]
+    output_month = emp_one.get("date", "")
 
-    # 所有mongoDB资料
-    all_documents = _work_list_db.find({})
-    document_id = [x["_id"] for x in all_documents]
+    # 所有mongoDB资料 (所有年份)
+    all_documents = []
+    for coll in _mongodb.all_work_hour_collections():
+        docs = coll.find({})
+        for doc in docs:
+            all_documents.append(doc)
+    document_date = [x.get("date", "") for x in all_documents]
 
     return render_template(
         "list.html",
         emp=sort_emp_dict,
-        document_id=document_id,
+        document_id=document_date,
         output_id=output_month,
         total_cash=total_cash,
         total_emp_on_list=total_emp_on_list,

@@ -28,7 +28,7 @@ class EditForm(FlaskForm):
 class CreateForm(EditForm, FlaskForm):
     """Create Form and inherent to Edit Form"""
 
-    img_employee = FileField("img_employee", validators=[DataRequired()])
+    img_employee = FileField("img_employee")
     name = StringField("name", validators=[DataRequired()])
     pay_hour = FloatField("hour salary", validators=[DataRequired()])
     ic = StringField("passport / ic", validators=[DataRequired()])
