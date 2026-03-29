@@ -48,7 +48,7 @@
                             {% for emp, data in doc.emp_work_hours.items() %}
                             {% set total.value = total.value + data.total_salary %}
                             {% endfor %}
-                            <span class="text-orange-600 font-semibold">RM {{ "%.2f"|format(total.value) }}</span>
+                            <span class="text-orange-600 font-semibold">RM {{ "{:,.2f}".format(total.value) }}</span>
                         </td>
                         <td class="py-3 px-3 sm:px-6">
                             <a href="{{ url_for('all_list', ids=doc.date) }}" 
