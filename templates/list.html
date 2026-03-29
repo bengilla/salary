@@ -143,9 +143,12 @@ function printSalaryList() {
     const printWindow = window.open('', '_blank');
     const empData = {{ emp|tojson }};
     const outputId = "{{ output_id }}";
+    const totalEmp = {{ total_emp_on_list }};
+    const totalCash = "{{ total_cash }}";
     
-    const firstEmp = Object.values(empData)[0];
-    const numDateCols = firstEmp ? firstEmp.output.length : 0;
+    const empList = Object.entries(empData);
+    const employeesPerPage = 2;
+    const totalPages = Math.ceil(empList.length / employeesPerPage);
     
     let html = `
     <!DOCTYPE html>
@@ -154,153 +157,222 @@ function printSalaryList() {
         <title>Salary List - ${outputId}</title>
         <style>
             @page {
-                size: landscape;
-                margin: 8mm;
+                size: A4 landscape;
+                margin: 15mm;
             }
             * {
                 box-sizing: border-box;
             }
             body {
-                font-family: Arial, sans-serif;
+                font-family: 'Segoe UI', Arial, sans-serif;
                 font-size: 10px;
                 margin: 0;
-                padding: 8px;
+                padding: 0;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                min-height: 100vh;
             }
-            h1 {
+            .main-content {
+                flex: 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .company-header {
                 text-align: center;
-                font-size: 16px;
-                margin: 0 0 3px 0;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #1a365d;
+                margin-bottom: 12px;
             }
-            .subtitle {
-                text-align: center;
-                color: #666;
-                font-size: 11px;
-                margin: 0 0 10px 0;
+            .company-header h1 {
+                font-size: 22px;
+                color: #1a365d;
+                margin: 0;
+                letter-spacing: 1px;
             }
-            table {
+            .company-header .subtitle {
+                color: #4a5568;
+                font-size: 14px;
+                margin: 5px 0 0 0;
+            }
+            .report-info {
+                display: flex;
+                justify-content: space-between;
+                font-size: 9px;
+                color: #718096;
+                margin-bottom: 10px;
+            }
+            .grid-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            .emp-card {
+                border: 1px solid #cbd5e0;
+                border-radius: 4px;
+                overflow: hidden;
+            }
+            .emp-header {
+                background: #f8f9fa;
+                color: #1a365d;
+                padding: 8px 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                border-bottom: 2px solid #1a365d;
+            }
+            .emp-header .emp-name {
+                font-weight: 700;
+                font-size: 24px;
+                color: #000;
+            }
+            .emp-header .emp-rate {
+                font-size: 13px;
+                color: #333;
+            }
+            .emp-table {
                 width: 100%;
                 border-collapse: collapse;
-                page-break-after: always;
-            }
-            th, td {
-                border: 1px solid #333;
-                padding: 2px 4px;
-                text-align: center;
-                font-size: 10px;
-            }
-            th {
-                background: #ddd;
-                font-weight: bold;
-            }
-            .header-date {
-                background: #dde;
-                font-size: 11px;
-            }
-            .emp-cell {
-                background: #eef;
-                width: 2%;
-                font-weight: bold;
-            }
-            .name-cell {
-                text-align: left;
-                background: #eef;
-                width: 6%;
-            }
-            .name-cell .emp-name {
-                font-weight: bold;
-                font-size: 10px;
-            }
-            .name-cell .emp-rate {
-                font-size: 8px;
-                color: #666;
-            }
-            .data-cell {
-                vertical-align: top;
-            }
-            .time-label { font-size: 10px; }
-            .time-label.empty, .hours-label.empty, .pay-label.empty { color: #ccc; }
-            .hours-label { font-size: 10px; color: red; }
-            .pay-label { font-size: 10px; }
-            .total-hrs {
-                background: #ffd;
-                font-weight: bold;
-                width: 4%;
-            }
-            .total-pay {
-                background: #fdd;
                 font-size: 12px;
+                table-layout: fixed;
             }
-            .summary {
+            .emp-card {
+                width: 100%;
+            }
+            .emp-table tr {
+                height: 28px;
+            }
+.emp-table th {
+                background: #f8f9fa;
+                color: #333;
+                font-weight: 600;
+                padding: 0 30px;
+                text-align: center;
+                border-bottom: 1px solid #dee2e6;
+                height: 28px;
+                vertical-align: middle;
+                font-size: 13px;
+            }
+            .emp-table td {
+                padding: 0 30px;
+                text-align: center;
+                border-bottom: 1px solid #f1f3f4;
+                color: #212529;
+                vertical-align: middle;
+                overflow: hidden;
+            }
+            .emp-table .day-col { width: 20%; }
+            .emp-table .day-num { color: #000; font-size: 13px; font-weight: 600; }
+            .emp-table .dow-col { color: #888; font-size: 9px; }
+            .emp-table .time-col { width: 30%; font-size: 13px; }
+            .emp-table .hrs-col { width: 20%; color: #c53030; font-weight: 600; font-size: 13px; }
+            .emp-table .pay-col { width: 30%; text-align: left; padding-left: 8px; font-size: 14px; font-weight: 600; }
+            .emp-table .pay-rm { float: left; padding-left: 8px; }
+            .emp-table .pay-amt { float: right; padding-right: 8px; }
+            .emp-footer {
+                background: #f7fafc;
+                padding: 5px 30px;
+                display: flex;
+                justify-content: space-between;
+                border-top: 2px solid #1a365d;
+            }
+            .emp-footer .total-hrs {
+                font-size: 16px;
+                color: #000;
+                font-weight: 600;
+            }
+            .emp-footer .total-pay {
+                font-size: 20px;
+                color: #c53030;
+                font-weight: 700;
+            }
+            .summary-bar {
+                background: #1a365d;
+                color: #fff;
+                padding: 10px 14px;
+                display: flex;
+                justify-content: space-between;
                 margin-top: 15px;
-                text-align: right;
-                font-size: 12px;
-                font-weight: bold;
+                font-size: 13px;
+                border-radius: 4px;
             }
-            .footer {
-                margin-top: 20px;
-                font-size: 9px;
-                color: #666;
+            .summary-bar span:last-child {
+                font-weight: 700;
+                font-size: 15px;
+            }
+            .page-footer {
                 text-align: center;
+                font-size: 10px;
+                color: #888;
+                margin-top: 10px;
+                display: none;
             }
+            @media print {
+                .summary-bar, .page-footer { display: none; }
+            }
+            
         </style>
     </head>
     <body>
-        <h1>TBROS Ventures Sdn. Bhd.</h1>
-        <p class="subtitle">Salary List - ${outputId}</p>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th class="emp-cell">No</th>
-                    <th class="name-cell">Name</th>
     `;
     
-    const firstEmpData = firstEmp ? firstEmp.output : [];
-    for (let i = 0; i < numDateCols; i++) {
-        const v = firstEmpData[i];
-        const dateStr = v ? v.day : `D${i+1}`;
-        const dayStr = v ? v.day_of_week : '';
-        html += `<th class="header-date">${dateStr}<br><span style="font-size:7px;color:#666">${dayStr}</span></th>`;
-    }
-    html += `<th class="total-hrs">Total Hrs</th><th class="total-pay" style="font-size:10px;">Total Pay</th>`;
-    html += `</tr></thead><tbody>`;
-    
-    let empNum = 0;
-    for (const [iname, idata] of Object.entries(empData)) {
-        empNum++;
-        const output = idata.output;
-        
-        html += `<tr><td class="emp-cell">${empNum}</td><td class="name-cell"><div class="emp-name">${iname}</div><div class="emp-rate">RM${idata.pay_hour}/hr</div></td>`;
-        
-        for (let col = 0; col < numDateCols; col++) {
-            const v = output[col];
-            if (v) {
-                const hasTime = v.work_time[0] && v.work_time[1];
-                const emptyClass = hasTime ? '' : ' empty';
-                const timeStr = hasTime ? `${v.work_time[0]}<br>${v.work_time[1]}` : 'undefined';
-                html += `<td class="data-cell">
-                    <div class="time-label${emptyClass}">${timeStr}</div>
-                    <div class="hours-label${emptyClass}">${v.daily_work_hours}h</div>
-                    <div class="pay-label${emptyClass}">RM${v.pay_perday}</div>
-                </td>`;
-            } else {
-                html += `<td class="data-cell"></td>`;
-            }
+    empList.forEach(([iname, idata], idx) => {
+        if (idx > 0 && idx % employeesPerPage === 0) {
+            html += `</div></div><div style="page-break-before: always;"></div><div class="main-content"><div class="grid-container">`;
+        } else if (idx === 0) {
+            html += `<div class="main-content"><div class="grid-container">`;
         }
         
-        html += `<td class="total-hrs">${idata.total_work_hours}</td><td class="total-pay">RM${idata.total_salary}</td></tr>`;
-    }
+        html += `
+        <div class="emp-card" style="page-break-inside: avoid;">
+            <div class="emp-header">
+                <span class="emp-name">${iname}</span>
+                <span class="emp-rate">RM ${idata.pay_hour}/hr</span>
+            </div>
+            <table class="emp-table">
+                <thead>
+                    <tr>
+                        <th class="day-col">Day</th>
+                        <th class="time-col">Time</th>
+                        <th class="hrs-col">Hrs</th>
+                        <th class="pay-col" style="text-align: center; padding-left: 0;">Pay</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        idata.output.forEach(v => {
+            const hasTime = v.work_time[0] && v.work_time[1];
+            const timeStr = hasTime ? `${v.work_time[0]}-${v.work_time[1]}` : '-';
+            html += `<tr>
+                <td class="day-col"><span class="day-num">${v.day}</span> <span class="dow-col">${v.day_of_week}</span></td>
+                <td class="time-col">${timeStr}</td>
+                <td class="hrs-col">${v.daily_work_hours}</td>
+                <td class="pay-col"><span class="pay-rm">RM</span><span class="pay-amt">${v.pay_perday}</span></td>
+            </tr>`;
+        });
+        
+        html += `
+                </tbody>
+            </table>
+            <div class="emp-footer">
+                <span class="total-hrs">Total: ${idata.total_work_hours} hrs</span>
+                <span class="total-pay">RM ${idata.total_salary}</span>
+            </div>
+        </div>
+        `;
+    });
+    
+    html += `</div></div>`;
     
     html += `
-            </tbody>
-        </table>
-        
-        <div class="summary">
-            Total Employees: {{ total_emp_on_list }} | Total Amount: {{ total_cash }}
+        <div class="summary-bar">
+            <span>Total Employees: ${totalEmp}</span>
+            <span>Total Amount: ${totalCash}</span>
         </div>
-        
-        <div class="footer">
-            Generated on ${new Date().toLocaleDateString()} - TBROS Ventures Sdn. Bhd.
+        <div class="page-footer">
+            Page 1 of ${totalPages} | Generated ${new Date().toLocaleDateString()} | TBROS Ventures Sdn. Bhd.
         </div>
     </body>
     </html>
