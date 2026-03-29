@@ -219,8 +219,8 @@ function printSalaryList() {
             }
             .time-label { font-size: 10px; }
             .time-label.empty, .hours-label.empty, .pay-label.empty { color: #ccc; }
-            .hours-label { font-size: 10px; color: red; font-weight: bold; }
-            .pay-label { font-size: 10px; font-weight: bold; }
+            .hours-label { font-size: 10px; color: red; }
+            .pay-label { font-size: 10px; }
             .total-hrs {
                 background: #ffd;
                 font-weight: bold;
@@ -228,7 +228,7 @@ function printSalaryList() {
             }
             .total-pay {
                 background: #fdd;
-                font-weight: bold;
+                font-size: 12px;
             }
             .summary {
                 margin-top: 15px;
@@ -277,7 +277,7 @@ function printSalaryList() {
             if (v) {
                 const hasTime = v.work_time[0] && v.work_time[1];
                 const emptyClass = hasTime ? '' : ' empty';
-                const timeStr = hasTime ? `${v.work_time[0]}-${v.work_time[1]}` : 'undefined';
+                const timeStr = hasTime ? `${v.work_time[0]}<br>${v.work_time[1]}` : 'undefined';
                 html += `<td class="data-cell">
                     <div class="time-label${emptyClass}">${timeStr}</div>
                     <div class="hours-label${emptyClass}">${v.daily_work_hours}h</div>
@@ -288,7 +288,7 @@ function printSalaryList() {
             }
         }
         
-        html += `<td class="total-hrs">${idata.total_work_hours}</td><td class="total-pay" style="font-size:10px;font-weight:bold;">RM${idata.total_salary}</td></tr>`;
+        html += `<td class="total-hrs">${idata.total_work_hours}</td><td class="total-pay">RM${idata.total_salary}</td></tr>`;
     }
     
     html += `
