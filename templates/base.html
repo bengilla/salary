@@ -4,37 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width={device-width}, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TBROS - {% block title %}{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='images/tb.ico') }}" rel="shortcut icon">
 </head>
 
-<body class="bg-slate-200">
+<body class="bg-gray-50 min-h-screen flex flex-col" style="background-color: #f9fafb;">
 
-    <header id="header" class="w-full h-20 font-bold text-center bg-cyan-900 print:hidden">
-        <div class="flex justify-between items-center px-4">
-            <div class="flex-1">
-                <a href="{{ url_for('index') }}">
-                    <h1 class="p-6 text-xl sm:text-2xl text-gray-300 hover:text-white">TBROS Ventures Sdn. Bhd.</h1>
+    <header class="bg-white shadow-sm border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+                <a href="{{ url_for('index') }}" class="text-xl font-bold text-cyan-800 hover:text-cyan-600 transition-colors">
+                    <span class="sm:inline">TBROS Ventures</span>
+                    <span class="block sm:inline sm:ml-1">Sdn. Bhd.</span>
                 </a>
+            {% if current_user.is_authenticated %}
+            <div class="flex items-center gap-6">
+                <div class="relative">
+                    <button onclick="toggleMenu()" class="flex items-center gap-1 text-gray-600 hover:text-cyan-700 transition-colors cursor-pointer">
+                        Menu
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="dropdownMenu" class="hidden absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                        <a href="{{ url_for('add_emp') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">Add Employee</a>
+                        <a href="{{ url_for('all_employees') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">All Employees</a>
+                        <a href="{{ url_for('all_work_lists') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">Work Lists</a>
+                    </div>
+                </div>
+                <a href="{{ url_for('logout') }}" class="px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-400 hover:text-white hover:bg-red-500 hover:border-red-500 rounded-lg transition-colors">Logout</a>
             </div>
-            <div class="pr-4">
-                {% if current_user.is_authenticated %}
-                <a href="{{ url_for('logout') }}" class="text-orange-500 hover:text-orange-300 text-sm">Logout</a>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
     </header>
 
-    <main id="content" class="mb-auto">
+    <script>
+    function toggleMenu() {
+        const menu = document.getElementById('dropdownMenu');
+        menu.classList.toggle('hidden');
+    }
+    document.addEventListener('click', function(e) {
+        const menu = document.getElementById('dropdownMenu');
+        if (!e.target.closest('[onclick="toggleMenu()"]') && !e.target.closest('#dropdownMenu')) {
+            menu.classList.add('hidden');
+        }
+    });
+    </script>
+
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
         {% block content %}{% endblock %}
     </main>
 
-    <footer id="footer" class="w-full pt-2 h-10 text-[0.8rem] font-bold text-center bg-slate-200 border-t-[1px] border-slate-800 fixed bottom-0 print:hidden">
-        <div>
-            <span>© tbros ventures sdn bhd</span>
+    <footer class="bg-white border-t border-gray-200 py-4 mt-auto">
+        <div class="text-center text-sm text-gray-500">
+            © 2022 TBROS Ventures Sdn. Bhd.
         </div>
     </footer>
 

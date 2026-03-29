@@ -1,65 +1,77 @@
 {% extends 'base.html' %}
-{% block title %}home page{% endblock %}
+{% block title %}Home{% endblock %}
 
 {% block content %}
-<section class="w-full">
+<div class="space-y-8">
 
-    <div class="w-full mt-8 mb-8 text-center">
-        <span>Today:</span>
-        <div class="w-full grid grid-cols-1">
-            <div class="grid place-content-center">
-                <hr class="w-[300px] border-[1px] border-amber-600 bg-amber-600">
+    <!-- Date -->
+    <div class="text-center">
+        <p class="text-gray-500 text-sm">Today</p>
+        <p class="text-2xl font-bold text-gray-800">{{ date.date().strftime("%d %B %Y") }}</p>
+        <p class="text-gray-500">{{ date.today().strftime('%A') }}</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Quick Actions</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a href="{{ url_for('add_emp') }}" 
+                class="flex flex-col items-center p-6 border border-gray-200 rounded-lg hover:border-cyan-500 hover:bg-cyan-50 transition-all cursor-pointer">
+                <svg class="w-8 h-8 text-cyan-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+                <span class="font-medium text-gray-700">Add Employee</span>
+            </a>
+            <a href="{{ url_for('all_employees') }}" 
+                class="flex flex-col items-center p-6 border border-gray-200 rounded-lg hover:border-cyan-500 hover:bg-cyan-50 transition-all cursor-pointer">
+                <svg class="w-8 h-8 text-cyan-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="font-medium text-gray-700">All Employees</span>
+            </a>
+            <a href="{{ url_for('all_work_lists') }}" 
+                class="flex flex-col items-center p-6 border border-gray-200 rounded-lg hover:border-cyan-500 hover:bg-cyan-50 transition-all cursor-pointer">
+                <svg class="w-8 h-8 text-cyan-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+                <span class="font-medium text-gray-700">Work Lists</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Upload Section -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Upload Salary File</h2>
+        <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-cyan-400 transition-colors">
+                <input type="file" name="file" id="file" accept=".xlsx,.xls" 
+                    class="hidden"
+                    onchange="document.getElementById('file-name').textContent = this.files[0]?.name || 'Choose file...'">
+                <label for="file" class="cursor-pointer">
+                    <svg class="w-10 h-10 text-gray-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <p id="file-name" class="text-gray-600">Click to choose Excel file</p>
+                </label>
             </div>
+            <button type="submit" 
+                class="w-full bg-cyan-800 hover:bg-cyan-700 text-white font-medium py-3 px-4 rounded-lg transition-colors cursor-pointer">
+                Upload & Calculate
+            </button>
+        </form>
+
+        {% if err_title %}
+        <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p class="text-red-600 font-medium">{{ err_title }}</p>
+            {% if err_exception_msg %}
+            <p class="text-red-500 text-sm mt-1">{{ err_exception_msg }}</p>
+            {% endif %}
+            {% if err_traceback %}
+            <pre class="mt-2 p-2 bg-red-100 text-red-800 text-xs overflow-x-auto whitespace-pre-wrap rounded">{{ err_traceback }}</pre>
+            {% endif %}
         </div>
-        <span class="font-bold m-2">{{ date.date().strftime("%d-%m-%Y") }} ({{ date.today().strftime('%A') }})</span>
+        {% endif %}
     </div>
 
-    <div class="w-full grid grid-cols-1 lg:grid-cols-1">
-        <div></div>
-        <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('all_employees') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
-                Read All Employee
-            </a>
-        </div>
-        <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('add_emp') }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
-                Add New Employee
-            </a>
-        </div>
-        <div class="grid py-2 place-content-center">
-            <a href="{{ url_for('all_list', ids=all_id[-1]) }}" class="w-60 p-8 text-center border-2 border-slate-900 rounded-lg drop-shadow-xl hover:bg-slate-300">
-                All List Work Hours
-            </a>
-        </div>
-
-        <div class="px-2 mt-4 grid grid-cols-1 place-items-center">
-            <hr class="w-3/5 border-slate-700">
-        </div>
-
-        <div class="pt-4 pb-8 grid grid-cols-1 place-items-center">
-            <form action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data" class="w-4/5 sm:w-[400px]">
-                <p class="text-sm text-red-500">Upload salary file</p>
-                <input type="file" name="file" class="px-4 py-4 rounded-xl border-2 border-slate-500 block w-full text-sm text-slate-500
-                file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0
-                file:text-sm file:font-semibold file:bg-blue-300 file:text-slate-700
-                hover:file:bg-blue-700 hover:file:text-white"><br>
-                <input type="submit" class="p-2 w-full bg-slate-300 rounded hover:bg-red-400 ease-in-out duration-300">
-                <p class="text-ls font-bold text-red-700">{{ err_title }}</p>
-                <div class="pb-8 px-8">
-                    {% for i in err_emp %}
-                    <span>{{ loop.index }}. {{ i }}</span><br>
-                    {% endfor %}
-                    {% if err_exception_msg %}
-                    <p class="text-red-600 font-bold">{{ err_exception_msg }}</p>
-                    {% endif %}
-                    {% if err_traceback %}
-                    <pre class="mt-2 p-2 bg-red-100 text-red-800 text-xs overflow-x-auto whitespace-pre-wrap">{{ err_traceback }}</pre>
-                    {% endif %}
-                </div>
-            </form>
-        </div>
-    </div>
-
-</section>
-<!-- Testing -->
+</div>
 {% endblock %}

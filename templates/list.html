@@ -1,107 +1,316 @@
 {% extends 'base.html' %}
-{% block title %}salary list{% endblock %}
+{% block title %}Salary List{% endblock %}
 
 {% block content %}
-<section id="list" class="mb-16 flex justify-center">
-    <div class="max-w-5xl">
-        <!-- Dropdown Menu -->
+<div class="space-y-6">
 
-        <div class="w-full px-2 grid mt-8 grid-cols-2 dropdown mb-8 print:hidden">
-            <div class="grid place-items-start">
-                <a href="{{ url_for('all_work_lists') }}" class="dropbtn rounded-lg">Back to Lists</a>
-            </div>
-            <div class="grid place-items-end">
-                <h4 class="pb-10">
-                    <span class="text-lg">month: </span>
-                    <span class="text-xl text-amber-600 font-bold">{{ output_id }}</span>
-                </h4>
-            </div>
+    <!-- Header -->
+    <div class="grid grid-cols-2 gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Salary List</h1>
+            <p class="text-gray-500">Month: <span class="text-orange-600 font-semibold">{{ output_id }}</span></p>
         </div>
-
-        <!-- Header section -->
-        <div class="w-full px-2 mb-8 print:hidden">
-            <!-- total employee -->
-            <div class="flex items-center">
-                <div class="w-[200px]">
-                    <span class="text-sm">Total employee on list:</span>
-                </div>
-                <div class="py-2">
-                    <span class="px-4 py-1 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_emp_on_list }}</span>
-                </div>
+        <div class="flex flex-wrap items-center gap-3">
+            <div class="relative flex-1 min-w-[150px]">
+                <input type="text" id="searchInput" onkeyup="searchEmployees()" placeholder="Search employee..." 
+                    class="w-full px-4 py-2 pr-8 border-2 border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm">
+                <button type="button" onclick="clearSearch()" id="clearBtn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-            <!-- total pay amount -->
-            <div class="flex items-center">
-                <div class="w-[200px]">
-                    <span class="text-sm">Total pay to employees:</span>
-                </div>
-                <div class="py-2">
-                    <span class="px-4 py-1 text-sm font-bold text-orange-600 border-2 border-slate-400 rounded-lg sm:text-xl">{{ total_cash }}</span>
-                </div>
-            </div>
-
+            <button onclick="printSalaryList()" 
+                class="px-4 py-2 bg-cyan-800 text-white rounded-lg hover:bg-cyan-700 transition-colors text-sm font-medium whitespace-nowrap cursor-pointer">
+                Print / PDF
+            </button>
+            <a href="{{ url_for('all_work_lists') }}" 
+               class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap">
+                ← Back to Lists
+            </a>
         </div>
-
-        <!-- All the list -->
-        {% for iname, idata in emp.items() %}
-        <div class="p-2 mx-2 my-4 relative bg-stone-200 outline outline-1 rounded print:grayscale print:h-[300px] print:break-inside-avoid-page">
-
-            <!-- Month in all columns -->
-            <div class="px-4 text-4xl text-gray-300 font-bold absolute right-0 opacity-0 print:opacity-20">{{ output_id }}</div>
-
-            <div class="pb-2 text-sm sm:text-base">
-                <span class="text-sm text-gray-500 underline">No: {{ loop.index }}</span><br>
-                <span>Name: </span><b class="font-bold">{{ iname }}</b><br>
-                <span>Hour Salary: </span><span class="font-bold"><b>RM {{ idata["pay_hour"] }}</b></span><br>
-                <span>Total work hours: </span><span class="font-bold text-sky-700 underline">{{ idata["total_work_hours"] }}</span><br>
-                <span>Total Salary: </span><span class="font-bold text-orange-700 underline">RM {{ idata["total_salary"] }}</span>
-            </div>
-
-            <hr class="border-red-800">
-
-            <table class="w-full list-table">
-                <tr>
-                    {% for v in idata["output"] %}
-                    <td class="text-xs text-red-700 sm:text-sm">
-                        <nobr>
-                            <span class="print:text-[0.6rem]">{{ v["day"] }}</span>
-                            <span class="text-[0.6rem] text-slate-700 print:text-[0.5rem]">({{ v["day_of_week"] }})</span>
-                        </nobr>
-                    </td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    {% for v in idata["output"] %}
-                    <td class="px-2 text-xs border-[2px] border-amber-600 sm:text-sm print:px-0">
-                        {% set pay_perday = v["pay_perday"] %}
-                        {% set daily_work_hours = v["daily_work_hours"] %}
-
-                        <span class="text-sky-700">
-                            ( {{ daily_work_hours }} )<br>
-                        </span>
-
-                        {% if pay_perday == 0 %}
-                        <!-- <span>RM </span> -->
-                        <span>{{ pay_perday }}</span>
-                        {% else %}
-                        <!-- <span>RM </span> -->
-                        <span class="font-bold">{{ pay_perday }}</span>
-                        {% endif %}
-                    </td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    {% for v in idata["output"] %}
-                    <td class="text-xs sm:text-sm">
-                        {% set work_time = v["work_time"] %}
-                        <span>{{ work_time[0] }}</span><br>
-                        <span>{{ work_time[1] }}</span>
-                    </td>
-                    {% endfor %}
-                </tr>
-            </table>
-        </div>
-        {% endfor %}
-
     </div>
-</section>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <p class="text-gray-500 text-sm">Total Employees</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1">{{ total_emp_on_list }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
+            <p class="text-gray-500 text-sm">Total Pay Amount</p>
+            <p class="text-3xl font-bold text-orange-600 mt-1">{{ total_cash }}</p>
+        </div>
+    </div>
+
+    <!-- Employee Salary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    {% for iname, idata in emp.items() %}
+    <div class="emp-card bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden" data-name="{{ iname.lower() }}">
+        <button onclick="toggleEmp('{{ loop.index }}')" class="w-full px-6 py-4 flex justify-between items-center hover:bg-gray-50 transition-colors cursor-pointer">
+            <div class="flex items-center gap-4">
+                <span id="icon-{{ loop.index }}" class="text-lg">+</span>
+                <div class="text-left">
+                    <h3 class="text-lg font-semibold text-gray-800">{{ loop.index }}. {{ iname }}</h3>
+                    <p class="text-sm text-gray-500">Hourly Rate: RM {{ idata["pay_hour"] }}</p>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-gray-500">Total Hours</p>
+                <p class="text-xl font-bold text-cyan-700">{{ idata["total_work_hours"] }}</p>
+            </div>
+        </button>
+
+        <div id="details-{{ loop.index }}" class="hidden border-t border-gray-200">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-200">
+                            <th class="text-left py-2 px-3 text-gray-500 font-medium">Day</th>
+                            <th class="text-left py-2 px-3 text-gray-500 font-medium">Hours</th>
+                            <th class="text-left py-2 px-3 text-gray-500 font-medium">Time</th>
+                            <th class="text-right py-2 px-3 text-gray-500 font-medium">Pay (RM)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for v in idata["output"] %}
+                        <tr class="border-b border-gray-100 hover:bg-gray-50">
+                            <td class="py-2 px-3">
+                                <span class="font-medium">{{ v["day"] }}</span>
+                                <span class="text-gray-400 text-xs">({{ v["day_of_week"] }})</span>
+                            </td>
+                            <td class="py-2 px-3 text-cyan-700 font-medium">{{ v["daily_work_hours"] }}</td>
+                            <td class="py-2 px-3 text-gray-600">{{ v["work_time"][0] }} - {{ v["work_time"][1] }}</td>
+                            <td class="py-2 px-3 text-right font-medium {{ 'text-gray-400' if v['pay_perday'] == 0 else 'text-gray-800' }}">
+                                {{ v["pay_perday"] }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr class="bg-gray-50">
+                            <td colspan="2" class="py-3 px-3"></td>
+                            <td class="py-3 px-3 text-right font-semibold text-gray-700">Total Salary:</td>
+                            <td class="py-3 px-3 text-right">
+                                <span class="text-xl font-bold text-orange-600">RM {{ idata["total_salary"] }}</span>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+
+</div>
+
+<script>
+function toggleEmp(index) {
+    const details = document.getElementById('details-' + index);
+    const icon = document.getElementById('icon-' + index);
+    if (details.classList.contains('hidden')) {
+        details.classList.remove('hidden');
+        icon.textContent = '-';
+    } else {
+        details.classList.add('hidden');
+        icon.textContent = '+';
+    }
+}
+
+function searchEmployees() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const cards = document.getElementsByClassName('emp-card');
+    const clearBtn = document.getElementById('clearBtn');
+    
+    clearBtn.classList.toggle('hidden', !input.value);
+    
+    for (let i = 0; i < cards.length; i++) {
+        const name = cards[i].getAttribute('data-name');
+        cards[i].style.display = name.includes(filter) ? '' : 'none';
+    }
+}
+
+function clearSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    searchEmployees();
+    input.focus();
+}
+
+function printSalaryList() {
+    const printWindow = window.open('', '_blank');
+    const empData = {{ emp|tojson }};
+    const outputId = "{{ output_id }}";
+    
+    const firstEmp = Object.values(empData)[0];
+    const numDateCols = firstEmp ? firstEmp.output.length : 0;
+    
+    let html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Salary List - ${outputId}</title>
+        <style>
+            @page {
+                size: landscape;
+                margin: 8mm;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 10px;
+                margin: 0;
+                padding: 8px;
+            }
+            h1 {
+                text-align: center;
+                font-size: 16px;
+                margin: 0 0 3px 0;
+            }
+            .subtitle {
+                text-align: center;
+                color: #666;
+                font-size: 11px;
+                margin: 0 0 10px 0;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                page-break-after: always;
+            }
+            th, td {
+                border: 1px solid #333;
+                padding: 2px 4px;
+                text-align: center;
+                font-size: 10px;
+            }
+            th {
+                background: #ddd;
+                font-weight: bold;
+            }
+            .header-date {
+                background: #dde;
+                font-size: 11px;
+            }
+            .emp-cell {
+                background: #eef;
+                width: 2%;
+                font-weight: bold;
+            }
+            .name-cell {
+                text-align: left;
+                background: #eef;
+                width: 6%;
+            }
+            .name-cell .emp-name {
+                font-weight: bold;
+                font-size: 10px;
+            }
+            .name-cell .emp-rate {
+                font-size: 8px;
+                color: #666;
+            }
+            .data-cell {
+                vertical-align: top;
+            }
+            .time-label { font-size: 10px; }
+            .time-label.empty, .hours-label.empty, .pay-label.empty { color: #ccc; }
+            .hours-label { font-size: 10px; color: red; font-weight: bold; }
+            .pay-label { font-size: 10px; font-weight: bold; }
+            .total-hrs {
+                background: #ffd;
+                font-weight: bold;
+                width: 4%;
+            }
+            .total-pay {
+                background: #fdd;
+                font-weight: bold;
+            }
+            .summary {
+                margin-top: 15px;
+                text-align: right;
+                font-size: 12px;
+                font-weight: bold;
+            }
+            .footer {
+                margin-top: 20px;
+                font-size: 9px;
+                color: #666;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>TBROS Ventures Sdn. Bhd.</h1>
+        <p class="subtitle">Salary List - ${outputId}</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th class="emp-cell">No</th>
+                    <th class="name-cell">Name</th>
+    `;
+    
+    const firstEmpData = firstEmp ? firstEmp.output : [];
+    for (let i = 0; i < numDateCols; i++) {
+        const v = firstEmpData[i];
+        const dateStr = v ? v.day : `D${i+1}`;
+        const dayStr = v ? v.day_of_week : '';
+        html += `<th class="header-date">${dateStr}<br><span style="font-size:7px;color:#666">${dayStr}</span></th>`;
+    }
+    html += `<th class="total-hrs">Total Hrs</th><th class="total-pay" style="font-size:10px;">Total Pay</th>`;
+    html += `</tr></thead><tbody>`;
+    
+    let empNum = 0;
+    for (const [iname, idata] of Object.entries(empData)) {
+        empNum++;
+        const output = idata.output;
+        
+        html += `<tr><td class="emp-cell">${empNum}</td><td class="name-cell"><div class="emp-name">${iname}</div><div class="emp-rate">RM${idata.pay_hour}/hr</div></td>`;
+        
+        for (let col = 0; col < numDateCols; col++) {
+            const v = output[col];
+            if (v) {
+                const hasTime = v.work_time[0] && v.work_time[1];
+                const emptyClass = hasTime ? '' : ' empty';
+                const timeStr = hasTime ? `${v.work_time[0]}-${v.work_time[1]}` : 'undefined';
+                html += `<td class="data-cell">
+                    <div class="time-label${emptyClass}">${timeStr}</div>
+                    <div class="hours-label${emptyClass}">${v.daily_work_hours}h</div>
+                    <div class="pay-label${emptyClass}">RM${v.pay_perday}</div>
+                </td>`;
+            } else {
+                html += `<td class="data-cell"></td>`;
+            }
+        }
+        
+        html += `<td class="total-hrs">${idata.total_work_hours}</td><td class="total-pay" style="font-size:10px;font-weight:bold;">RM${idata.total_salary}</td></tr>`;
+    }
+    
+    html += `
+            </tbody>
+        </table>
+        
+        <div class="summary">
+            Total Employees: {{ total_emp_on_list }} | Total Amount: {{ total_cash }}
+        </div>
+        
+        <div class="footer">
+            Generated on ${new Date().toLocaleDateString()} - TBROS Ventures Sdn. Bhd.
+        </div>
+    </body>
+    </html>
+    `;
+    
+    printWindow.document.write(html);
+    printWindow.document.close();
+    printWindow.onload = function() {
+        printWindow.print();
+    };
+}
+</script>
 {% endblock %}

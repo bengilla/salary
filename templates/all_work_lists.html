@@ -12,65 +12,73 @@
 {% set _ = years[year].append({'doc': doc, 'sort_date': sort_date|int}) %}
 {% endfor %}
 
-<section id="all_work_lists" class="mb-16 flex justify-center">
-    <div class="max-w-5xl">
-        <h1 class="text-2xl font-bold mt-8 mb-4 text-center">All Work Lists</h1>
+<div class="space-y-4">
+    <h1 class="text-xl sm:text-2xl font-bold text-gray-800">All Work Lists</h1>
 
-        {% if documents %}
-        {% for year in years|sort(reverse=True) %}
-        <div class="mb-4">
-            <h2 onclick="toggleYear('{{ year }}')" class="text-xl font-bold bg-slate-600 text-white p-2 rounded cursor-pointer hover:bg-slate-700 flex items-center" style="width: 100%;">
-                <span id="icon-{{ year }}" class="mr-2">{% if loop.first %}-{% else %}+{% endif %}</span> {{ year }}
-            </h2>
-            <table id="table-{{ year }}" class="w-full border-collapse mt-0" {% if not loop.first %}style="display: none;" {% endif %}>
-                <thead>
-                    <tr class="bg-cyan-300 border-solid">
-                        <th class="border p-2 text-left">Date</th>
-                        <th class="border p-2 text-center">Total Employees</th>
-                        <th class="border p-2 text-left">Total Salary</th>
-                        <th class="border p-2 text-left">Action</th>
+    {% if documents %}
+    {% for year in years|sort(reverse=True) %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        <button onclick="toggleYear('{{ year }}')" 
+                class="w-full px-4 py-3 sm:px-6 sm:py-4 bg-gray-800 text-white text-left font-semibold hover:bg-gray-700 transition-colors flex items-center cursor-pointer text-sm sm:text-base">
+            <span id="icon-{{ year }}" class="mr-3">
+                {% if loop.first %}-{% else %}+{% endif %}
+            </span>
+            {{ year }}
+        </button>
+        
+        <div id="table-{{ year }}" {% if not loop.first %}style="display: none;"{% endif %}>
+            <table class="w-full text-xs sm:text-sm">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="text-left py-2 px-3 sm:py-3 sm:px-6 font-medium text-gray-600">Date</th>
+                        <th class="text-center py-2 px-3 sm:py-3 sm:px-6 font-medium text-gray-600">Emp</th>
+                        <th class="text-left py-2 px-3 sm:py-3 sm:px-6 font-medium text-gray-600">Total</th>
+                        <th class="text-left py-2 px-3 sm:py-3 sm:px-6 font-medium text-gray-600"></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-gray-100">
                     {% set sorted_docs = years[year]|sort(attribute='sort_date') %}
                     {% for item in sorted_docs %}
                     {% set doc = item.doc %}
-                    <tr class="hover:bg-gray-100">
-                        <td class="border p-2">{{ doc.date }}</td>
-                        <td class="border p-2 text-center">{{ doc.emp_work_hours|length }}</td>
-                        <td class="border p-2">
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="py-3 px-3 sm:px-6 font-medium text-gray-800">{{ doc.date }}</td>
+                        <td class="py-3 px-3 sm:px-6 text-center text-gray-600">{{ doc.emp_work_hours|length }}</td>
+                        <td class="py-3 px-3 sm:px-6 text-gray-800">
                             {% set total = namespace(value=0) %}
                             {% for emp, data in doc.emp_work_hours.items() %}
                             {% set total.value = total.value + data.total_salary %}
                             {% endfor %}
-                            RM {{ "%.2f"|format(total.value) }}
+                            <span class="text-orange-600 font-semibold">RM {{ "%.2f"|format(total.value) }}</span>
                         </td>
-                        <td class="border p-2">
-                            <a href="{{ url_for('all_list', ids=doc.date) }}" class="text-blue-600 hover:underline">View</a>
+                        <td class="py-3 px-3 sm:px-6">
+                            <a href="{{ url_for('all_list', ids=doc.date) }}" 
+                               class="text-cyan-600 hover:text-cyan-800 font-medium">View →</a>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-        {% endfor %}
-        {% else %}
-        <p>No work lists found.</p>
-        {% endif %}
     </div>
-</section>
+    {% endfor %}
+    {% else %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <p class="text-gray-500">No work lists found.</p>
+    </div>
+    {% endif %}
+</div>
 
 <script>
-    function toggleYear(year) {
-        const table = document.getElementById('table-' + year);
-        const icon = document.getElementById('icon-' + year);
-        if (table.style.display === 'none') {
-            table.style.display = '';
-            icon.textContent = '-';
-        } else {
-            table.style.display = 'none';
-            icon.textContent = '+';
-        }
+function toggleYear(year) {
+    const table = document.getElementById('table-' + year);
+    const icon = document.getElementById('icon-' + year);
+    if (table.style.display === 'none') {
+        table.style.display = '';
+        icon.textContent = '-';
+    } else {
+        table.style.display = 'none';
+        icon.textContent = '+';
     }
+}
 </script>
 {% endblock %}

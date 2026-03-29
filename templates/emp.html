@@ -2,166 +2,144 @@
 {% block title %}{{ emp_name }}{% endblock %}
 
 {% block content %}
-<section id="all" class="py-[2%] px-[5%] lg:px-[15%]">
+<div class="space-y-6">
 
-    {% if count is defined %}
-    <div class="py-4 mx-2 flex gap-4 items-center">
-        <div><span class="text-sm">Total Employees: </span></div>
-        <div><span class="py-1 px-4 text-xl font-bold text-orange-600 border-2 border-slate-400 rounded-lg">{{ count }}</span></div>
-        <div class="ml-auto">
-            <input type="text" id="searchInput" onkeyup="searchEmployees()" placeholder="Search by name..." class="px-3 py-1 border border-slate-400 rounded-lg text-sm focus:outline-none focus:border-sky-600">
+    <!-- Header -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">{{ emp_name }}</h1>
+            {% if count is defined %}
+            <p class="text-gray-500 text-sm mt-1">Total: {{ count }} employees</p>
+            {% endif %}
+        </div>
+        {% if count is defined %}
+        <div class="relative w-full sm:w-64">
+            <input type="text" id="searchInput" onkeyup="searchEmployees()" placeholder="Search employees..." 
+                class="w-full px-4 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-sm">
+            <button type="button" onclick="clearSearch()" id="clearBtn" class="hidden absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Employee List -->
+    {% if count is defined and count > 0 %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {% for employee in info %}
+        <div class="employee-card bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow cursor-pointer"
+             onclick="window.location='{{ url_for('info_emp', ids=employee._id) }}'">
+            
+            <div class="flex items-start gap-4">
+                <img src="data:;base64, {{ employee['img_employee'] }}" 
+                     class="w-16 h-16 object-cover rounded-lg flex-shrink-0" />
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-semibold text-gray-800 truncate">{{ employee.name }}</h3>
+                    <p class="text-orange-600 font-medium text-sm">RM {{ employee.pay_hour }}/hr</p>
+                    <p class="text-gray-500 text-xs truncate">{{ employee.ic }}</p>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
+                <span class="text-xs text-gray-500">{{ employee.nationality }}</span>
+                <a href="{{ url_for('edit_emp', ids=employee._id) }}" 
+                   onclick="event.stopPropagation()"
+                   class="text-sm text-cyan-600 hover:text-cyan-800 font-medium">Edit</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif count is defined and count == 0 %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <p class="text-gray-500">No employees yet.</p>
+        <a href="{{ url_for('add_emp') }}" class="text-cyan-600 hover:text-cyan-800 font-medium mt-2 inline-block">Add first employee</a>
+    </div>
+
+    {% else %}
+    <!-- Single Employee View -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="flex flex-col sm:flex-row gap-6">
+            <div class="flex-shrink-0">
+                <img src="data:;base64, {{ info['img_employee'] }}" class="w-32 h-32 object-cover rounded-xl" />
+            </div>
+            <div class="flex-1">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">{{ info.name }}</h2>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="text-gray-500">Hourly Rate</span>
+                        <p class="font-medium text-orange-600">RM {{ info.pay_hour }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">IC / Passport</span>
+                        <p class="font-medium">{{ info.ic }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Nationality</span>
+                        <p class="font-medium">{{ info.nationality }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Gender</span>
+                        <p class="font-medium">{{ info.gender }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Date of Birth</span>
+                        <p class="font-medium">{{ info.dob }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Contact</span>
+                        <p class="font-medium">{{ info.contact }}</p>
+                    </div>
+                    <div class="col-span-2">
+                        <span class="text-gray-500">Address</span>
+                        <p class="font-medium">{{ info.address }}</p>
+                    </div>
+                    <div>
+                        <span class="text-gray-500">Sign Date</span>
+                        <p class="font-medium">{{ info.sign_date }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex gap-3">
+                    <a href="{{ url_for('edit_emp', ids=info._id) }}" 
+                       class="px-4 py-2 bg-cyan-800 text-white rounded-lg hover:bg-cyan-700 transition-colors text-sm font-medium">
+                        Edit
+                    </a>
+                    <a href="{{ url_for('all_employees') }}" 
+                       class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                        Back
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
     {% endif %}
 
-    {% for employee in info if count is defined %}
-    <!-- {{ employee }} -->
-    <div class="employee-card mt-2 w-full border border-1 border-slate-900">
-        <table class="table-auto w-full">
-            <tbody>
-                <tr>
-                    <!--image -->
-                    <td class="w-20 px-4">
-                        <div class="grid place-content-center">
-                            <img src="data:;base64, {{ employee['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
-                        </div>
-                        <div class="grid grid-rows-1 place-content-center">
-                            <a href="{{ url_for('edit_emp', ids=employee._id) }}">
-                                <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
-                        </div>
-                    </td>
-
-                    <!--Info -->
-                    <td>
-                        <table class="auto">
-                            {% set cols={
-                            'id': employee._id,
-                            'name': employee.name,
-                            'pay': employee.pay_hour,
-                            'passport/ic': employee.ic,
-                            'nationality': employee.nationality,
-                            'gender': employee.gender,
-                            'd.o.b': employee.dob,
-                            'contact': employee.contact,
-                            'address': employee.address,
-                            'sign date': employee.sign_date
-                            } %}
-                            {% for key, value in cols.items() %}
-                            <tr>
-                                <th class="text-right">
-                                    <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
-                                </th>
-                                <td class="w-full">
-                                    {% if key == 'name' %}
-                                    <a href="{{ url_for('info_emp', ids=employee._id) }}">
-                                        <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
-                                    </a>
-                                    {% elif key == 'pay' %}
-                                    <span class="text-xs text-red-500 sm:text-sm">RM
-                                        <span class="font-bold underline select-all sm:text-sm">
-                                            {{ value }}
-                                        </span> / hour</span>
-                                    {% else %}
-                                    <span class="text-xs select-all sm:text-sm">{{ value }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </td>
-                    <!-- End info -->
-
-                </tr>
-            </tbody>
-
-        </table>
-
-    </div>
-    {% endfor %}
-
-    {% if count is not defined %}
-    <!-- Single employee view (original) -->
-    <div class="mt-2 w-full border border-1 border-slate-900">
-        <table class="table-auto w-full">
-            <tbody>
-                <tr>
-                    <!--image -->
-                    <td class="w-20 px-4">
-                        <div class="grid place-content-center">
-                            <img src="data:;base64, {{ info['img_employee'] }}" class="w-20 h-20 mb-2 object-cover rounded-2xl sm:w-40 sm:h-40" />
-                        </div>
-                        <div class="grid grid-rows-1 place-content-center">
-                            <a href="{{ url_for('edit_emp', ids=info._id) }}">
-                                <button class="w-20 py-1 mb-1 text-xs border border-1 border-slate-900 rounded hover:bg-sky-700 hover:text-slate-100 sm:rounded-md sm:py-1 sm:w-40 sm:text-sm">edit</button></a>
-                        </div>
-                    </td>
-
-                    <!--Info -->
-                    <td>
-                        <table class="auto">
-                            {% set cols={
-                            'id': info._id,
-                            'name': info.name,
-                            'pay': info.pay_hour,
-                            'passport/ic': info.ic,
-                            'nationality': info.nationality,
-                            'gender': info.gender,
-                            'd.o.b': info.dob,
-                            'contact': info.contact,
-                            'address': info.address,
-                            'sign date': info.sign_date
-                            } %}
-                            {% for key, value in cols.items() %}
-                            <tr>
-                                <th class="text-right">
-                                    <span class="mx-2 text-xs text-slate-500 font-normal italic select-none sm:text-sm">{{ key }}: </span>
-                                </th>
-                                <td class="w-full">
-                                    {% if key == 'name' %}
-                                    <span class="font-bold text-sm select-all sm:text-lg">{{ value }}</span>
-                                    {% elif key == 'pay' %}
-                                    <span class="text-xs text-red-500 sm:text-sm">RM
-                                        <span class="font-bold underline select-all sm:text-sm">
-                                            {{ value }}
-                                        </span> / hour</span>
-                                    {% else %}
-                                    <span class="text-xs select-all sm:text-sm">{{ value }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </td>
-                    <!-- End info -->
-
-                </tr>
-            </tbody>
-
-        </table>
-
-    </div>
-    <!-- Work Hour -->
-    <h3 class="p-4">Empty</h3>
-    {% endif %}
-</section>
+</div>
 
 <script>
 function searchEmployees() {
     const input = document.getElementById('searchInput');
     const filter = input.value.toLowerCase();
     const cards = document.getElementsByClassName('employee-card');
+    const clearBtn = document.getElementById('clearBtn');
+    
+    clearBtn.classList.toggle('hidden', !input.value);
     
     for (let i = 0; i < cards.length; i++) {
-        const nameSpan = cards[i].querySelector('a[href^="/info/"] span');
-        if (nameSpan) {
-            const name = nameSpan.textContent.toLowerCase();
-            if (name.includes(filter)) {
-                cards[i].style.display = '';
-            } else {
-                cards[i].style.display = 'none';
-            }
-        }
+        const name = cards[i].querySelector('h3').textContent.toLowerCase();
+        cards[i].style.display = name.includes(filter) ? '' : 'none';
     }
+}
+
+function clearSearch() {
+    const input = document.getElementById('searchInput');
+    input.value = '';
+    searchEmployees();
+    input.focus();
 }
 </script>
 {% endblock %}

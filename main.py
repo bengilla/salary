@@ -17,11 +17,11 @@ from forms.form import CreateForm, EditForm
 from mongodb import MongoDB
 
 # 设置
+load_dotenv()
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "tbrosventures"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "tbrosventures")
 
 # Simple users - username: password
-load_dotenv()
 USERS = {
     os.getenv("LOGIN_USERNAME", "tbros"): os.getenv("LOGIN_PASSWORD", "password")
 }
@@ -248,4 +248,4 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=5001)

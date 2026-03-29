@@ -1,14 +1,30 @@
-### Python ###
-venv
+# Python
 __pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+env/
 
-### env ###
-env
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Env
 *.env
-.venv
 
-.idea
+# macOS
 .DS_Store
-work_dir
-node_modules
+.AppleDouble
+.LSOverride
 
+# Node
+node_modules/
+
+# Misc
+work_dir/
+_issue/
