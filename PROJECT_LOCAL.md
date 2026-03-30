@@ -4,7 +4,17 @@
 
 **服务器平台**: Railway.app
 **自动部署**: GitHub 推送后自动触发部署
-**项目地址**: https://github.com/xxx/salary (需替换为实际仓库地址)
+**项目地址**: https://github.com/bengilla/salary
+**线上域名**: https://tbros.my
+
+### Railway 自定义域名配置
+
+- 域名 `tbros.my` 在 Namecheap 购买
+- DNS 配置：
+  - TXT 记录：`_railway-verify` → Railway 提供的验证值
+  - CNAME 记录：`www` → `cywc9rg7.up.railway.app`
+- Railway 端口填 **5001**
+- 状态变为 **Healthy** 后即可访问
 
 ## 本地开发环境
 
@@ -84,3 +94,11 @@ isort .
 - Railway 的环境变量在 Railway Dashboard 设置，不从 .env 读取
 - Python 3.14.3 为必需版本
 - Tailwind CSS 通过 CDN 加载，无需 npm 构建
+
+## ⚠️ 暂停部署（2026年3月30日起约一周）
+
+**暂时禁用 GitHub 推送触发 Railway 自动部署**
+
+原因：需要整理代码，更新期间不希望触发 Railway 部署。
+
+恢复方式：删除此注意事项或将 `RAILWAY_NO_DEPLOY` 环境变量设为 `false`
