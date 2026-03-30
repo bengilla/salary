@@ -15,7 +15,7 @@
 
     <header class="bg-white shadow-sm border-b border-gray-200">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-                <a href="{{ url_for('index') }}" class="text-xl font-bold text-cyan-800 hover:text-cyan-600 transition-colors">
+                <a href="{{ url_for('salary.index') }}" class="text-xl font-bold text-cyan-800 hover:text-cyan-600 transition-colors">
                     <span class="sm:inline">TBROS Ventures</span>
                     <span class="block sm:inline sm:ml-1">Sdn. Bhd.</span>
                 </a>
@@ -29,12 +29,12 @@
                         </svg>
                     </button>
                     <div id="dropdownMenu" class="hidden absolute top-full right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                        <a href="{{ url_for('add_emp') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">Add Employee</a>
-                        <a href="{{ url_for('all_employees') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">All Employees</a>
-                        <a href="{{ url_for('all_work_lists') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">Work Lists</a>
+                        <a href="{{ url_for('employees.add') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">Add Employee</a>
+                        <a href="{{ url_for('employees.list_employees') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">All Employees</a>
+                        <a href="{{ url_for('salary.all_work_lists') }}" class="block px-4 py-2 text-gray-700 hover:bg-cyan-50 hover:text-cyan-700">Work Lists</a>
                     </div>
                 </div>
-                <a href="{{ url_for('logout') }}" class="px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-400 hover:text-white hover:bg-red-500 hover:border-red-500 rounded-lg transition-colors">Logout</a>
+                <a href="{{ url_for('auth.logout') }}" class="px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-400 hover:text-white hover:bg-red-500 hover:border-red-500 rounded-lg transition-colors">Logout</a>
             </div>
             {% endif %}
         </div>

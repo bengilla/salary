@@ -51,7 +51,7 @@
                             <span class="text-orange-600 font-semibold">RM {{ "{:,.2f}".format(total.value) }}</span>
                         </td>
                         <td class="py-3 px-3 sm:px-6">
-                            <a href="{{ url_for('all_list', ids=doc.date) }}" 
+                            <a href="{{ url_for('salary.list', batch_id=doc.date) }}" 
                                class="text-cyan-600 hover:text-cyan-800 font-medium">View →</a>
                         </td>
                     </tr>

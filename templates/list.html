@@ -11,6 +11,13 @@
             <p class="text-gray-500">Month: <span class="text-orange-600 font-semibold">{{ output_id }}</span></p>
         </div>
         <div class="flex flex-wrap items-center gap-3">
+            <form method="POST" action="{{ url_for('salary.list', batch_id=output_id) }}" class="flex items-center gap-2">
+                <select name="version" onchange="this.form.submit()" 
+                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 text-sm">
+                    <option value="v0800" {{ 'selected' if selected_version == 'v0800' else '' }}>08:00 - 17:00</option>
+                    <option value="v0830" {{ 'selected' if selected_version == 'v0830' else '' }}>08:30 - 17:30</option>
+                </select>
+            </form>
             <div class="relative flex-1 min-w-[150px]">
                 <input type="text" id="searchInput" onkeyup="searchEmployees()" placeholder="Search employee..." 
                     class="w-full px-4 py-2 pr-8 border-2 border-red-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent text-sm">
@@ -24,7 +31,7 @@
                 class="px-4 py-2 bg-cyan-800 text-white rounded-lg hover:bg-cyan-700 transition-colors text-sm font-medium whitespace-nowrap cursor-pointer">
                 Print / PDF
             </button>
-            <a href="{{ url_for('all_work_lists') }}" 
+            <a href="{{ url_for('salary.all_work_lists') }}" 
                class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium whitespace-nowrap">
                 ← Back to Lists
             </a>

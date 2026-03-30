@@ -29,3 +29,7 @@ node_modules/
 work_dir/
 _issue/
 PROJECT_LOCAL.md
+
+# Temp
+/tmp/
+*.log

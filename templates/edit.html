@@ -9,7 +9,7 @@
             <p class="text-gray-500 text-sm mt-1">{{ edit_emp.name }}</p>
         </div>
 
-        <form action="{{ url_for('edit_emp', ids=edit_emp._id) }}" method="POST" enctype="multipart/form-data" novalidate class="space-y-5">
+        <form action="{{ url_for('employees.edit', emp_id=edit_emp._id) }}" method="POST" enctype="multipart/form-data" novalidate class="space-y-5">
             {{ form.csrf_token }}
 
             <div>
@@ -44,7 +44,7 @@
 
             <div class="pt-4 flex gap-3">
                 {{ form.submit(class="flex-1 bg-cyan-800 hover:bg-cyan-700 text-white font-medium py-2.5 px-4 rounded-lg transition-colors cursor-pointer") }}
-                <a href="{{ url_for('all_employees') }}" 
+                <a href="{{ url_for('employees.list_employees') }}" 
                    class="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-center font-medium">
                     Cancel
                 </a>

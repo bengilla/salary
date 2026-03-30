@@ -1,0 +1,26 @@
+{
+  "versions": {
+    "v0800": {
+      "start": "08:00",
+      "end": "17:00",
+      "overtime_start": "17:00",
+      "max_time": "23:30"
+    },
+    "v0830": {
+      "start": "08:30",
+      "end": "17:30",
+      "overtime_start": "17:30",
+      "max_time": "24:00"
+    }
+  },
+  "overtime_rules": {
+    "bonus_30min_per_90min": true,
+    "night_shift_bonus": {
+      "start": "18:30",
+      "duration": 3,
+      "bonus_hours": 1
+    }
+  },
+  "salary_round_threshold": 5,
+  "salary_round_unit": 10
+}
